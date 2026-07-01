@@ -15,7 +15,7 @@ META_ARCH:=x86_64 aarch64
 META_TAGS:=ai
 META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/openclawmgr
 META_WEBSITE:=https://github.com/openclaw/openclaw
-META_TUTORIAL:=https://www.koolcenter.com/t/topic/19042
+META_TUTORIAL:=https://www.koolcenter.com/tags/c/soft-guides/16/openclaw
 META_AUTOCONF:=path enable
 META_UCI:=openclawmgr
 
