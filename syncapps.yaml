@@ -270,6 +270,16 @@ apps:
         meta:
             - local: apps/kai/app-meta-kai
               remote: openwrt-app-meta/applications/app-meta-kai
+    kaiplus:
+        services:
+            - local: apps/kaiplus/kaiplus
+              remote: nas-packages/network/services/kaiplus
+        luci:
+            - local: apps/kaiplus/luci-app-kaiplus
+              remote: nas-packages-luci/luci/luci-app-kaiplus
+        meta:
+            - local: apps/kaiplus/app-meta-kaiplus
+              remote: openwrt-app-meta/applications/app-meta-kaiplus
     kodexplorer:
         services: []
         luci:
