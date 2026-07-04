@@ -20,6 +20,7 @@ Optional:
   BAIDUDRIVE_ARCH=<x86_64|aarch64>
   BAIDUDRIVE_TARBALL_URL=<url>
   BAIDUDRIVE_INSTALL_DEPS=1
+  BAIDUDRIVE_OVERWRITE_CONFIG=0
   BAIDUDRIVE_RESTART=1
   DEPLOY_SSH_KEY
   DEPLOY_SSH_OPTS
@@ -98,6 +99,15 @@ stage_runtime() {
   copy_file_into "$sdk_dir/libkernel.so" "$staging_dir/opt/baidunas-sdk/libkernel.so"
   ln -sfn /usr/sbin/baidudrive "$staging_dir/opt/baidunas-sdk/P2PClient"
   copy_tree_into "$glibc_dir" "$staging_dir/opt/baidunas-glibc"
+  if [[ "$src_arch" == "x86_64" ]]; then
+    local loader_src="$staging_dir/opt/baidunas-glibc/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
+    local loader_dst="$staging_dir/opt/baidunas-glibc/lib64/ld-linux-x86-64.so.2"
+    if [[ -e "$loader_src" ]]; then
+      mkdir -p "$(dirname "$loader_dst")"
+      rm -f "$loader_dst"
+      cp -a "$loader_src" "$loader_dst"
+    fi
+  fi
 
   local pkg_dir="$PROJECT_ROOT/apps/baidudrive/baidudrive"
   copy_file_into "$pkg_dir/files/baidudrive.init" "$staging_dir/etc/init.d/baidudrive"
@@ -137,6 +147,7 @@ main() {
   local arch="${BAIDUDRIVE_ARCH:-${DEPLOY_ARCH:-x86_64}}"
   local url="${BAIDUDRIVE_TARBALL_URL:-https://github.com/linkease/istore-packages/releases/download/prebuilt/baidudrive-binary-${version}.tar.gz}"
   local install_deps="${BAIDUDRIVE_INSTALL_DEPS:-1}"
+  local overwrite_config="${BAIDUDRIVE_OVERWRITE_CONFIG:-0}"
   local restart_service="${BAIDUDRIVE_RESTART:-1}"
 
   curl -fsSL "$url" -o "$TARBALL_PATH"
@@ -194,8 +205,15 @@ if [ "$install_deps" = "1" ] && command -v opkg >/dev/null 2>&1; then
   opkg update || true
   opkg install curl luci-compat rpcd-mod-luci || true
 fi
-tar -xzf payload.tgz -C /
+staging_dir="\$(mktemp -d /tmp/baidudrive-payload.XXXXXX)"
+tar -xzf payload.tgz -C "\$staging_dir"
+if [ "$overwrite_config" != "1" ] && [ -e /etc/config/baidudrive ]; then
+  rm -f "\$staging_dir/etc/config/baidudrive"
+fi
+tar -C "\$staging_dir" -cf - . | tar -C / -xf -
+rm -rf "\$staging_dir"
 chmod +x /usr/sbin/baidudrive /opt/baidunas-sdk/baiduNas /opt/baidunas-sdk/P2PClient.bin /etc/init.d/baidudrive /usr/libexec/baidudrive/sdk-init.sh
+chown -R root:root /usr/sbin/baidudrive /opt/baidunas-sdk /opt/baidunas-glibc /etc/init.d/baidudrive /usr/libexec/baidudrive
 [ -x /etc/init.d/baidudrive ] && /etc/init.d/baidudrive enable || true
 rm -rf /tmp/luci-* /tmp/luci-indexcache || true
 if [ "$restart_service" = "1" ]; then

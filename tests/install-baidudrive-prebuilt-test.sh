@@ -42,3 +42,5 @@ printf '%s\n' "$output" | grep -F 'opt/baidunas-glibc/lib64/ld-linux-x86-64.so.2
 printf '%s\n' "$output" | grep -F 'etc/init.d/baidudrive' >/dev/null
 printf '%s\n' "$output" | grep -F 'usr/libexec/baidudrive/sdk-init.sh' >/dev/null
 printf '%s\n' "$output" | grep -F 'usr/lib/lua/luci/controller/baidudrive.lua' >/dev/null
+grep -F 'BAIDUDRIVE_OVERWRITE_CONFIG' "$ROOT_DIR/tools/install-baidudrive-prebuilt.sh" >/dev/null
+grep -F 'loader_dst="$staging_dir/opt/baidunas-glibc/lib64/ld-linux-x86-64.so.2"' "$ROOT_DIR/tools/install-baidudrive-prebuilt.sh" >/dev/null
