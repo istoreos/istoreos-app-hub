@@ -23,6 +23,10 @@ This directory defines runnable tasks for the it-runner web UI.
   - default selectors: `.it-runner/tasks/<task>/envs/000-defaults.env`
   - deploy target: `.it-runner/envsets/deploy-targets/<target>/000-base.env`
   - app/runtime profile: `.it-runner/envsets/task-runtimes/<task>/<profile>/000-base.env`
+- `install-baidudrive-prebuilt`
+  - installs the published `baidudrive-binary-<version>.tar.gz` runtime directly to the selected remote box
+  - default target is `main-dev`, default arch is `x86_64`
+  - this is not an OpenWrt build; it overlays the prebuilt runtime, LuCI files, init script, and SDK files for smoke testing
 - `syncapps-app`
   - default selector: `.it-runner/tasks/syncapps-app/envs/000-defaults.env`
   - runtime profile: `.it-runner/envsets/task-runtimes/syncapps-app/<profile>/000-base.env`
@@ -64,3 +68,10 @@ For this repo, tasks intentionally call `make <target>` to reuse the project’s
 - Run task `openclawmgr-install`
   - It runs `/usr/libexec/istorec/openclawmgr.sh install` on the remote box via SSH (prefer taskd if present)
   - Logs are saved under `.it-runner/logs/openclawmgr-install/`
+
+## BaiduDrive prebuilt install (debug)
+
+- Run task `install-baidudrive-prebuilt`
+  - defaults: `BAIDUDRIVE_VERSION=0.5.1`, `BAIDUDRIVE_ARCH=x86_64`, target `main-dev`
+  - uses `DEPLOY_HOST/DEPLOY_USER/DEPLOY_PORT` from the selected deploy target
+  - equivalent CLI: `make install-baidudrive-prebuilt`

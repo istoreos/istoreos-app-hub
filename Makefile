@@ -22,6 +22,7 @@ help:
   "  make deploy-app-dry         Show what would be deployed (APP=...)" \
   "  make deploy-single-app      Deploy DEPLOY_SINGLE_APP to remote" \
   "  make deploy-single-app-dry  Dry-run for DEPLOY_SINGLE_APP" \
+  "  make install-baidudrive-prebuilt Install published BaiduDrive runtime to remote" \
   "  make tidy-tools             Run go mod tidy (tools)" \
   "  make syncapps-autogen       Scan legacy -> update config" \
   "  make syncapps-autogen-dry   Dry-run autogen" \
@@ -89,6 +90,10 @@ deploy-single-app:
 .PHONY: deploy-single-app-dry
 deploy-single-app-dry:
 >@./tools/deploy-to-remote.sh --dry-run
+
+.PHONY: install-baidudrive-prebuilt
+install-baidudrive-prebuilt:
+>@./tools/install-baidudrive-prebuilt.sh
 
 .PHONY: syncapps-autogen
 syncapps-autogen: build-syncapps-autogen
