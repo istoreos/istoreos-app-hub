@@ -1,0 +1,39 @@
+#!/bin/sh
+set -eu
+
+ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+PKG_DIR="$ROOT_DIR/apps/baidudrive/baidudrive"
+LUCI_DIR="$ROOT_DIR/apps/baidudrive/luci-app-baidudrive"
+
+grep -F 'PKG_ARCH_BAIDUDRIVE:=$(ARCH)' "$PKG_DIR/Makefile" >/dev/null
+grep -F 'DEPENDS:=@(x86_64||aarch64) +curl' "$PKG_DIR/Makefile" >/dev/null
+grep -F 'STRIP:=true' "$PKG_DIR/Makefile" >/dev/null
+grep -F '$(PKG_BUILD_DIR)/baidudrive.$(PKG_ARCH_BAIDUDRIVE)' "$PKG_DIR/Makefile" >/dev/null
+grep -F '$(PKG_BUILD_DIR)/nas_sdk/$(PKG_ARCH_BAIDUDRIVE)/baiduNas' "$PKG_DIR/Makefile" >/dev/null
+grep -F '$(PKG_BUILD_DIR)/nas_sdk/$(PKG_ARCH_BAIDUDRIVE)/P2PClient.bin' "$PKG_DIR/Makefile" >/dev/null
+grep -F '$(PKG_BUILD_DIR)/glibc/$(PKG_ARCH_BAIDUDRIVE)/.' "$PKG_DIR/Makefile" >/dev/null
+grep -F '$(LN) /usr/sbin/baidudrive $(1)/opt/baidunas-sdk/P2PClient' "$PKG_DIR/Makefile" >/dev/null
+
+sh -n "$PKG_DIR/files/baidudrive.init"
+grep -F 'procd_open_instance baiduNas' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'procd_open_instance sdk-init' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'BAIDU_NAS_MACID="$macid"' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'BAIDU_NAS_DEVICE_TYPE="$device_type"' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'procd_set_param command /usr/libexec/baidudrive/sdk-init.sh' "$PKG_DIR/files/baidudrive.init" >/dev/null
+
+sh -n "$PKG_DIR/files/sdk-init.sh"
+grep -F 'register' "$PKG_DIR/files/sdk-init.sh" >/dev/null
+grep -F 'type=quota' "$PKG_DIR/files/sdk-init.sh" >/dev/null
+grep -F 'type=usbIn' "$PKG_DIR/files/sdk-init.sh" >/dev/null
+
+grep -F "option 'sdk_dir' '/opt/baidunas-sdk'" "$PKG_DIR/files/baidudrive.config" >/dev/null
+! grep -F "option 'glibc_dir'" "$PKG_DIR/files/baidudrive.config" >/dev/null
+grep -F "option 'sdk_port' '8001'" "$PKG_DIR/files/baidudrive.config" >/dev/null
+grep -F "option 'usb_path' '/mnt'" "$PKG_DIR/files/baidudrive.config" >/dev/null
+grep -F "option 'download_path' '/'" "$PKG_DIR/files/baidudrive.config" >/dev/null
+
+grep -F 'Value, "macid"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
+grep -F 'Value, "device_type"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
+grep -F 'Value, "usb_path"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
+! grep -F 'Value, "glibc_dir"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
+grep -F -- '--data-urlencode' "$PKG_DIR/files/sdk-init.sh" >/dev/null

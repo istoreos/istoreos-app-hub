@@ -1,0 +1,14 @@
+name: "install-baidudrive-prebuilt"
+description: "Install published BaiduDrive prebuilt runtime to remote x86_64 test box without compiling"
+tags: ["baidudrive", "install", "remote", "prebuilt", "x86_64"]
+version: "1"
+env:
+  autoDirs: ["envs"]
+  includeSets:
+    - "../../envsets/deploy-targets/${ISTOREOS_APP_HUB_DEPLOY_TARGET}"
+  required: ["ISTOREOS_APP_HUB_DEPLOY_TARGET", "BAIDUDRIVE_VERSION", "BAIDUDRIVE_ARCH"]
+workspace:
+  workdir: "."
+run:
+  cmds:
+    - "make install-baidudrive-prebuilt"
