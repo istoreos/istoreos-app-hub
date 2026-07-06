@@ -23,10 +23,6 @@ for _, val in pairs(paths) do
 end
 data_dir.default = default_path
 
-local host = s:option(Value, "host", translate("Listen address"))
-host.default = "0.0.0.0"
-host.rmempty = false
-
 local port = s:option(Value, "port", translate("Listen port"))
 port.default = "10780"
 port.rmempty = false
