@@ -20,6 +20,7 @@ grep -F 'procd_open_instance sdk-init' "$PKG_DIR/files/baidudrive.init" >/dev/nu
 grep -F 'BAIDU_NAS_MACID="$macid"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'BAIDU_NAS_DEVICE_TYPE="$device_type"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'procd_set_param command /usr/libexec/baidudrive/sdk-init.sh' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'storage_root_from_data_dir' "$PKG_DIR/files/baidudrive.init" >/dev/null
 
 sh -n "$PKG_DIR/files/sdk-init.sh"
 grep -F 'register' "$PKG_DIR/files/sdk-init.sh" >/dev/null
@@ -32,7 +33,8 @@ grep -F "option 'sdk_dir' '/opt/baidunas-sdk'" "$PKG_DIR/files/baidudrive.config
 grep -F "option 'sdk_port' '8001'" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'macid' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'device_type' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
-grep -F "option 'usb_path' '/mnt'" "$PKG_DIR/files/baidudrive.config" >/dev/null
+grep -F "option 'usb_path' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
+grep -F "option 'quota_path' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'download_path' '/'" "$PKG_DIR/files/baidudrive.config" >/dev/null
 
 grep -F 'Value, "data_dir"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null

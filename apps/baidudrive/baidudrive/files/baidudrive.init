@@ -13,9 +13,9 @@ get_config() {
 	config_get sdk_port "$1" sdk_port "8001"
 	config_get macid "$1" macid ""
 	config_get device_type "$1" device_type ""
-	config_get usb_path "$1" usb_path "/mnt"
+	config_get usb_path "$1" usb_path ""
 	config_get download_path "$1" download_path "/"
-	config_get quota_path "$1" quota_path "$usb_path"
+	config_get quota_path "$1" quota_path ""
 	config_get tmp_path "$1" tmp_path ""
 	config_get log_level "$1" log_level "7"
 }
@@ -48,15 +48,17 @@ require_file() {
 	return 0
 }
 
+storage_root_from_data_dir() {
+	local path="$1"
+	df -P "$path" 2>/dev/null | awk 'NR == 2 { print $6 }'
+}
+
 start_service() {
 	config_load baidudrive
 	config_foreach get_config baidudrive
 	if [ "$enabled" != 1 ]; then
 		return 1
 	fi
-
-	[ -n "$tmp_path" ] || tmp_path="$data_dir/sdk-tmp"
-	[ -n "$quota_path" ] || quota_path="$usb_path"
 
 	require_start_value data_dir "$data_dir" || return 1
 	require_start_value macid "$macid" || return 1
@@ -68,7 +70,19 @@ start_service() {
 	require_file "$sdk_dir/libkernel.so" || return 1
 	require_file /opt/baidunas-glibc || return 1
 
-	mkdir -p "$data_dir" "$tmp_path" || return 1
+	mkdir -p "$data_dir" || return 1
+
+	local storage_root
+	storage_root="$(storage_root_from_data_dir "$data_dir")"
+	if [ -n "$storage_root" ]; then
+		[ -n "$usb_path" ] && [ "$usb_path" != "/mnt" ] || usb_path="$storage_root"
+		[ -n "$quota_path" ] && [ "$quota_path" != "/mnt" ] || quota_path="$storage_root"
+	fi
+	[ -n "$usb_path" ] || usb_path="$data_dir"
+	[ -n "$quota_path" ] || quota_path="$usb_path"
+	[ -n "$tmp_path" ] || tmp_path="$data_dir/sdk-tmp"
+
+	mkdir -p "$tmp_path" || return 1
 	rm -rf /mnt/mnt /mnt/.baidudrive-write-test-* 2>/dev/null || true
 
 	logger -t baidudrive "Starting Baidu NAS SDK"
