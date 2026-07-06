@@ -25,6 +25,7 @@ sh -n "$PKG_DIR/files/sdk-init.sh"
 grep -F 'register' "$PKG_DIR/files/sdk-init.sh" >/dev/null
 grep -F 'type=quota' "$PKG_DIR/files/sdk-init.sh" >/dev/null
 grep -F 'type=usbIn' "$PKG_DIR/files/sdk-init.sh" >/dev/null
+grep -F 'sdk init ready' "$PKG_DIR/files/sdk-init.sh" >/dev/null
 
 grep -F "option 'sdk_dir' '/opt/baidunas-sdk'" "$PKG_DIR/files/baidudrive.config" >/dev/null
 ! grep -F "option 'glibc_dir'" "$PKG_DIR/files/baidudrive.config" >/dev/null
@@ -48,4 +49,6 @@ grep -F 'Value, "port"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
 ! grep -F 'Value, "tmp_path"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
 ! grep -F 'Value, "log_level"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
 ! grep -F 'Value, "glibc_dir"' "$LUCI_DIR/luasrc/model/cbi/baidudrive.lua" >/dev/null
+! grep -F 'NAS SDK init' "$LUCI_DIR/luasrc/view/baidudrive/baidudrive_status.htm" >/dev/null
+! grep -F 'sdk_ready' "$LUCI_DIR/luasrc/controller/baidudrive.lua" >/dev/null
 grep -F -- '--data-urlencode' "$PKG_DIR/files/sdk-init.sh" >/dev/null

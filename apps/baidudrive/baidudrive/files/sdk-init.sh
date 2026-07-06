@@ -61,6 +61,7 @@ while true; do
 	fi
 
 	if [ "$sdk_ready" = "1" ]; then
+		log "sdk init ready"
 		sleep 60
 	else
 		sleep 2
