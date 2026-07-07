@@ -72,7 +72,7 @@ For this repo, tasks intentionally call `make <target>` to reuse the project’s
 ## BaiduDrive prebuilt install (debug)
 
 - Run task `install-baidudrive-prebuilt`
-  - defaults: `BAIDUDRIVE_VERSION=0.5.1`, `BAIDUDRIVE_ARCH=x86_64`, target `main-dev`
+  - defaults: `BAIDUDRIVE_VERSION=1.0.1`, `BAIDUDRIVE_ARCH=x86_64`, target `main-dev`
   - uses `DEPLOY_HOST/DEPLOY_USER/DEPLOY_PORT` from the selected deploy target
   - arm64 test target: set `ISTOREOS_APP_HUB_DEPLOY_TARGET=arm64-dev`
   - equivalent CLI: `make install-baidudrive-prebuilt`
