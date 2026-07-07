@@ -41,10 +41,10 @@ apps:
     baidudrive:
         services:
             - local: apps/baidudrive/baidudrive
-              remote: openwrt-app-actions/applications/baidudrive
+              remote: nas-packages/network/services/baidudrive
         luci:
             - local: apps/baidudrive/luci-app-baidudrive
-              remote: openwrt-app-actions/applications/luci-app-baidudrive
+              remote: nas-packages-luci/luci/luci-app-baidudrive
         meta:
             - local: apps/baidudrive/app-meta-baidudrive
               remote: openwrt-app-meta/applications/app-meta-baidudrive

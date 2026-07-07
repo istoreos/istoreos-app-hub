@@ -16,7 +16,7 @@ Optional:
   DEPLOY_USER=root
   DEPLOY_PORT=22
   DEPLOY_ARCH=x86_64
-  BAIDUDRIVE_VERSION=0.5.1
+  BAIDUDRIVE_VERSION=1.0.1
   BAIDUDRIVE_ARCH=<x86_64|aarch64>
   BAIDUDRIVE_TARBALL_URL=<url>
   BAIDUDRIVE_INSTALL_DEPS=1
@@ -143,7 +143,7 @@ main() {
   PAYLOAD_PATH="$(mktemp -t baidudrive-install.XXXXXX.tgz)"
   trap cleanup EXIT
 
-  local version="${BAIDUDRIVE_VERSION:-0.5.1}"
+  local version="${BAIDUDRIVE_VERSION:-1.0.1}"
   local arch="${BAIDUDRIVE_ARCH:-${DEPLOY_ARCH:-x86_64}}"
   local url="${BAIDUDRIVE_TARBALL_URL:-https://github.com/linkease/istore-packages/releases/download/prebuilt/baidudrive-binary-${version}.tar.gz}"
   local install_deps="${BAIDUDRIVE_INSTALL_DEPS:-1}"
