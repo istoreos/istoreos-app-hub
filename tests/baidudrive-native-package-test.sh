@@ -19,6 +19,8 @@ grep -F 'procd_open_instance baiduNas' "$PKG_DIR/files/baidudrive.init" >/dev/nu
 grep -F 'procd_open_instance sdk-init' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'BAIDU_NAS_MACID="$macid"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'BAIDU_NAS_DEVICE_TYPE="$device_type"' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'BAIDU_NAS_USB_PATH="$usb_path"' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'BAIDU_NAS_QUOTA_PATH="$quota_path"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'procd_set_param command /usr/libexec/baidudrive/sdk-init.sh' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'storage_root_from_data_dir' "$PKG_DIR/files/baidudrive.init" >/dev/null
 
