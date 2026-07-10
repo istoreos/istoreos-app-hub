@@ -23,6 +23,10 @@ grep -F 'BAIDU_NAS_DEVICE_TYPE="$DEVICE_TYPE"' "$PKG_DIR/files/baidudrive.init" 
 grep -F -- '-type "$DEVICE_TYPE"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 ! grep -F 'config_get device_type' "$PKG_DIR/files/baidudrive.init" >/dev/null
 ! grep -F 'require_start_value device_type' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'default_macid()' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'for netdev in br-lan eth0 lan0; do' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'uci set "baidudrive.$config_section.macid=$macid"' "$PKG_DIR/files/baidudrive.init" >/dev/null
+grep -F 'ensure_macid' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'BAIDU_NAS_USB_PATH="$usb_path"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'BAIDU_NAS_QUOTA_PATH="$quota_path"' "$PKG_DIR/files/baidudrive.init" >/dev/null
 grep -F 'procd_set_param command /usr/libexec/baidudrive/sdk-init.sh' "$PKG_DIR/files/baidudrive.init" >/dev/null
