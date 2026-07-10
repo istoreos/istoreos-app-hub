@@ -34,7 +34,7 @@ grep -F "option 'sdk_dir' '/opt/baidunas-sdk'" "$PKG_DIR/files/baidudrive.config
 ! grep -F "option 'glibc_dir'" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'sdk_port' '8001'" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'macid' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
-grep -F "option 'device_type' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
+grep -F "option 'device_type' '202604101148240791'" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'usb_path' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'quota_path' ''" "$PKG_DIR/files/baidudrive.config" >/dev/null
 grep -F "option 'download_path' '/'" "$PKG_DIR/files/baidudrive.config" >/dev/null
