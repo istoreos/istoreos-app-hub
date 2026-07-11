@@ -48,11 +48,11 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("PROG_APPTUNNEL=/usr/bin/apptunnel-client", text)
         self.assertRegex(text, r"procd_open_instance ['\"]?desktop['\"]?")
         self.assertRegex(text, r"procd_open_instance ['\"]?apptunnel['\"]?")
-        self.assertIn("SERVER_PORT=$desktop_port", text)
-        self.assertIn("SERVER_BASE_PATH=$desktop_base_path", text)
 
         desktop = self.procd_instance_block(text, "desktop")
         self.assertRegex(desktop, re.compile(r"procd_(?:set|append)_param command .*(?:\$PROG_DESKTOP|linkease-desktop)"))
+        self.assertIn("SERVER_PORT=$desktop_port", desktop)
+        self.assertIn("SERVER_BASE_PATH=$desktop_base_path", desktop)
 
         apptunnel = self.procd_instance_block(text, "apptunnel")
         self.assertRegex(apptunnel, re.compile(r"procd_(?:set|append)_param command .*(?:\$PROG_APPTUNNEL|apptunnel-client)"))
@@ -89,6 +89,7 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("rm -f /etc/init.d/betterapps", text)
         self.assertIn("/etc/rc.d/S*betterapps", text)
         self.assertIn("/etc/rc.d/K*betterapps", text)
+        self.assertRegex(text, re.compile(r"rm\s+-f\s+.*?/etc/rc\.d/S\*betterapps.*?/etc/rc\.d/K\*betterapps", re.DOTALL))
         self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?/mnt(?:/|\b)", re.IGNORECASE))
         self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?\$\{?data[\w_]*\}?", re.IGNORECASE))
         self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?\$\{?[\w_]*mount[\w_]*\}?", re.IGNORECASE))
