@@ -5,36 +5,36 @@
 			var tb = document.getElementById('linkease_status');
 			if (st && tb)
 			{
-				if (st.running)
+				var desktopBase = st.desktop_base_path || "/apps/";
+				if (desktopBase.charAt(0) !== "/")
 				{
-					var desktopBase = st.desktop_base_path || "/apps/";
-					if (desktopBase.charAt(0) !== "/")
-					{
-						desktopBase = "/" + desktopBase;
-					}
-					if (desktopBase.charAt(desktopBase.length - 1) !== "/")
-					{
-						desktopBase = desktopBase + "/";
-					}
-					var fullUrl = "http://" + window.location.hostname + ":" + (st.desktop_port || 19290) + desktopBase;
-					var legacyUrl = "http://" + window.location.hostname + ":" + (st.port || 8897) + "/";
-					var desktopStatus = st.desktop_running
-						? '<br/><em style=\"color:green\"><%:Full UI is running.%></em>'
-						: '<br/><em style=\"color:red\"><%:Full UI is stopped.%></em>';
-					var apptunnelStatus = st.apptunnel_running
-						? '<br/><em style=\"color:green\"><%:Remote access is running.%></em>'
-						: '<br/><em style=\"color:red\"><%:Remote access is stopped.%></em>';
-					tb.innerHTML = '<br/><em style=\"color:green\"><%:The LinkEase service is running.%></em>'
-						+ desktopStatus
-						+ apptunnelStatus
-						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Full%> \" onclick=\"window.open('" + fullUrl + "')\"/>"
-						+ "<br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Legacy%> \" onclick=\"window.open('" + legacyUrl + "')\"/>"
-						+ "<br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open Files%> \" onclick=\"window.open('/cgi-bin/luci/admin/services/linkease/file/')\"/>";
+					desktopBase = "/" + desktopBase;
 				}
-				else
+				if (desktopBase.charAt(desktopBase.length - 1) !== "/")
 				{
-					tb.innerHTML = '<br/><em style=\"color:red\"><%:The LinkEase service is not running.%></em>';
+					desktopBase = desktopBase + "/";
 				}
+				var fullUrl = "http://" + window.location.hostname + ":" + (st.desktop_port || 19290) + desktopBase;
+				var legacyUrl = "http://" + window.location.hostname + ":" + (st.port || 8897) + "/";
+				var anyRunning = st.desktop_running || st.apptunnel_running;
+				var overallStatus = anyRunning
+					? '<br/><em style=\"color:green\"><%:The LinkEase service is running.%></em>'
+					: '<br/><em style=\"color:red\"><%:The LinkEase service is not running.%></em>';
+				var desktopStatus = st.desktop_running
+					? '<br/><em style=\"color:green\"><%:Full UI is running.%></em>'
+					: '<br/><em style=\"color:red\"><%:Full UI is stopped.%></em>';
+				var apptunnelStatus = st.apptunnel_running
+					? '<br/><em style=\"color:green\"><%:Remote access is running.%></em>'
+					: '<br/><em style=\"color:red\"><%:Remote access is stopped.%></em>';
+				var fullButton = st.desktop_running
+					? "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Full%> \" onclick=\"window.open('" + fullUrl + "')\"/>"
+					: "";
+				tb.innerHTML = overallStatus
+					+ desktopStatus
+					+ apptunnelStatus
+					+ fullButton
+					+ "<br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Legacy%> \" onclick=\"window.open('" + legacyUrl + "')\"/>"
+					+ "<br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open Files%> \" onclick=\"window.open('/cgi-bin/luci/admin/services/linkease/file/')\"/>";
 			}
 		}
 	);
