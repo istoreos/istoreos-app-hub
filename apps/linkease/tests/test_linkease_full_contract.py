@@ -54,19 +54,24 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("apptunnel_running", controller)
         self.assertIn("desktop_port", controller)
         self.assertIn("desktop_base_path", controller)
-        self.assertIn("19290", status)
-        self.assertIn("/apps/", status)
+        self.assertIn("fullUrl", status)
+        self.assertIn("desktop_port", status)
+        self.assertIn("desktopBase", status)
+        self.assertRegex(status, re.compile(r"fullUrl\s*=.*desktop_port.*\+.*desktopBase", re.DOTALL))
         self.assertIn("Click to open LinkEase Full", status)
 
     def test_migration_helper_preserves_legacy_and_removes_betterapps(self):
         text = self.read("linkease/files/linkease-migrate.sh")
 
         self.assertIn("uci -q get linkease.@linkease[0].local_home", text)
+        self.assertIn("data_root_parent", text)
+        self.assertRegex(text, re.compile(r"data_root_parent=.*\$\{?local_home\}?", re.IGNORECASE))
+        self.assertRegex(text, re.compile(r"uci -q set linkease\.@linkease\[0\]\.data_root_parent=.*\$\{?data_root_parent\}?", re.IGNORECASE))
         self.assertIn("uci -q set linkease.@linkease[0].edition='full'", text)
         self.assertIn("/etc/init.d/betterapps stop", text)
         self.assertIn("rm -f /etc/init.d/betterapps", text)
         self.assertNotIn("rm -rf /mnt", text)
-        self.assertNotRegex(text, re.compile(r"rm -rf\\s+\\$\\{?data", re.IGNORECASE))
+        self.assertNotRegex(text, re.compile(r"rm -rf\s+\$\{?data", re.IGNORECASE))
 
 
 if __name__ == "__main__":
