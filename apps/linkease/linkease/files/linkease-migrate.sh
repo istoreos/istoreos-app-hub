@@ -24,11 +24,11 @@ preserve_local_home_as_data_parent() {
 	fi
 
 	local_home="$(uci -q get linkease.@linkease[0].local_home || true)"
-	if [ -n "$local_home" ] && [ -d "$local_home" ]; then
+	if [ -n "$local_home" ]; then
 		data_root_parent="$local_home"
 	elif [ -f /etc/config/quickstart ]; then
 		quickstart_main_dir="$(uci -q get quickstart.main.main_dir || true)"
-		if [ -n "$quickstart_main_dir" ] && [ -d "$quickstart_main_dir" ]; then
+		if [ -n "$quickstart_main_dir" ]; then
 			data_root_parent="$quickstart_main_dir"
 		fi
 	fi

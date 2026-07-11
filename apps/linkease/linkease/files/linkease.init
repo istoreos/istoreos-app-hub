@@ -21,19 +21,19 @@ normalize_base_path() {
 }
 
 resolve_data_root_parent() {
-	if [ -n "$data_root_parent" ] && [ -d "$data_root_parent" ]; then
+	if [ -n "$data_root_parent" ]; then
 		return 0
 	fi
 
 	local_home="$(uci -q get linkease.@linkease[0].local_home || true)"
-	if [ -n "$local_home" ] && [ -d "$local_home" ]; then
+	if [ -n "$local_home" ]; then
 		data_root_parent="$local_home"
 		return 0
 	fi
 
 	if [ -f /etc/config/quickstart ]; then
 		quickstart_main_dir="$(uci -q get quickstart.main.main_dir || true)"
-		if [ -n "$quickstart_main_dir" ] && [ -d "$quickstart_main_dir" ]; then
+		if [ -n "$quickstart_main_dir" ]; then
 			data_root_parent="$quickstart_main_dir"
 			return 0
 		fi
