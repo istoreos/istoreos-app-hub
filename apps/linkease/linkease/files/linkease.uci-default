@@ -4,16 +4,26 @@ if ! uci -q get linkease.@linkease[0] >/dev/null; then
 	uci -q add linkease linkease >/dev/null
 fi
 
-uci -q batch <<-EOF >/dev/null
-	set linkease.@linkease[0].enabled='1'
-	set linkease.@linkease[0].edition='full'
-	set linkease.@linkease[0].desktop_port='19290'
-	set linkease.@linkease[0].desktop_base_path='/apps/'
-	set linkease.@linkease[0].desktop_enabled='1'
-	set linkease.@linkease[0].apptunnel_enabled='1'
-	set linkease.@linkease[0].low_memory_fallback='1'
-	commit linkease
+set_default() {
+	key="$1"
+	value="$2"
+	current="$(uci -q get "linkease.@linkease[0].$key" 2>/dev/null || true)"
+	[ -n "$current" ] && return 0
+	uci -q set "linkease.@linkease[0].$key=$value"
+}
 
+uci -q set linkease.@linkease[0].edition='full'
+set_default enabled 1
+set_default port 8897
+set_default desktop_port 19290
+set_default desktop_base_path /apps/
+set_default desktop_enabled 1
+set_default apptunnel_enabled 1
+set_default allowPublic 0
+set_default low_memory_fallback 1
+uci -q commit linkease
+
+uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@linkease[-1]
 	add ucitrack linkease
 	set ucitrack.@linkease[-1].init=linkease
