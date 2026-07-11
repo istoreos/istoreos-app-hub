@@ -16,6 +16,7 @@
 				}
 				var fullUrl = "http://" + window.location.hostname + ":" + (st.desktop_port || 19290) + desktopBase;
 				var legacyUrl = "http://" + window.location.hostname + ":" + (st.port || 8897) + "/";
+				var fileUrl = '<%=url("admin/services/linkease/file")%>';
 				var anyRunning = st.desktop_running || st.apptunnel_running;
 				var overallStatus = anyRunning
 					? '<br/><em style=\"color:green\"><%:The LinkEase service is running.%></em>'
@@ -26,15 +27,41 @@
 				var apptunnelStatus = st.apptunnel_running
 					? '<br/><em style=\"color:green\"><%:Remote access is running.%></em>'
 					: '<br/><em style=\"color:red\"><%:Remote access is stopped.%></em>';
-				var fullButton = st.desktop_running
-					? "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Full%> \" onclick=\"window.open('" + fullUrl + "')\"/>"
-					: "";
 				tb.innerHTML = overallStatus
 					+ desktopStatus
-					+ apptunnelStatus
-					+ fullButton
-					+ "<br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Legacy%> \" onclick=\"window.open('" + legacyUrl + "')\"/>"
-					+ "<br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open Files%> \" onclick=\"window.open('/cgi-bin/luci/admin/services/linkease/file/')\"/>";
+					+ apptunnelStatus;
+
+				function appendBreak()
+				{
+					tb.appendChild(document.createElement("br"));
+				}
+
+				function appendButton(value, action)
+				{
+					var button = document.createElement("input");
+					button.className = "btn cbi-button cbi-button-apply";
+					button.type = "button";
+					button.value = value;
+					button.onclick = action;
+					tb.appendChild(button);
+				}
+
+				if (st.desktop_running)
+				{
+					appendBreak();
+					appendBreak();
+					var button = document.createElement("input");
+					button.className = "btn cbi-button cbi-button-apply";
+					button.type = "button";
+					button.value = " <%:Click to open LinkEase Full%> ";
+					button.onclick = function() { window.open(fullUrl); };
+					tb.appendChild(button);
+				}
+
+				appendBreak();
+				appendButton(" <%:Click to open LinkEase Legacy%> ", function() { window.open(legacyUrl); });
+				appendBreak();
+				appendButton(" <%:Click to open Files%> ", function() { window.open(fileUrl); });
 			}
 		}
 	);
