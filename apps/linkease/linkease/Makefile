@@ -20,7 +20,7 @@ endif
 
 PKG_SOURCE:=linkease-full-binary-$(PKG_SOURCE_DATE).tar.gz
 PKG_SOURCE_URL:=https://github.com/linkease/linkease-desktop/releases/download/linkease-full-v$(PKG_SOURCE_DATE)/
-PKG_HASH:=skip
+PKG_HASH:=751c5d314a4fcee6e50c8ec36317a768ebd189f60b043e1fc25dfa9e8e9c91aa
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-full-binary-$(PKG_SOURCE_DATE)
 
 PKG_BUILD_PARALLEL:=1
