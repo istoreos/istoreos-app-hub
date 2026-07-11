@@ -10,10 +10,19 @@ class LinkEaseFullContractTest(unittest.TestCase):
     def read(self, relative):
         return (ROOT / relative).read_text(encoding="utf-8")
 
+    def procd_open_instance_pattern(self, name):
+        escaped = re.escape(name)
+        return re.compile(
+            r"^[ \t]*procd_open_instance\s+(?:['\"]%s['\"]|%s)(?=\s|$|#)" % (escaped, escaped),
+            re.MULTILINE,
+        )
+
     def procd_instance_block(self, text, name):
+        escaped = re.escape(name)
         pattern = re.compile(
-            r"procd_open_instance\s+['\"]?%s['\"]?.*?procd_close_instance" % re.escape(name),
-            re.DOTALL,
+            r"^[ \t]*procd_open_instance\s+(?:['\"]%s['\"]|%s)(?=\s|$|#).*?^[ \t]*procd_close_instance\b"
+            % (escaped, escaped),
+            re.DOTALL | re.MULTILINE,
         )
         match = pattern.search(text)
         self.assertIsNotNone(match, "missing procd instance block for %s" % name)
@@ -46,8 +55,8 @@ class LinkEaseFullContractTest(unittest.TestCase):
 
         self.assertIn("PROG_DESKTOP=/usr/bin/linkease-desktop", text)
         self.assertIn("PROG_APPTUNNEL=/usr/bin/apptunnel-client", text)
-        self.assertRegex(text, r"procd_open_instance ['\"]?desktop['\"]?")
-        self.assertRegex(text, r"procd_open_instance ['\"]?apptunnel['\"]?")
+        self.assertRegex(text, self.procd_open_instance_pattern("desktop"))
+        self.assertRegex(text, self.procd_open_instance_pattern("apptunnel"))
 
         desktop = self.procd_instance_block(text, "desktop")
         self.assertRegex(desktop, re.compile(r"procd_(?:set|append)_param command .*(?:\$PROG_DESKTOP|linkease-desktop)"))
@@ -74,7 +83,7 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("st.desktop_port || 19290", status)
         self.assertIn("desktopBase", status)
         self.assertRegex(status, re.compile(r"fullUrl\s*=.*hostname.*(?:desktop_port|desktopPort).*desktopBase", re.DOTALL))
-        self.assertRegex(status, re.compile(r"(window\.open\([^)]*fullUrl|location\.href\s*=\s*fullUrl|onclick=[\"'][^\"']*fullUrl)", re.DOTALL))
+        self.assertRegex(status, re.compile(r"(window\.open\s*\([^)]*\bfullUrl\b[^)]*\)|location\.href\s*=\s*fullUrl\b)", re.DOTALL))
         self.assertIn("Click to open LinkEase Full", status)
 
     def test_migration_helper_preserves_legacy_and_removes_betterapps(self):
@@ -89,7 +98,8 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("rm -f /etc/init.d/betterapps", text)
         self.assertIn("/etc/rc.d/S*betterapps", text)
         self.assertIn("/etc/rc.d/K*betterapps", text)
-        self.assertRegex(text, re.compile(r"rm\s+-f\s+.*?/etc/rc\.d/S\*betterapps.*?/etc/rc\.d/K\*betterapps", re.DOTALL))
+        self.assertRegex(text, re.compile(r"(?m)(?:^|[;&]\s*)rm\s+-f(?:\s+[^#\n;]*)?['\"]?/etc/rc\.d/S\*betterapps['\"]?(?:\s|$|[;#])"))
+        self.assertRegex(text, re.compile(r"(?m)(?:^|[;&]\s*)rm\s+-f(?:\s+[^#\n;]*)?['\"]?/etc/rc\.d/K\*betterapps['\"]?(?:\s|$|[;#])"))
         self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?/mnt(?:/|\b)", re.IGNORECASE))
         self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?\$\{?data[\w_]*\}?", re.IGNORECASE))
         self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?\$\{?[\w_]*mount[\w_]*\}?", re.IGNORECASE))
