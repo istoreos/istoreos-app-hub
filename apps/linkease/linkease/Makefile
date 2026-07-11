@@ -34,7 +34,6 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkEase - the file cloud
 	DEPENDS:=@(x86_64||aarch64) +ca-bundle
-	PKGARCH:=all
 	URL:=https://www.linkease.com/
 endef
 

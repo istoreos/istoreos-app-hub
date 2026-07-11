@@ -24,13 +24,17 @@ set_default low_memory_fallback 1
 uci -q commit linkease
 port="$(uci -q get linkease.@linkease[0].port 2>/dev/null || true)"
 [ -n "$port" ] || port=8897
+allow_public="$(uci -q get linkease.@linkease[0].allowPublic 2>/dev/null || true)"
 
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@linkease[-1]
 	add ucitrack linkease
 	set ucitrack.@linkease[-1].init=linkease
 	commit ucitrack
+EOF
 
+if [ "$allow_public" = "1" ]; then
+	uci -q batch <<-EOF >/dev/null
 	delete firewall.linkease
 	set firewall.linkease=rule
 	set firewall.linkease.name="linkease"
@@ -40,6 +44,12 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.linkease.dest_port="$port"
 	commit firewall
 EOF
+else
+	uci -q batch <<-EOF >/dev/null
+	delete firewall.linkease
+	commit firewall
+EOF
+fi
 
 /etc/init.d/linkease enable
 /etc/init.d/linkease restart
