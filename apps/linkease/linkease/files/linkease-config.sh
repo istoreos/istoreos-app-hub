@@ -1,6 +1,34 @@
 #!/bin/sh
 
-source /lib/functions.sh
+. /lib/functions.sh
+
+normalize_base_path() {
+  base="$1"
+  [ -n "$base" ] || base="/apps/"
+  case "$base" in
+    /*) ;;
+    *) base="/$base" ;;
+  esac
+  case "$base" in
+    */) ;;
+    *) base="$base/" ;;
+  esac
+  echo "$base"
+}
+
+resolve_data_root_parent() {
+  parent="`uci -q get linkease.@linkease[0].data_root_parent`"
+  if [ -z "$parent" ]; then
+    parent="`uci -q get linkease.@linkease[0].local_home`"
+  fi
+  if [ -z "$parent" ] && [ -f "/etc/config/quickstart" ]; then
+    parent="`uci -q get quickstart.main.main_dir`"
+  fi
+  if [ -z "$parent" ]; then
+    parent="/tmp/linkease"
+  fi
+  echo "$parent"
+}
 
 case "$1" in
   save)
@@ -78,12 +106,26 @@ case "$1" in
 
     ;;
 
+  desktop_url)
+    desktop_port="`uci -q get linkease.@linkease[0].desktop_port`"
+    if [ -z "$desktop_port" ]; then
+      desktop_port="19290"
+    fi
+    base="`uci -q get linkease.@linkease[0].desktop_base_path`"
+    base="`normalize_base_path "$base"`"
+    echo "http://127.0.0.1:${desktop_port}${base}"
+    ;;
+
+  data_root)
+    parent="`resolve_data_root_parent`"
+    echo "${parent}/.linkease_data"
+    ;;
+
   status)
     echo "TODO"
     ;;
 
   *)
-    echo "Usage: $0 {save|load|status}"
+    echo "Usage: $0 {save|load|local_save|local_load|desktop_url|data_root|status}"
     exit 1
 esac
-

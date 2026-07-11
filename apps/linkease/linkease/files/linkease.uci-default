@@ -1,6 +1,19 @@
 #!/bin/sh
 
 uci -q batch <<-EOF >/dev/null
+	delete linkease.@linkease[0]
+	add linkease linkease
+	set linkease.@linkease[0].enabled='1'
+	set linkease.@linkease[0].edition='full'
+	set linkease.@linkease[0].port='8897'
+	set linkease.@linkease[0].desktop_port='19290'
+	set linkease.@linkease[0].desktop_base_path='/apps/'
+	set linkease.@linkease[0].desktop_enabled='1'
+	set linkease.@linkease[0].apptunnel_enabled='1'
+	set linkease.@linkease[0].allowPublic='0'
+	set linkease.@linkease[0].low_memory_fallback='1'
+	commit linkease
+
 	delete ucitrack.@linkease[-1]
 	add ucitrack linkease
 	set ucitrack.@linkease[-1].init=linkease
@@ -17,6 +30,6 @@ uci -q batch <<-EOF >/dev/null
 EOF
 
 /etc/init.d/linkease enable
-/etc/init.d/linkease start
+/etc/init.d/linkease restart
 
 exit 0
