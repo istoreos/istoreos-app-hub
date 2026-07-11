@@ -10,6 +10,15 @@ class LinkEaseFullContractTest(unittest.TestCase):
     def read(self, relative):
         return (ROOT / relative).read_text(encoding="utf-8")
 
+    def procd_instance_block(self, text, name):
+        pattern = re.compile(
+            r"procd_open_instance\s+['\"]?%s['\"]?.*?procd_close_instance" % re.escape(name),
+            re.DOTALL,
+        )
+        match = pattern.search(text)
+        self.assertIsNotNone(match, "missing procd instance block for %s" % name)
+        return match.group(0)
+
     def test_package_installs_full_runtime_files(self):
         text = self.read("linkease/Makefile")
 
@@ -41,10 +50,12 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertRegex(text, r"procd_open_instance ['\"]?apptunnel['\"]?")
         self.assertIn("SERVER_PORT=$desktop_port", text)
         self.assertIn("SERVER_BASE_PATH=$desktop_base_path", text)
-        self.assertIn("--deviceAddr", text)
-        self.assertIn(":$port", text)
-        self.assertIn("--localApi", text)
-        self.assertIn("/var/run/linkease.sock", text)
+
+        apptunnel = self.procd_instance_block(text, "apptunnel")
+        self.assertIn("--deviceAddr", apptunnel)
+        self.assertIn(":$port", apptunnel)
+        self.assertIn("--localApi", apptunnel)
+        self.assertIn("/var/run/linkease.sock", apptunnel)
 
     def test_luci_opens_full_ui_and_reports_both_statuses(self):
         controller = self.read("luci-app-linkease/luasrc/controller/linkease.lua")
@@ -55,9 +66,11 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("desktop_port", controller)
         self.assertIn("desktop_base_path", controller)
         self.assertIn("fullUrl", status)
-        self.assertIn("desktop_port", status)
+        self.assertIn("var fullUrl", status)
+        self.assertIn("st.desktop_port || 19290", status)
         self.assertIn("desktopBase", status)
-        self.assertRegex(status, re.compile(r"fullUrl\s*=.*desktop_port.*\+.*desktopBase", re.DOTALL))
+        self.assertRegex(status, re.compile(r"fullUrl\s*=.*hostname.*(?:desktop_port|desktopPort).*desktopBase", re.DOTALL))
+        self.assertRegex(status, re.compile(r"(window\.open\([^)]*fullUrl|location\.href\s*=\s*fullUrl|onclick=[\"'][^\"']*fullUrl)", re.DOTALL))
         self.assertIn("Click to open LinkEase Full", status)
 
     def test_migration_helper_preserves_legacy_and_removes_betterapps(self):
@@ -70,8 +83,8 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("uci -q set linkease.@linkease[0].edition='full'", text)
         self.assertIn("/etc/init.d/betterapps stop", text)
         self.assertIn("rm -f /etc/init.d/betterapps", text)
-        self.assertNotIn("rm -rf /mnt", text)
-        self.assertNotRegex(text, re.compile(r"rm -rf\s+\$\{?data", re.IGNORECASE))
+        self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?/mnt(?:/|\b)", re.IGNORECASE))
+        self.assertNotRegex(text, re.compile(r"rm\s+-rf\s+(?:--\s+)?['\"]?\$\{?data[\w_]*\}?", re.IGNORECASE))
 
 
 if __name__ == "__main__":
