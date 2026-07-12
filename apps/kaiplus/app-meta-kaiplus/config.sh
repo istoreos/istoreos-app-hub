@@ -11,7 +11,8 @@ mkdir -p "$ISTORE_CONF_DIR/KAIPlus" || exit 1
 uci -q batch <<-EOF >/dev/null || exit 1
 	set kaiplus.@kaiplus[0].enabled=$ENABLED
 	set kaiplus.@kaiplus[0].data_dir="$ISTORE_CONF_DIR/KAIPlus"
-	set kaiplus.@kaiplus[0].port="8198"
+	set kaiplus.@kaiplus[0].port="8189"
+	set kaiplus.@kaiplus[0].base_path="/apps/kaiplus/"
 	set kaiplus.@kaiplus[0].system_role="istoreos"
 	commit kaiplus
 EOF
