@@ -39,7 +39,7 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertNotIn("$(CP) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/kaiplus $(1)/usr/lib/linkease/", text)
         self.assertNotIn("/usr/lib/linkease/kaiplus", text)
 
-    def test_config_has_full_runtime_defaults(self):
+    def test_config_preserves_desktop_base_path_contract(self):
         text = self.read("linkease/files/linkease.config")
 
         self.assertIn("option enabled '1'", text)
@@ -69,7 +69,11 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertNotIn("KAIPLUS_DEFAULTS_DIR=", desktop)
         self.assertNotIn("KAIPLUS_HOME=", desktop)
         self.assertNotIn("KAIPLUS_ADDR=", desktop)
+        self.assertNotIn("KAIPLUS_BASE_PATH=", desktop)
         self.assertIn("KAIPLUS_PROXY_TARGET=http://127.0.0.1:$kaiplus_port", desktop)
+        config = self.read("linkease/files/linkease.config")
+        self.assertIn("option desktop_base_path '/apps/'", config)
+        self.assertIn("SERVER_BASE_PATH=$desktop_base_path", desktop)
 
         apptunnel = self.procd_instance_block(text, "apptunnel")
         self.assertRegex(apptunnel, re.compile(r"procd_(?:set|append)_param command .*(?:\$PROG_APPTUNNEL|apptunnel-client)"))
@@ -78,10 +82,20 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("--localApi", apptunnel)
         self.assertIn("/var/run/linkease.sock", apptunnel)
 
-    def test_init_configures_kaiplus_proxy_from_standalone_plugin(self):
+    def test_init_read_config_resolves_kaiplus_proxy_from_standalone_plugin(self):
         text = self.read("linkease/files/linkease.init")
 
         self.assertIn("resolve_kaiplus_proxy_target()", text)
+        self.assertRegex(
+            text,
+            re.compile(
+                r"(?ms)^read_config\(\)\s*\n.*?"
+                r"^\s*resolve_data_root_parent\s*\n"
+                r".*?^\s*data_root=.*?\n"
+                r"^\s*recycle_root=.*?\n"
+                r"^\s*resolve_kaiplus_proxy_target\s*$"
+            ),
+        )
         self.assertIn("[ -x /etc/init.d/kaiplus ] || return 0", text)
         self.assertIn('kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"', text)
         self.assertIn('[ -n "$kaiplus_port" ] || kaiplus_port=8189', text)
