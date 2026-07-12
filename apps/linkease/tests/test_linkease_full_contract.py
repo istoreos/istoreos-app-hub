@@ -127,9 +127,11 @@ invalid()
             desktop,
             re.compile(
                 r'if \[ -n "\$KAIPLUS_PROXY_TARGET" \]; then\s*'
-                r'procd_set_param env "KAIPLUS_PROXY_TARGET=\$KAIPLUS_PROXY_TARGET"\s*fi'
+                r'procd_append_param env "KAIPLUS_PROXY_TARGET=\$KAIPLUS_PROXY_TARGET"\s*fi'
             ),
         )
+        self.assertEqual(desktop.count("procd_set_param env"), 1)
+        self.assertIn('procd_append_param env "KAIPLUS_PROXY_TARGET=$KAIPLUS_PROXY_TARGET"', desktop)
         config = self.read("linkease/files/linkease.config")
         self.assertIn("option desktop_base_path '/apps/'", config)
         self.assertIn("SERVER_BASE_PATH=$desktop_base_path", desktop)

@@ -94,19 +94,20 @@ start_desktop() {
 
 	procd_open_instance desktop
 	procd_set_param command "$PROG_DESKTOP"
-	procd_set_param env "SERVER_HOST=0.0.0.0"
-	procd_set_param env "SERVER_PORT=$desktop_port"
-	procd_set_param env "SERVER_MODE=release"
-	procd_set_param env "SERVER_BASE_PATH=$desktop_base_path"
-	procd_set_param env "LINKEASE_EDITION=router-lite"
-	procd_set_param env "BETTERAPPS_DATA_ROOT=$data_root"
-	procd_set_param env "BETTERAPPS_RECYCLE_ROOT=$recycle_root"
-	procd_set_param env "USER_DATA_PATH=$data_root/user"
-	procd_set_param env "SYSTEM_DATA_PATH=$data_root/system"
-	procd_set_param env "TEMP_PATH=$data_root/tmp"
-	procd_set_param env "KAIPLUS_ENABLED=0"
+	procd_set_param env \
+		"SERVER_HOST=0.0.0.0" \
+		"SERVER_PORT=$desktop_port" \
+		"SERVER_MODE=release" \
+		"SERVER_BASE_PATH=$desktop_base_path" \
+		"LINKEASE_EDITION=router-lite" \
+		"BETTERAPPS_DATA_ROOT=$data_root" \
+		"BETTERAPPS_RECYCLE_ROOT=$recycle_root" \
+		"USER_DATA_PATH=$data_root/user" \
+		"SYSTEM_DATA_PATH=$data_root/system" \
+		"TEMP_PATH=$data_root/tmp" \
+		"KAIPLUS_ENABLED=0"
 	if [ -n "$KAIPLUS_PROXY_TARGET" ]; then
-		procd_set_param env "KAIPLUS_PROXY_TARGET=$KAIPLUS_PROXY_TARGET"
+		procd_append_param env "KAIPLUS_PROXY_TARGET=$KAIPLUS_PROXY_TARGET"
 	fi
 	procd_set_param respawn
 	procd_set_param stdout 1
