@@ -28,6 +28,17 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIsNotNone(match, "missing procd instance block for %s" % name)
         return match.group(0)
 
+    def shell_function_block(self, text, name):
+        escaped = re.escape(name)
+        pattern = re.compile(
+            r"^[ \t]*%s\(\)[ \t]*(?:\{[ \t]*)?\n.*?^[ \t]*\}[ \t]*(?:#.*)?$"
+            % escaped,
+            re.DOTALL | re.MULTILINE,
+        )
+        match = pattern.search(text)
+        self.assertIsNotNone(match, "missing shell function block for %s" % name)
+        return match.group(0)
+
     def test_package_installs_full_runtime_files(self):
         text = self.read("linkease/Makefile")
 
@@ -70,7 +81,13 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertNotIn("KAIPLUS_HOME=", desktop)
         self.assertNotIn("KAIPLUS_ADDR=", desktop)
         self.assertNotIn("KAIPLUS_BASE_PATH=", desktop)
-        self.assertIn("KAIPLUS_PROXY_TARGET=http://127.0.0.1:$kaiplus_port", desktop)
+        self.assertRegex(
+            desktop,
+            re.compile(
+                r'if \[ -n "\$KAIPLUS_PROXY_TARGET" \]; then\s*'
+                r'procd_set_param env "KAIPLUS_PROXY_TARGET=\$KAIPLUS_PROXY_TARGET"\s*fi'
+            ),
+        )
         config = self.read("linkease/files/linkease.config")
         self.assertIn("option desktop_base_path '/apps/'", config)
         self.assertIn("SERVER_BASE_PATH=$desktop_base_path", desktop)
@@ -84,17 +101,20 @@ class LinkEaseFullContractTest(unittest.TestCase):
 
     def test_init_read_config_resolves_kaiplus_proxy_from_standalone_plugin(self):
         text = self.read("linkease/files/linkease.init")
+        read_config = self.shell_function_block(text, "read_config")
 
         self.assertIn("resolve_kaiplus_proxy_target()", text)
-        self.assertRegex(
-            text,
-            re.compile(
-                r"(?ms)^read_config\(\)\s*\n.*?"
-                r"^\s*resolve_data_root_parent\s*\n"
-                r".*?^\s*data_root=.*?\n"
-                r"^\s*recycle_root=.*?\n"
-                r"^\s*resolve_kaiplus_proxy_target\s*$"
-            ),
+        self.assertIn("resolve_data_root_parent", read_config)
+        self.assertIn("data_root=", read_config)
+        self.assertIn("recycle_root=", read_config)
+        self.assertIn("resolve_kaiplus_proxy_target", read_config)
+        self.assertLess(
+            read_config.index("data_root="),
+            read_config.index("resolve_kaiplus_proxy_target"),
+        )
+        self.assertLess(
+            read_config.index("recycle_root="),
+            read_config.index("resolve_kaiplus_proxy_target"),
         )
         self.assertIn("[ -x /etc/init.d/kaiplus ] || return 0", text)
         self.assertIn('kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"', text)

@@ -53,8 +53,7 @@ resolve_kaiplus_proxy_target() {
 	KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"
 }
 
-read_config()
-{
+read_config() {
 	section="$1"
 	config_get_bool enabled "$section" enabled 1
 	config_get edition "$section" edition full
@@ -93,7 +92,6 @@ start_desktop() {
 	procd_set_param env "SYSTEM_DATA_PATH=$data_root/system"
 	procd_set_param env "TEMP_PATH=$data_root/tmp"
 	procd_set_param env "KAIPLUS_ENABLED=0"
-	# KAIPLUS_PROXY_TARGET=http://127.0.0.1:$kaiplus_port is resolved from standalone KaiPlus UCI.
 	if [ -n "$KAIPLUS_PROXY_TARGET" ]; then
 		procd_set_param env "KAIPLUS_PROXY_TARGET=$KAIPLUS_PROXY_TARGET"
 	fi
