@@ -36,7 +36,8 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn("LINKEASE_FULL_ARCH", text)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/linkease-desktop $(1)/usr/bin/linkease-desktop", text)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/apptunnel-client $(1)/usr/bin/apptunnel-client", text)
-        self.assertIn("$(CP) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/kaiplus $(1)/usr/lib/linkease/", text)
+        self.assertNotIn("$(CP) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/kaiplus $(1)/usr/lib/linkease/", text)
+        self.assertNotIn("/usr/lib/linkease/kaiplus", text)
 
     def test_config_has_full_runtime_defaults(self):
         text = self.read("linkease/files/linkease.config")
@@ -62,6 +63,13 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertRegex(desktop, re.compile(r"procd_(?:set|append)_param command .*(?:\$PROG_DESKTOP|linkease-desktop)"))
         self.assertIn("SERVER_PORT=$desktop_port", desktop)
         self.assertIn("SERVER_BASE_PATH=$desktop_base_path", desktop)
+        self.assertIn("KAIPLUS_ENABLED=0", desktop)
+        self.assertNotIn("KAIPLUS_BIN=", desktop)
+        self.assertNotIn("KAIPLUS_STATIC_DIR=", desktop)
+        self.assertNotIn("KAIPLUS_DEFAULTS_DIR=", desktop)
+        self.assertNotIn("KAIPLUS_HOME=", desktop)
+        self.assertNotIn("KAIPLUS_ADDR=", desktop)
+        self.assertIn("KAIPLUS_PROXY_TARGET=http://127.0.0.1:$kaiplus_port", desktop)
 
         apptunnel = self.procd_instance_block(text, "apptunnel")
         self.assertRegex(apptunnel, re.compile(r"procd_(?:set|append)_param command .*(?:\$PROG_APPTUNNEL|apptunnel-client)"))
@@ -69,6 +77,16 @@ class LinkEaseFullContractTest(unittest.TestCase):
         self.assertIn(":$port", apptunnel)
         self.assertIn("--localApi", apptunnel)
         self.assertIn("/var/run/linkease.sock", apptunnel)
+
+    def test_init_configures_kaiplus_proxy_from_standalone_plugin(self):
+        text = self.read("linkease/files/linkease.init")
+
+        self.assertIn("resolve_kaiplus_proxy_target()", text)
+        self.assertIn("[ -x /etc/init.d/kaiplus ] || return 0", text)
+        self.assertIn('kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"', text)
+        self.assertIn('[ -n "$kaiplus_port" ] || kaiplus_port=8189', text)
+        self.assertIn('KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"', text)
+        self.assertNotIn("127.0.0.1:19291", text)
 
     def test_luci_opens_full_ui_and_reports_both_statuses(self):
         controller = self.read("luci-app-linkease/luasrc/controller/linkease.lua")
