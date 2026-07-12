@@ -18,3 +18,4 @@ uci -q batch <<-EOF >/dev/null || exit 1
 EOF
 
 /etc/init.d/kaiplus restart || true
+[ -x /etc/init.d/linkease ] && /etc/init.d/linkease restart >/dev/null 2>&1 &

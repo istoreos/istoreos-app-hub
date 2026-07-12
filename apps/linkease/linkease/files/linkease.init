@@ -8,6 +8,7 @@ PROG_DESKTOP=/usr/bin/linkease-desktop
 PROG_APPTUNNEL=/usr/bin/apptunnel-client
 LOCAL_API=/var/run/linkease.sock
 APP_DIR=/usr/lib/linkease
+KAIPLUS_INIT=${KAIPLUS_INIT:-/etc/init.d/kaiplus}
 
 normalize_base_path() {
 	case "$desktop_base_path" in
@@ -46,11 +47,23 @@ resolve_kaiplus_proxy_target() {
 	KAIPLUS_PROXY_TARGET=""
 	kaiplus_port=""
 
-	[ -x /etc/init.d/kaiplus ] || return 0
+	[ -x "$KAIPLUS_INIT" ] || return 0
 
 	kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"
-	[ -n "$kaiplus_port" ] || kaiplus_port=8189
+	kaiplus_port="$(normalize_kaiplus_port "$kaiplus_port")"
 	KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"
+}
+
+normalize_kaiplus_port() {
+	case "$1" in
+		''|*[!0-9]*) echo 8189; return 0 ;;
+	esac
+
+	if [ "$1" -ge 1 ] 2>/dev/null && [ "$1" -le 65535 ] 2>/dev/null; then
+		echo "$1"
+	else
+		echo 8189
+	fi
 }
 
 read_config() {

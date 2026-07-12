@@ -1,5 +1,7 @@
 from pathlib import Path
 import re
+import subprocess
+import tempfile
 import unittest
 
 
@@ -39,6 +41,27 @@ class LinkEaseFullContractTest(unittest.TestCase):
         match = pattern.search(text)
         self.assertIsNotNone(match, "missing shell function block for %s" % name)
         return match.group(0)
+
+    def resolve_kaiplus_proxy_target(self, port):
+        init = ROOT / "linkease/files/linkease.init"
+        with tempfile.TemporaryDirectory() as directory:
+            kaiplus_init = Path(directory) / "kaiplus"
+            kaiplus_init.touch(mode=0o755)
+            result = subprocess.run(
+                [
+                    "sh",
+                    "-c",
+                    '. "$1"; uci() { printf "%s\\n" "$KAIPLUS_TEST_PORT"; }; '
+                    'resolve_kaiplus_proxy_target; printf "%s" "$KAIPLUS_PROXY_TARGET"',
+                    "sh",
+                    str(init),
+                ],
+                env={"KAIPLUS_INIT": str(kaiplus_init), "KAIPLUS_TEST_PORT": port},
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+        return result.stdout
 
     def test_shell_function_block_requires_opening_brace(self):
         text = """valid_same_line() {
@@ -135,11 +158,18 @@ invalid()
             read_config.index("recycle_root="),
             read_config.index("resolve_kaiplus_proxy_target"),
         )
-        self.assertIn("[ -x /etc/init.d/kaiplus ] || return 0", resolver)
+        self.assertIn('KAIPLUS_INIT=${KAIPLUS_INIT:-/etc/init.d/kaiplus}', text)
+        self.assertIn('[ -x "$KAIPLUS_INIT" ] || return 0', resolver)
         self.assertIn('kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"', resolver)
-        self.assertIn('[ -n "$kaiplus_port" ] || kaiplus_port=8189', resolver)
+        self.assertIn('normalize_kaiplus_port "$kaiplus_port"', resolver)
         self.assertIn('KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"', resolver)
         self.assertNotIn("127.0.0.1:19291", text)
+
+    def test_kaiplus_proxy_target_normalizes_invalid_uci_ports(self):
+        self.assertEqual(self.resolve_kaiplus_proxy_target("8188"), "http://127.0.0.1:8188")
+        for port in ("", "abc", "0", "65536"):
+            with self.subTest(port=port):
+                self.assertEqual(self.resolve_kaiplus_proxy_target(port), "http://127.0.0.1:8189")
 
     def test_luci_opens_full_ui_and_reports_both_statuses(self):
         controller = self.read("luci-app-linkease/luasrc/controller/linkease.lua")

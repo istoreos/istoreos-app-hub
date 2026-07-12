@@ -4,6 +4,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+LEGACY_PORT = str(8200 - 2)
 
 
 class KaiPlusOpenWrtContractTest(unittest.TestCase):
@@ -25,14 +26,27 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('config_get base_path "$1" base_path "/apps/kaiplus/"', text)
         self.assertIn('procd_append_param command --base-path "$base_path"', text)
         self.assertIn('procd_append_param command --addr "0.0.0.0:$port"', text)
-        self.assertNotIn('port "8198"', text)
+        self.assertNotIn('port "{}"'.format(LEGACY_PORT), text)
 
     def test_app_meta_config_writes_standalone_port_and_base_path(self):
         text = self.read("app-meta-kaiplus/config.sh")
 
         self.assertIn('set kaiplus.@kaiplus[0].port="8189"', text)
         self.assertIn('set kaiplus.@kaiplus[0].base_path="/apps/kaiplus/"', text)
-        self.assertNotIn('port="8198"', text)
+        self.assertNotIn('port="{}"'.format(LEGACY_PORT), text)
+
+    def test_kaiplus_package_contains_no_legacy_port_value(self):
+        for path in ROOT.rglob("*"):
+            if path.is_file() and "tests" not in path.parts:
+                self.assertNotIn(LEGACY_PORT.encode(), path.read_bytes(), str(path))
+
+    def test_restart_paths_refresh_linkease_when_present(self):
+        app_meta = self.read("app-meta-kaiplus/config.sh")
+        cbi = self.read("luci-app-kaiplus/luasrc/model/cbi/kaiplus.lua")
+
+        self.assertIn('[ -x /etc/init.d/linkease ] && /etc/init.d/linkease restart >/dev/null 2>&1 &', app_meta)
+        self.assertIn('if sys.call("[ -x /etc/init.d/linkease ]") == 0 then', cbi)
+        self.assertIn('sys.call("/etc/init.d/linkease restart >/dev/null 2>&1 &")', cbi)
 
     def test_app_meta_entry_reports_base_path_href(self):
         text = self.read("app-meta-kaiplus/entry.sh")
