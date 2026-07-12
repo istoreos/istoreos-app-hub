@@ -31,13 +31,32 @@ class LinkEaseFullContractTest(unittest.TestCase):
     def shell_function_block(self, text, name):
         escaped = re.escape(name)
         pattern = re.compile(
-            r"^[ \t]*%s\(\)[ \t]*(?:\{[ \t]*)?\n.*?^[ \t]*\}[ \t]*(?:#.*)?$"
+            r"^[ \t]*%s\(\)[ \t]*(?:\{[ \t]*(?:#.*)?\n|\n[ \t]*\{[ \t]*(?:#.*)?\n)"
+            r".*?^[ \t]*\}[ \t]*(?:#.*)?$"
             % escaped,
             re.DOTALL | re.MULTILINE,
         )
         match = pattern.search(text)
         self.assertIsNotNone(match, "missing shell function block for %s" % name)
         return match.group(0)
+
+    def test_shell_function_block_requires_opening_brace(self):
+        text = """valid_same_line() {
+    value=1
+}
+valid_next_line()
+{
+    value=2
+}
+invalid()
+    value=3
+}
+"""
+
+        self.assertIn("value=1", self.shell_function_block(text, "valid_same_line"))
+        self.assertIn("value=2", self.shell_function_block(text, "valid_next_line"))
+        with self.assertRaises(AssertionError):
+            self.shell_function_block(text, "invalid")
 
     def test_package_installs_full_runtime_files(self):
         text = self.read("linkease/Makefile")
@@ -101,9 +120,9 @@ class LinkEaseFullContractTest(unittest.TestCase):
 
     def test_init_read_config_resolves_kaiplus_proxy_from_standalone_plugin(self):
         text = self.read("linkease/files/linkease.init")
+        resolver = self.shell_function_block(text, "resolve_kaiplus_proxy_target")
         read_config = self.shell_function_block(text, "read_config")
 
-        self.assertIn("resolve_kaiplus_proxy_target()", text)
         self.assertIn("resolve_data_root_parent", read_config)
         self.assertIn("data_root=", read_config)
         self.assertIn("recycle_root=", read_config)
@@ -116,10 +135,10 @@ class LinkEaseFullContractTest(unittest.TestCase):
             read_config.index("recycle_root="),
             read_config.index("resolve_kaiplus_proxy_target"),
         )
-        self.assertIn("[ -x /etc/init.d/kaiplus ] || return 0", text)
-        self.assertIn('kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"', text)
-        self.assertIn('[ -n "$kaiplus_port" ] || kaiplus_port=8189', text)
-        self.assertIn('KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"', text)
+        self.assertIn("[ -x /etc/init.d/kaiplus ] || return 0", resolver)
+        self.assertIn('kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"', resolver)
+        self.assertIn('[ -n "$kaiplus_port" ] || kaiplus_port=8189', resolver)
+        self.assertIn('KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"', resolver)
         self.assertNotIn("127.0.0.1:19291", text)
 
     def test_luci_opens_full_ui_and_reports_both_statuses(self):
