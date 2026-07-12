@@ -42,7 +42,19 @@ resolve_data_root_parent() {
 	data_root_parent=/tmp/linkease
 }
 
-read_config() {
+resolve_kaiplus_proxy_target() {
+	KAIPLUS_PROXY_TARGET=""
+	kaiplus_port=""
+
+	[ -x /etc/init.d/kaiplus ] || return 0
+
+	kaiplus_port="$(uci -q get kaiplus.@kaiplus[0].port || true)"
+	[ -n "$kaiplus_port" ] || kaiplus_port=8189
+	KAIPLUS_PROXY_TARGET="http://127.0.0.1:$kaiplus_port"
+}
+
+read_config()
+{
 	section="$1"
 	config_get_bool enabled "$section" enabled 1
 	config_get edition "$section" edition full
@@ -59,13 +71,14 @@ read_config() {
 	resolve_data_root_parent
 	data_root="$data_root_parent/.linkease_data"
 	recycle_root="$data_root/recycle"
+	resolve_kaiplus_proxy_target
 }
 
 start_desktop() {
 	[ "$desktop_enabled" = "1" ] || return 0
 	[ -x "$PROG_DESKTOP" ] || return 0
 
-	mkdir -p "$data_root" "$recycle_root" "$data_root/user" "$data_root/system" "$data_root/tmp" "$data_root/kaiplus"
+	mkdir -p "$data_root" "$recycle_root" "$data_root/user" "$data_root/system" "$data_root/tmp"
 
 	procd_open_instance desktop
 	procd_set_param command "$PROG_DESKTOP"
@@ -79,15 +92,11 @@ start_desktop() {
 	procd_set_param env "USER_DATA_PATH=$data_root/user"
 	procd_set_param env "SYSTEM_DATA_PATH=$data_root/system"
 	procd_set_param env "TEMP_PATH=$data_root/tmp"
-	procd_set_param env "KAIPLUS_ENABLED=1"
-	procd_set_param env "KAIPLUS_BIN=$APP_DIR/kaiplus/bin/kaiplus_bin"
-	procd_set_param env "KAIPLUS_STATIC_DIR=$APP_DIR/kaiplus/www"
-	procd_set_param env "KAIPLUS_DEFAULTS_DIR=$APP_DIR/kaiplus/defaults"
-	procd_set_param env "KAIPLUS_HOME=$data_root/kaiplus"
-	procd_set_param env "KAIPLUS_SYSTEM_ROLE=istoreos"
-	procd_set_param env "KAIPLUS_BASE_PATH=${desktop_base_path}kaiplus/"
-	procd_set_param env "KAIPLUS_ADDR=127.0.0.1:19291"
-	procd_set_param env "KAIPLUS_PROXY_TARGET=http://127.0.0.1:19291"
+	procd_set_param env "KAIPLUS_ENABLED=0"
+	# KAIPLUS_PROXY_TARGET=http://127.0.0.1:$kaiplus_port is resolved from standalone KaiPlus UCI.
+	if [ -n "$KAIPLUS_PROXY_TARGET" ]; then
+		procd_set_param env "KAIPLUS_PROXY_TARGET=$KAIPLUS_PROXY_TARGET"
+	fi
 	procd_set_param respawn
 	procd_set_param stdout 1
 	procd_set_param stderr 1

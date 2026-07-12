@@ -64,7 +64,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/bin $(1)/usr/lib/linkease $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/linkease-desktop $(1)/usr/bin/linkease-desktop
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/apptunnel-client $(1)/usr/bin/apptunnel-client
-	$(CP) $(PKG_BUILD_DIR)/$(LINKEASE_FULL_ARCH)/kaiplus $(1)/usr/lib/linkease/
 	$(INSTALL_BIN) ./files/linkease-config.sh $(1)/usr/bin/linkease-config.sh
 	$(INSTALL_BIN) ./files/linkease-migrate.sh $(1)/usr/bin/linkease-migrate.sh
 	$(INSTALL_CONF) ./files/linkease.config $(1)/etc/config/linkease
