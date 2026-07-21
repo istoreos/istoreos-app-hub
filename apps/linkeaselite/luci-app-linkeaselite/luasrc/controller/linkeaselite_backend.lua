@@ -5,7 +5,6 @@ local http = require "luci.http"
 local nixio = require "nixio"
 local ltn12 = require "luci.ltn12"
 local table = require "table"
-local util = require "luci.util"
 
 module("luci.controller.linkeaselite_backend", package.seeall)
 
@@ -16,47 +15,18 @@ function index()
     entry({"linkeaselite"}, call("linkeaselite_backend")).leaf=true
 end
 
-local function sink_socket(sock, io_err) 
-  if sock then 
-    return function(chunk, err) 
-      if not chunk then 
-        return 1 
-      else 
+local function sink_socket(sock, io_err)
+  if sock then
+    return function(chunk, err)
+      if not chunk then
+        return 1
+      else
         return sock:send(chunk)
-      end 
-    end 
-  else 
-    return ltn12.sink.error(io_err or "unable to send socket") 
-  end
-end
-
-local function session_retrieve(sid, allowed_users)
-  local sdat = util.ubus("session", "get", { ubus_rpc_session = sid })
-  if type(sdat) == "table" and
-      type(sdat.values) == "table" and
-      type(sdat.values.token) == "string" and
-      (not allowed_users or
-      util.contains(allowed_users, sdat.values.username))
-  then
-      return sid, sdat.values
-  end
-  return nil, nil
-end
-
-local function get_session()
-  local sid
-  local key
-  local sdat
-  for _, key in ipairs({"sysauth_https", "sysauth_http", "sysauth"}) do
-    sid = http.getcookie(key)
-    if sid then
-      sid, sdat = session_retrieve(sid, nil)
-      if sid and sdat then
-        return sid, sdat
       end
     end
+  else
+    return ltn12.sink.error(io_err or "unable to send socket")
   end
-  return nil, nil
 end
 
 local function chunksource(sock, buffer)
@@ -69,7 +39,7 @@ local function chunksource(sock, buffer)
 			if not newblock then
 				return nil, code
 			end
-			buffer = buffer .. newblock  
+			buffer = buffer .. newblock
 			_, endp, count = buffer:find("^([0-9a-fA-F]+);?.-\r\n")
 		end
 		count = tonumber(count, 16)
@@ -102,37 +72,37 @@ local function chunksource(sock, buffer)
 	end
 end
 
-function linkeaselite_backend() 
+function linkeaselite_backend()
   local sock = nixio.socket("unix", "stream")
   if sock:connect(LINKEASELITE_UNIX) ~= true then
     http.status(500, "connect failed")
     return
   end
   local input = {}
-  input[#input+1] = http.getenv("REQUEST_METHOD") .. " " .. http.getenv("REQUEST_URI") .. " HTTP/1.1"
+  local request_uri = http.getenv("REQUEST_URI") or "/"
+  request_uri = request_uri:gsub("^/cgi%-bin/luci/linkeaselite", "")
+  if request_uri == "" then
+    request_uri = "/"
+  end
+  input[#input+1] = http.getenv("REQUEST_METHOD") .. " " .. request_uri .. " HTTP/1.1"
   local req = http.context.request
   local start = "HTTP_"
   local start_len = string.len(start)
   local ctype = http.getenv("CONTENT_TYPE")
   if ctype then
-    input[#input+1] = "Content-Type: " .. ctype 
+    input[#input+1] = "Content-Type: " .. ctype
   end
   for k, v in pairs(req.message.env) do
-    if string.sub(k, 1, start_len) == start and not string.find(k, "FORWARDED") then 
+    if string.sub(k, 1, start_len) == start and not string.find(k, "FORWARDED") then
       input[#input+1] = string.sub(k, start_len+1, string.len(k)) .. ": " .. v
     end
-  end
-  local sid, sdat = get_session()
-  if sdat ~= nil then
-    input[#input+1] = "X-Forwarded-Sid: " .. sid
-    input[#input+1] = "X-Forwarded-Token: " .. sdat.token
   end
   -- input[#input+1] = "X-Forwarded-For: " .. http.getenv("REMOTE_HOST") ..":".. http.getenv("REMOTE_PORT")
   local num = tonumber(http.getenv("CONTENT_LENGTH")) or 0
   input[#input+1] = "Content-Length: " .. tostring(num)
   input[#input+1] = "\r\n"
   local source = ltn12.source.cat(ltn12.source.string(table.concat(input, "\r\n")), http.source())
-  local ret = ltn12.pump.all(source, sink_socket(sock, "write sock error")) 
+  local ret = ltn12.pump.all(source, sink_socket(sock, "write sock error"))
   if ret ~= 1 then
     sock:close()
     http.status(500, "proxy error")

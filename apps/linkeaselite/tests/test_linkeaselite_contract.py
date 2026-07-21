@@ -78,6 +78,31 @@ class LinkEaseLiteContractTest(unittest.TestCase):
         self.assertIn("procd_set_param respawn", block)
         self.assert_not_contains_full_runtime(text)
 
+    def test_init_reconciles_firewall_on_every_restart(self):
+        text = self.read("linkeaselite/files/linkeaselite.init")
+
+        self.assertIn("sync_firewall() {", text)
+        self.assertIn("uci -q delete firewall.linkeaselite", text)
+        self.assertIn("uci -q set firewall.linkeaselite=rule", text)
+        self.assertIn('uci -q set firewall.linkeaselite.name="linkeaselite"', text)
+        self.assertIn('uci -q set firewall.linkeaselite.dest_port="$port"', text)
+        self.assertIn("uci -q commit firewall", text)
+        self.assertIn("/etc/init.d/firewall reload", text)
+        self.assertIn('sync_firewall\n\t[ "$enabled" = "1" ] || return 1', text)
+
+    def test_runtime_package_removal_deletes_only_its_firewall_rule(self):
+        text = self.read("linkeaselite/Makefile")
+        postrm = re.search(
+            r"define Package/\$\(PKG_NAME\)/postrm\n(.*?)\nendef", text, re.DOTALL
+        )
+
+        self.assertIsNotNone(postrm, "missing runtime package postrm hook")
+        postrm_text = postrm.group(1)
+        self.assertIn("uci -q delete firewall.linkeaselite", postrm_text)
+        self.assertIn("uci -q commit firewall", postrm_text)
+        self.assertIn("/etc/init.d/firewall reload", postrm_text)
+        self.assertNotIn("delete linkeaselite", postrm_text)
+
     def test_uci_default_preserves_values_and_manages_firewall(self):
         text = self.read("linkeaselite/files/linkeaselite.uci-default")
 
@@ -125,12 +150,27 @@ class LinkEaseLiteContractTest(unittest.TestCase):
         backend = self.read("luci-app-linkeaselite/luasrc/controller/linkeaselite_backend.lua")
         file_view = self.read("luci-app-linkeaselite/luasrc/view/linkeaselite/file.htm")
         static_index = ROOT / "luci-app-linkeaselite/htdocs/luci-static/linkeasefile/index.js"
+        static = static_index.read_text(encoding="utf-8")
 
         self.assertIn('local LINKEASELITE_UNIX = "/var/run/linkeaselite.sock"', backend)
         self.assertIn('entry({"linkeaselite"}, call("linkeaselite_backend")).leaf=true', backend)
         self.assertIn("function linkeaselite_backend()", backend)
+        self.assertIn('local request_uri = http.getenv("REQUEST_URI") or "/"', backend)
+        self.assertIn(
+            'request_uri = request_uri:gsub("^/cgi%-bin/luci/linkeaselite", "")', backend
+        )
+        self.assertIn('.. " " .. request_uri .. " HTTP/1.1"', backend)
+        self.assertIn("for k, v in pairs(req.message.env)", backend)
+        self.assertNotIn("function get_session()", backend)
+        self.assertNotIn("X-Forwarded-Sid", backend)
+        self.assertNotIn("X-Forwarded-Token", backend)
         self.assertIn("luci-static/linkeasefile/index.js", file_view)
+        self.assertIn(
+            'window.LINKEASE_BACKEND_PREFIX = "/cgi-bin/luci/linkeaselite"', file_view
+        )
         self.assertTrue(static_index.is_file())
+        self.assertNotRegex(static, re.compile(r"(?<!/cgi-bin/luci)/linkeaselite"))
+        self.assertEqual(static.count("/cgi-bin/luci/linkeaselite"), 4)
         self.assertNotIn('/var/run/linkease.sock', backend)
 
     def test_app_meta_declares_linkeaselite(self):

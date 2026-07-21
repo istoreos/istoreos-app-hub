@@ -47,6 +47,16 @@ if [ -z "$${IPKG_INSTROOT}" ]; then
 fi
 endef
 
+define Package/$(PKG_NAME)/postrm
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	uci -q delete firewall.linkeaselite
+	uci -q commit firewall
+	/etc/init.d/firewall reload
+fi
+exit 0
+endef
+
 define Build/Configure
 endef
 

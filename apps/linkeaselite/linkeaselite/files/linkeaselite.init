@@ -14,9 +14,24 @@ read_config() {
 	config_get_bool allowPublic "$section" allowPublic 0
 }
 
+sync_firewall() {
+	uci -q delete firewall.linkeaselite
+	if [ "$allowPublic" = "1" ]; then
+		uci -q set firewall.linkeaselite=rule
+		uci -q set firewall.linkeaselite.name="linkeaselite"
+		uci -q set firewall.linkeaselite.target="ACCEPT"
+		uci -q set firewall.linkeaselite.src="wan"
+		uci -q set firewall.linkeaselite.proto="tcp"
+		uci -q set firewall.linkeaselite.dest_port="$port"
+	fi
+	uci -q commit firewall
+	/etc/init.d/firewall reload
+}
+
 start_service() {
 	config_load linkeaselite
 	config_foreach read_config linkeaselite
+	sync_firewall
 	[ "$enabled" = "1" ] || return 1
 	[ -x "$PROG" ] || return 1
 
