@@ -47,6 +47,7 @@ class LinkEaseLiteContractTest(unittest.TestCase):
 
         self.assertIn("PKG_NAME:=linkeaselite", text)
         self.assertIn("PKG_SOURCE:=linkeaselite-binary-$(PKG_SOURCE_DATE).tar.gz", text)
+        self.assertIn("TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)", text)
         self.assertIn("CONFLICTS:=linkease", text)
         self.assertIn("DEPENDS:=@(arm||x86_64||aarch64) +ca-bundle", text)
         self.assertIn("/etc/config/linkeaselite", text)
