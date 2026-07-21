@@ -7,7 +7,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | airconnect | AirConnect | multimedia net | /cgi-bin/luci/admin/services/airconnect | https://github.com/philippe44/AirConnect | 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流 |
 | ap-modem | 访问AP/光猫 | net tool | /cgi-bin/luci/admin/network/ap_modem | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-ap-modem | 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上） |
 | arcadia | Arcadia一站式代码运维平台 | net tool | /cgi-bin/luci/admin/services/arcadia | https://arcadia.cool | 脚本语言编程与运维，支持定时任务调度。 |
-| baidudrive | 百度网盘 | network storage | /cgi-bin/luci/admin/services/baidudrive | https://pan.baidu.com | 百度网盘 Web 管理工具 |
+| baidudrive | 百度网盘 | nas service | /cgi-bin/luci/admin/services/baidudrive | https://pan.baidu.com | 百度网盘 iStoreOS 版 |
 | chinesesubfinder | ChineseSubFinder中文字幕 | multimedia net | /cgi-bin/luci/admin/services/chinesesubfinder | https://github.com/allanpk716/ChineseSubFinder | ChineseSubFinder是一个中文字幕平台。 |
 | clouddrive2 | CloudDrive2 | service tool | /cgi-bin/luci/admin/services/clouddrive2 | https://www.clouddrive2.com/ | CloudDrive 是一个强大的多云盘管理工具，为用户提供包含云盘本地挂载的一站式的多云盘解决方案。 |
 | codeserver | CodeServer | net tool | /cgi-bin/luci/admin/services/codeserver | https://coder.com/ | 一个在线版本的VSCode，可以在线开发。 |
@@ -33,9 +33,11 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | jackett | Jackett | download nas | /cgi-bin/luci/admin/services/jackett | https://github.com/Jackett/Jackett | Jackett 是维护索引器抓取和翻译逻辑的单一存储库 - 消除了其他应用程序的负担。 |
 | jellyfin | Jellyfin私有影院 | multimedia net | /cgi-bin/luci/admin/services/jellyfin | https://jellyfin.org | Jellyfin是一个免费自由的媒体系统软件，可以让您方便地管理和串流您的媒体。部分机型无需配置即可支持硬件转码：Easepi ARS2；RK35xx 系列。 |
 | kai | 酷友社KAI | ai system | /cgi-bin/luci/admin/services/kai | https://www.koolcenter.com | KAI安装软件助手(iStoreOS 24版本以上适用) |
+| kaiplus | KaiPlus | ai system | /cgi-bin/luci/admin/services/kaiplus | https://ai.koolcenter.com | KaiPlus AI 工作台(iStoreOS 24版本以上适用) |
 | kodexplorer | 可道云 | nas service | /cgi-bin/luci/admin/services/kodexplorer | https://kodcloud.com | 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。 |
 | lanraragi | LANraragi电子书 | multimedia net | /cgi-bin/luci/admin/services/lanraragi | https://lrr.tvc-16.science/ | LANraragi是一个开源的电子书、漫画管理平台。 |
-| linkease | 易有云 | nas service | /cgi-bin/luci/admin/services/linkease | https://www.linkease.com/ | 易有云提供文件的外网访问，相册备份，文件同步，异地组网功能。需要配合电脑、手机客户端使用。 |
+| linkease | 易有云 | nas service | /cgi-bin/luci/admin/services/linkease | https://www.linkease.com/ | 易有云提供远程访问、文件管理、相册备份、文件同步、备份仓库和桌面式本地文件管理能力。 |
+| linkeaselite | 易有云Lite | nas service | /cgi-bin/luci/admin/services/linkeaselite | https://www.linkease.com/ | 易有云Lite提供适合小内存设备的远程访问和轻量文件管理能力。 |
 | memos | Memos知识管理 | net tool | /cgi-bin/luci/admin/services/memos | https://usememos.com/ | 开源的极简的碎片化知识管理工具。 |
 | mtphotos | MTPhotos相册 | net tool | /cgi-bin/luci/admin/services/mtphotos | https://mtmt.tech/ | MTPhotos是一款简单、好用的照片管理系统。 |
 | multiaccountdial | 多账号多拨 | net tool | /cgi-bin/luci/admin/network/multiaccountdial | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-multiaccountdial | 支持多账号的多拨插件 |

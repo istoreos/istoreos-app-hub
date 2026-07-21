@@ -53,17 +53,17 @@
   {
     "id": "baidudrive",
     "title": "百度网盘",
-    "description": "百度网盘 Web 管理工具",
-    "description_en": "Baidu Netdisk Web UI",
+    "description": "百度网盘 iStoreOS 版",
+    "description_en": "BaiduDrive for iStoreOS. BaiduDrive is a netdisk provided by Baidu.com",
     "tags": [
-      "network",
-      "storage"
+      "nas",
+      "service"
     ],
     "website": "https://pan.baidu.com",
     "author": "linkease",
     "version": "1.0.0",
-    "release": "1",
-    "depends": "+luci-app-baidudrive +baidudrive",
+    "release": "3",
+    "depends": "+luci-i18n-baidudrive-zh-cn +luci-app-baidudrive +baidudrive",
     "luci_entry": "/cgi-bin/luci/admin/services/baidudrive",
     "meta_dir": "apps/baidudrive/app-meta-baidudrive"
   },
@@ -129,8 +129,8 @@
     ],
     "website": "https://www.ddnsto.com/",
     "author": "xiaobao",
-    "version": "3.0.4",
-    "release": "5",
+    "version": "4.2.2",
+    "release": "1",
     "depends": "+ddnsto +luci-app-ddnsto +luci-i18n-ddnsto-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/ddnsto",
     "meta_dir": "apps/ddnsto/app-meta-ddnsto"
@@ -245,7 +245,7 @@
     ],
     "website": "https://github.com/linkease/nas-packages",
     "author": "jjm2473",
-    "version": "1.0.10",
+    "version": "1.1.0",
     "release": "1",
     "depends": "+floatip +luci-app-floatip +luci-i18n-floatip-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/floatip",
@@ -380,8 +380,8 @@
     ],
     "website": "https://kspeeder.com/",
     "author": "xiaobao",
-    "version": "0.7.0",
-    "release": "1",
+    "version": "0.7.5",
+    "release": "2",
     "depends": "+istoreenhance +luci-app-istoreenhance +luci-i18n-istoreenhance-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/istoreenhance",
     "meta_dir": "apps/istoreenhance/app-meta-istoreenhance"
@@ -481,10 +481,27 @@
     "website": "https://www.koolcenter.com",
     "author": "koolcenter",
     "version": "1.0.2",
-    "release": "1",
+    "release": "2",
     "depends": "+luci-app-kai +kai +kai_session",
     "luci_entry": "/cgi-bin/luci/admin/services/kai",
     "meta_dir": "apps/kai/app-meta-kai"
+  },
+  {
+    "id": "kaiplus",
+    "title": "KaiPlus",
+    "description": "KaiPlus AI 工作台(iStoreOS 24版本以上适用)",
+    "description_en": "KaiPlus AI workspace",
+    "tags": [
+      "ai",
+      "system"
+    ],
+    "website": "https://ai.koolcenter.com",
+    "author": "koolcenter",
+    "version": "1.0.5",
+    "release": "1",
+    "depends": "+luci-app-kaiplus +kaiplus",
+    "luci_entry": "/cgi-bin/luci/admin/services/kaiplus",
+    "meta_dir": "apps/kaiplus/app-meta-kaiplus"
   },
   {
     "id": "kodexplorer",
@@ -522,19 +539,36 @@
   {
     "id": "linkease",
     "title": "易有云",
-    "description": "易有云提供文件的外网访问，相册备份，文件同步，异地组网功能。需要配合电脑、手机客户端使用。",
-    "description_en": "LinkEase is a private cloud storage with its own remote connection to access personal files anytime, anywhere",
+    "description": "易有云提供远程访问、文件管理、相册备份、文件同步、备份仓库和桌面式本地文件管理能力。",
+    "description_en": "LinkEase full provides remote access, file management, photo backup, sync, backup repository, and a local web desktop.",
     "tags": [
       "nas",
       "service"
     ],
     "website": "https://www.linkease.com/",
     "author": "xiaobao",
-    "version": "1.7.5",
-    "release": "4",
+    "version": "3.0.0",
+    "release": "1",
     "depends": "+linkease +luci-app-linkease +luci-i18n-linkease-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease",
     "meta_dir": "apps/linkease/app-meta-linkease"
+  },
+  {
+    "id": "linkeaselite",
+    "title": "易有云Lite",
+    "description": "易有云Lite提供适合小内存设备的远程访问和轻量文件管理能力。",
+    "description_en": "LinkEaseLite provides remote access and lightweight file management for small-memory devices.",
+    "tags": [
+      "nas",
+      "service"
+    ],
+    "website": "https://www.linkease.com/",
+    "author": "xiaobao",
+    "version": "3.0.0",
+    "release": "1",
+    "depends": "+linkeaselite +luci-app-linkeaselite +luci-i18n-linkeaselite-zh-cn",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkeaselite",
+    "meta_dir": "apps/linkeaselite/app-meta-linkeaselite"
   },
   {
     "id": "memos",
@@ -833,7 +867,7 @@
     ],
     "website": "https://www.istoreos.com",
     "author": "jjm2473",
-    "version": "1.1.7",
+    "version": "1.1.8",
     "release": "1",
     "depends": "+luci-app-shadowrt +luci-i18n-shadowrt-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/shadowrt",
@@ -867,7 +901,7 @@
     ],
     "website": "https://github.com/istoreos",
     "author": "xiaobao",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "release": "1",
     "depends": "+luci-app-systools +luci-i18n-systools-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/system/systools/pages",
