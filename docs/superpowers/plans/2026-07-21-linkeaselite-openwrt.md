@@ -1088,10 +1088,13 @@ Expected: no output and exit code `0`. If the number of commits differs because 
 Run:
 
 ```bash
-rtk rg -n "linkease-desktop|apptunnel-client|KAIPLUS|kaiplus|linkmount|desktop_port|desktop_base_path|Full UI|edition" apps/linkeaselite
+rtk rg -n "linkease-desktop|apptunnel-client|KAIPLUS|kaiplus|linkmount|desktop_port|desktop_base_path|Full UI|edition" \
+  apps/linkeaselite/linkeaselite \
+  apps/linkeaselite/luci-app-linkeaselite \
+  apps/linkeaselite/app-meta-linkeaselite
 ```
 
-Expected: no matches.
+Expected: no matches. The command intentionally excludes `apps/linkeaselite/tests` because the contract test contains the forbidden strings as assertion data.
 
 - [ ] **Step 4: Check required LinkEaseLite references**
 
