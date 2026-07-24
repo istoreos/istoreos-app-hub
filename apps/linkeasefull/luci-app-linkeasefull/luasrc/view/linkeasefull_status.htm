@@ -5,17 +5,8 @@
 			var tb = document.getElementById('linkeasefull_status');
 			if (st && tb)
 			{
-				var basePath = st.base_path || "/apps/";
-				if (basePath.charAt(0) !== "/")
-				{
-					basePath = "/" + basePath;
-				}
-				if (basePath.charAt(basePath.length - 1) !== "/")
-				{
-					basePath = basePath + "/";
-				}
-
-				var fullUrl = "http://" + window.location.hostname + ":" + (st.port || 19290) + basePath;
+				var fullUrl = "http://" + window.location.hostname + ":" + (st.full_port || 19290) + "/apps/";
+				var legacyUrl = "http://" + window.location.hostname + ":" + (st.legacy_port || 8897) + "/";
 				var overallStatus = st.running
 					? '<br/><em style=\"color:green\"><%:The LinkEase Full service is running.%></em>'
 					: '<br/><em style=\"color:red\"><%:The LinkEase Full service is not running.%></em>';
@@ -24,7 +15,8 @@
 				if (st.running)
 				{
 					tb.innerHTML = tb.innerHTML
-						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Full%> \" onclick=\"window.open('" + fullUrl + "')\"/>";
+						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Open Full Entry%> \" onclick=\"window.open('" + fullUrl + "')\"/>"
+						+ " <input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Open Standard Entry%> \" onclick=\"window.open('" + legacyUrl + "')\"/>";
 				}
 			}
 		}

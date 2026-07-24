@@ -11,9 +11,44 @@ module("luci.controller.linkease_backend", package.seeall)
 
 local BLOCKSIZE = 2048
 local LINKEASE_UNIX = "/var/run/linkease.sock"
+local LINKEASE_FULL_LEGACY_HOST = "127.0.0.1"
+local LINKEASE_FULL_LEGACY_PORT = 8897
 
 function index()
     entry({"linkease"}, call("linkease_backend")).leaf=true
+end
+
+local function connect_linkease_backend()
+  local sock = nixio.socket("unix", "stream")
+  if sock and sock:connect(LINKEASE_UNIX) == true then
+    return sock, "unix"
+  end
+  if sock then
+    sock:close()
+  end
+
+  sock = nixio.socket("inet", "stream")
+  if sock and sock:connect(LINKEASE_FULL_LEGACY_HOST, LINKEASE_FULL_LEGACY_PORT) == true then
+    return sock, "tcp"
+  end
+  if sock then
+    sock:close()
+  end
+  return nil
+end
+
+local function backend_request_uri(kind)
+  local uri = http.getenv("REQUEST_URI") or "/"
+  if kind == "tcp" then
+    local prefix = "/cgi-bin/luci/linkease"
+    if uri:sub(1, #prefix) == prefix then
+      uri = uri:sub(#prefix + 1)
+      if uri == "" then
+        uri = "/"
+      end
+    end
+  end
+  return uri
 end
 
 local function sink_socket(sock, io_err) 
@@ -103,13 +138,13 @@ local function chunksource(sock, buffer)
 end
 
 function linkease_backend() 
-  local sock = nixio.socket("unix", "stream")
-  if sock:connect(LINKEASE_UNIX) ~= true then
+  local sock, backend_kind = connect_linkease_backend()
+  if not sock then
     http.status(500, "connect failed")
     return
   end
   local input = {}
-  input[#input+1] = http.getenv("REQUEST_METHOD") .. " " .. http.getenv("REQUEST_URI") .. " HTTP/1.1"
+  input[#input+1] = http.getenv("REQUEST_METHOD") .. " " .. backend_request_uri(backend_kind) .. " HTTP/1.1"
   local req = http.context.request
   local start = "HTTP_"
   local start_len = string.len(start)
@@ -118,7 +153,7 @@ function linkease_backend()
     input[#input+1] = "Content-Type: " .. ctype 
   end
   for k, v in pairs(req.message.env) do
-    if string.sub(k, 1, start_len) == start and not string.find(k, "FORWARDED") then 
+    if string.sub(k, 1, start_len) == start and not string.find(k, "FORWARDED") and k ~= "HTTP_CONNECTION" then 
       input[#input+1] = string.sub(k, start_len+1, string.len(k)) .. ": " .. v
     end
   end
@@ -130,6 +165,7 @@ function linkease_backend()
   -- input[#input+1] = "X-Forwarded-For: " .. http.getenv("REMOTE_HOST") ..":".. http.getenv("REMOTE_PORT")
   local num = tonumber(http.getenv("CONTENT_LENGTH")) or 0
   input[#input+1] = "Content-Length: " .. tostring(num)
+  input[#input+1] = "Connection: close"
   input[#input+1] = "\r\n"
   local source = ltn12.source.cat(ltn12.source.string(table.concat(input, "\r\n")), http.source())
   local ret = ltn12.pump.all(source, sink_socket(sock, "write sock error")) 
@@ -188,4 +224,3 @@ function linkease_backend()
 
   sock:close()
 end
-

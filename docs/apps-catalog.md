@@ -37,7 +37,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | kodexplorer | 可道云 | nas service | /cgi-bin/luci/admin/services/kodexplorer | https://kodcloud.com | 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。 |
 | lanraragi | LANraragi电子书 | multimedia net | /cgi-bin/luci/admin/services/lanraragi | https://lrr.tvc-16.science/ | LANraragi是一个开源的电子书、漫画管理平台。 |
 | linkease | 易有云 | nas service | /cgi-bin/luci/admin/services/linkease | https://www.linkease.com/ | 易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。 |
-| linkeasefull | 易有云完整版 | nas service | /cgi-bin/luci/admin/services/linkeasefull | https://www.linkease.com/ | 易有云完整版提供本地 Web 桌面和 8897 兼容入口，运行时会停用标准版易有云。 |
+| linkeasefull | 易有云完整版 | nas service | /cgi-bin/luci/admin/services/linkeasefull | https://www.linkease.com/ | 易有云完整版提供本地 Web 桌面和 8897 兼容入口，复用标准版易有云 LuCI 文件入口，运行时会停用标准版易有云。 |
 | linkeaselite | 易有云Lite | nas service | /cgi-bin/luci/admin/services/linkeaselite/config | https://www.linkease.com/ | 易有云Lite提供适合小内存设备的远程访问和轻量文件管理能力。 |
 | memos | Memos知识管理 | net tool | /cgi-bin/luci/admin/services/memos | https://usememos.com/ | 开源的极简的碎片化知识管理工具。 |
 | mtphotos | MTPhotos相册 | net tool | /cgi-bin/luci/admin/services/mtphotos | https://mtmt.tech/ | MTPhotos是一款简单、好用的照片管理系统。 |

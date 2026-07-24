@@ -13,8 +13,6 @@ set_default() {
 }
 
 set_default enabled 1
-set_default port 19290
-set_default base_path /apps/
 uci -q commit linkeasefull
 
 uci -q batch <<-EOF >/dev/null

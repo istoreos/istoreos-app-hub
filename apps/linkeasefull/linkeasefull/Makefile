@@ -33,12 +33,12 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkEase Full - the local web desktop
-	DEPENDS:=@(x86_64||aarch64) +ca-bundle
+	DEPENDS:=@(x86_64||aarch64) +linkease +luci-app-linkease +ca-bundle
 	URL:=https://www.linkease.com/
 endef
 
 define Package/$(PKG_NAME)/description
-  LinkEase Full provides the local web desktop entry for LinkEase.
+  LinkEase Full provides the local web desktop entry for LinkEase and reuses the standard LinkEase LuCI file entry.
 endef
 
 define Package/$(PKG_NAME)/conffiles
@@ -60,15 +60,14 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/bin $(1)/usr/libexec/linkease/linkmount_bin $(1)/usr/libexec/linkease/scripts $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
+	$(INSTALL_DIR) $(1)/usr/bin $(1)/usr/libexec/linkeasefull/linkmount_bin $(1)/usr/libexec/linkeasefull/scripts $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-full $(1)/usr/bin/linkease-full
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkremote-agent $(1)/usr/bin/linkremote-agent
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/heif-converter $(1)/usr/bin/heif-converter
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/hostlink $(1)/usr/bin/hostlink
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkmount_bin/linkmount_bin $(1)/usr/libexec/linkease/linkmount_bin/linkmount_bin
-	$(CP) $(PKG_BUILD_DIR)/linkmount_bin/lib $(1)/usr/libexec/linkease/linkmount_bin/lib
-	$(CP) $(PKG_BUILD_DIR)/linkmount_bin/ver.json $(1)/usr/libexec/linkease/linkmount_bin/ver.json
-	$(CP) $(PKG_BUILD_DIR)/scripts/. $(1)/usr/libexec/linkease/scripts/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkmount_bin/linkmount_bin $(1)/usr/libexec/linkeasefull/linkmount_bin/linkmount_bin
+	$(CP) $(PKG_BUILD_DIR)/linkmount_bin/lib $(1)/usr/libexec/linkeasefull/linkmount_bin/lib
+	$(CP) $(PKG_BUILD_DIR)/linkmount_bin/ver.json $(1)/usr/libexec/linkeasefull/linkmount_bin/ver.json
+	$(CP) $(PKG_BUILD_DIR)/scripts/. $(1)/usr/libexec/linkeasefull/scripts/
 	$(INSTALL_CONF) ./files/linkeasefull.config $(1)/etc/config/linkeasefull
 	$(INSTALL_BIN) ./files/linkeasefull.init $(1)/etc/init.d/linkeasefull
 	$(INSTALL_BIN) ./files/linkeasefull.uci-default $(1)/etc/uci-defaults/linkeasefull
