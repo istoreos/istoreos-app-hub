@@ -28,7 +28,6 @@ define Package/$(PKG_NAME)
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkEaseLite - the file cloud
 	DEPENDS:=@(arm||x86_64||aarch64) +ca-bundle
-	CONFLICTS:=linkease
 	URL:=https://www.linkease.com/
 endef
 

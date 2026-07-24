@@ -5,8 +5,7 @@
 			var tb = document.getElementById('linkeaselite_status');
 			if (st && tb)
 			{
-				var runtimeUrl = "http://" + window.location.hostname + ":" + (st.port || 8897) + "/";
-				var fileUrl = '<%=url("admin/services/linkeaselite/file")%>';
+				var legacyUrl = "http://" + window.location.hostname + ":" + (st.port || 8897) + "/";
 				var overallStatus = st.running
 					? '<br/><em style=\"color:green\"><%:The LinkEaseLite service is running.%></em>'
 					: '<br/><em style=\"color:red\"><%:The LinkEaseLite service is not running.%></em>';
@@ -29,9 +28,7 @@
 
 				appendBreak();
 				appendBreak();
-				appendButton(" <%:Click to open LinkEaseLite%> ", function() { window.open(runtimeUrl); });
-				appendBreak();
-				appendButton(" <%:Click to open Files%> ", function() { window.open(fileUrl); });
+				appendButton(" <%:Click to open LinkEaseLite%> ", function() { window.open(legacyUrl); });
 			}
 		}
 	);

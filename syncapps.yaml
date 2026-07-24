@@ -316,6 +316,16 @@ apps:
         meta:
             - local: apps/linkeaselite/app-meta-linkeaselite
               remote: openwrt-app-meta/applications/app-meta-linkeaselite
+    linkeasefull:
+        services:
+            - local: apps/linkeasefull/linkeasefull
+              remote: nas-packages/network/services/linkeasefull
+        luci:
+            - local: apps/linkeasefull/luci-app-linkeasefull
+              remote: nas-packages-luci/luci/luci-app-linkeasefull
+        meta:
+            - local: apps/linkeasefull/app-meta-linkeasefull
+              remote: openwrt-app-meta/applications/app-meta-linkeasefull
     linkmount:
         services:
             - local: apps/linkmount/linkmount

@@ -1,0 +1,236 @@
+from pathlib import Path
+import json
+import re
+import unittest
+
+
+ROOT = Path(__file__).resolve().parents[1]
+REPO = ROOT.parents[1]
+
+
+class LinkEasePackageContractTest(unittest.TestCase):
+    def read_app(self, app, relative):
+        return (REPO / "apps" / app / relative).read_text(encoding="utf-8")
+
+    def makefile_installed_files(self, relative):
+        paths = set()
+        for line in (REPO / relative).read_text(encoding="utf-8").splitlines():
+            if "$(INSTALL_BIN)" not in line and "$(INSTALL_CONF)" not in line:
+                continue
+            matches = re.findall(r"\$\(1\)(/\S+)", line)
+            if matches:
+                paths.add(matches[-1])
+        return paths
+
+    def luci_installed_files(self, relative):
+        root = REPO / relative
+        paths = set()
+        for subdir, prefix in (
+            ("htdocs", "/www/"),
+            ("luasrc", "/usr/lib/lua/luci/"),
+        ):
+            base = root / subdir
+            if not base.exists():
+                continue
+            for file in base.rglob("*"):
+                if file.is_file():
+                    paths.add(prefix + file.relative_to(base).as_posix())
+        return paths
+
+    def procd_instance_block(self, text, name=None):
+        if name is None:
+            pattern = re.compile(
+                r"^[ \t]*procd_open_instance\b.*?^[ \t]*procd_close_instance\b",
+                re.DOTALL | re.MULTILINE,
+            )
+        else:
+            escaped = re.escape(name)
+            pattern = re.compile(
+                r"^[ \t]*procd_open_instance\s+(?:['\"]%s['\"]|%s)(?=\s|$|#).*?^[ \t]*procd_close_instance\b"
+                % (escaped, escaped),
+                re.DOTALL | re.MULTILINE,
+            )
+        match = pattern.search(text)
+        self.assertIsNotNone(match, "missing procd instance block")
+        return match.group(0)
+
+    def test_standard_linkease_uses_legacy_runtime_only(self):
+        makefile = self.read_app("linkease", "linkease/Makefile")
+        init = self.read_app("linkease", "linkease/files/linkease.init")
+        config = self.read_app("linkease", "linkease/files/linkease.config")
+        helper = self.read_app("linkease", "linkease/files/linkease-config.sh")
+        status = self.read_app(
+            "linkease", "luci-app-linkease/luasrc/view/linkease_status.htm"
+        )
+        controller = self.read_app(
+            "linkease", "luci-app-linkease/luasrc/controller/linkease.lua"
+        )
+
+        self.assertIn("PKG_NAME:=linkease", makefile)
+        self.assertIn("PKG_SOURCE:=linkease-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
+        self.assertIn("PKG_SOURCE_URL:=https://dl.istoreos.com/binary/LinkEase/LinuxStorage/", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=1.7.5", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/link-ease", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/heif-converter.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/heif-converter", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease-media.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease-media", makefile)
+        self.assertNotIn("linkease-migrate.sh", makefile)
+        self.assertNotIn("linkease-desktop", makefile)
+        self.assertNotIn("apptunnel-client", makefile)
+        self.assertNotIn("linkease-full", makefile)
+
+        self.assertIn("PROG=/usr/sbin/link-ease", init)
+        self.assertIn("LOCAL_API=/var/run/linkease.sock", init)
+        self.assertIn("stop_linkeaselite_runtime()", init)
+        self.assertIn("/etc/init.d/linkeaselite stop", init)
+        self.assertIn('uci -q set linkeaselite.@linkeaselite[0].enabled="0"', init)
+        self.assertIn("stop_linkeaselite_runtime", init.split("procd_open_instance")[0])
+        block = self.procd_instance_block(init)
+        self.assertIn('procd_set_param command "$PROG"', block)
+        self.assertIn('procd_append_param command --deviceAddr ":$port" --localApi "$LOCAL_API"', block)
+        self.assertIn('[ "$allowPublic" = "1" ] && procd_append_param command --allowPublic', block)
+        self.assertNotIn("PROG_DESKTOP", init)
+        self.assertNotIn("PROG_APPTUNNEL", init)
+
+        self.assertIn("option port '8897'", config)
+        self.assertNotIn("desktop_port", config)
+        self.assertNotIn("desktop_base_path", config)
+        self.assertNotIn("edition", config)
+        self.assertIn("Click to open LinkEase", status)
+        self.assertNotIn("Click to open LinkEase Full", status)
+        self.assertNotIn("Click to open LinkEase Legacy", status)
+        self.assertIn('pidof link-ease >/dev/null', controller)
+        self.assertNotIn("desktop_running", controller)
+        self.assertNotIn("apptunnel_running", controller)
+        self.assertNotIn("desktop_port", helper)
+        self.assertNotIn("desktop_base_path", helper)
+        self.assertNotIn("desktop_url", helper)
+        self.assertNotIn("data_root_parent", helper)
+
+    def test_linkeasefull_is_independent_full_runtime_package(self):
+        makefile = self.read_app("linkeasefull", "linkeasefull/Makefile")
+        init = self.read_app("linkeasefull", "linkeasefull/files/linkeasefull.init")
+        config = self.read_app("linkeasefull", "linkeasefull/files/linkeasefull.config")
+        cbi = self.read_app("linkeasefull", "luci-app-linkeasefull/luasrc/model/cbi/linkeasefull.lua")
+        controller = self.read_app(
+            "linkeasefull", "luci-app-linkeasefull/luasrc/controller/linkeasefull.lua"
+        )
+        status = self.read_app(
+            "linkeasefull", "luci-app-linkeasefull/luasrc/view/linkeasefull_status.htm"
+        )
+        meta = self.read_app("linkeasefull", "app-meta-linkeasefull/Makefile")
+        defaults = self.read_app("linkeasefull", "linkeasefull/files/linkeasefull.uci-default")
+        meta_config = self.read_app("linkeasefull", "app-meta-linkeasefull/config.sh")
+
+        self.assertIn("PKG_NAME:=linkeasefull", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=3.0.4", makefile)
+        self.assertIn("LINKEASE_RUNTIME_ARCH:=amd64", makefile)
+        self.assertIn("LINKEASE_RUNTIME_ARCH:=arm64", makefile)
+        self.assertIn("PKG_SOURCE:=linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz", makefile)
+        self.assertIn("9e8d7b42d0cfb7ae746a34fb1980978b8a32fc57ac5ad905f27df4229cedeb98", makefile)
+        self.assertIn("6a02d5a515e80819693609f042a25f0dd005307d54f7111e5ccf730d683743e3", makefile)
+        self.assertIn("TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) --strip-components=1 $(TAR_OPTIONS)", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-full $(1)/usr/bin/linkease-full", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkremote-agent $(1)/usr/bin/linkremote-agent", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/heif-converter $(1)/usr/bin/heif-converter", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/hostlink $(1)/usr/bin/hostlink", makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkmount_bin/linkmount_bin $(1)/usr/libexec/linkease/linkmount_bin/linkmount_bin", makefile)
+        self.assertIn("$(CP) $(PKG_BUILD_DIR)/linkmount_bin/lib $(1)/usr/libexec/linkease/linkmount_bin/lib", makefile)
+        self.assertIn("DEPENDS:=@(x86_64||aarch64) +ca-bundle", makefile)
+        self.assertNotIn("/etc/config/linkease\n", makefile)
+        self.assertNotIn("/etc/init.d/linkease\n", makefile)
+        self.assertNotIn("/usr/sbin/link-ease", makefile)
+        self.assertNotIn("apptunnel-client", makefile)
+
+        self.assertIn("PROG=/usr/bin/linkease-full", init)
+        self.assertIn("config_load linkeasefull", init)
+        self.assertIn("stop_other_linkease_runtimes()", init)
+        self.assertIn("/etc/init.d/linkease stop", init)
+        self.assertIn("/etc/init.d/linkeaselite stop", init)
+        self.assertIn('uci -q set linkease.@linkease[0].enabled="0"', init)
+        self.assertIn('uci -q set linkeaselite.@linkeaselite[0].enabled="0"', init)
+        self.assertIn("stop_other_linkease_runtimes", init.split("procd_open_instance")[0])
+        self.assertIn("SERVER_HOST=0.0.0.0", init)
+        self.assertIn("SERVER_PORT=$port", init)
+        self.assertIn("SERVER_BASE_PATH=$base_path", init)
+        self.assertIn("LINKEASE_EDITION=nas-full", init)
+        self.assertIn("LINKEASE_APPTUNNEL_INTERNAL_ADDR=127.0.0.1:19810", init)
+        self.assertIn("LINKEASE_APPTUNNEL_LEGACY_ADDR=0.0.0.0:8897", init)
+        self.assertIn("LINKEASE_APPTUNNEL_DATA_DIR=$data_root/apptunnel", init)
+        self.assertIn("APPTUNNEL_MOUNTREMOTE_MODE=real", init)
+        self.assertIn("APPTUNNEL_MOUNTREMOTE_LINKREMOTE_AGENT_BINARY=/usr/bin/linkremote-agent", init)
+        self.assertIn("APPTUNNEL_MOUNTREMOTE_SMBD_BINARY=$LINKEASE_LIBEXEC/linkmount_bin/linkmount_bin", init)
+        self.assertIn("APPTUNNEL_MOUNTREMOTE_SYSTEM_COMMAND_HELPER=$LINKEASE_LIBEXEC/scripts/mountremote-ctl.sh", init)
+        self.assertIn("APPTUNNEL_MOUNTREMOTE_STARTUP_RECONCILE=true", init)
+        self.assertIn("APPTUNNEL_MOUNTREMOTE_ROOT_WATCH_DIR=$data_root/mountremote/root-watch", init)
+        self.assertIn("MOUNTREMOTE_ALLOWED_MOUNT_PREFIX=$data_root_parent", init)
+        self.assertIn("LINKEASE_LIBEXEC=/usr/libexec/linkease", init)
+        self.assertIn("LINKEASE_LINKMOUNT_BIN=$LINKEASE_LIBEXEC/linkmount_bin/linkmount_bin", init)
+        self.assertIn("LINKEASE_LINKMOUNT_LIB_DIR=$LINKEASE_LIBEXEC/linkmount_bin/lib", init)
+        self.assertNotIn("--deviceAddr", init)
+        self.assertNotIn("--localApi", init)
+
+        self.assertIn("option enabled '1'", config)
+        self.assertIn("option port '19290'", config)
+        self.assertIn("option base_path '/apps/'", config)
+        self.assertIn('Map("linkeasefull"', cbi)
+        self.assertIn('/etc/config/linkeasefull', controller)
+        self.assertIn('pidof linkease-full >/dev/null', controller)
+        self.assertIn("Click to open LinkEase Full", status)
+        self.assertIn("st.port || 19290", status)
+        self.assertIn("basePath", status)
+        self.assertIn("PKG_VERSION:=3.0.4", meta)
+        self.assertIn("META_DEPENDS:=+linkeasefull +luci-app-linkeasefull +luci-i18n-linkeasefull-zh-cn", meta)
+        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeasefull", meta)
+        self.assertNotIn("/etc/init.d/linkease enable", defaults)
+        self.assertNotIn("/etc/init.d/linkease restart", defaults)
+        self.assertNotIn("set linkease.@linkease[0].enabled", meta_config)
+        self.assertNotIn("commit linkease\n", meta_config)
+        self.assertNotIn("/etc/init.d/linkease restart", meta_config)
+
+    def test_linkease_packages_do_not_install_overlapping_paths(self):
+        packages = {
+            "linkease": (
+                self.makefile_installed_files("apps/linkease/linkease/Makefile")
+                | self.luci_installed_files("apps/linkease/luci-app-linkease")
+            ),
+            "linkeasefull": (
+                self.makefile_installed_files("apps/linkeasefull/linkeasefull/Makefile")
+                | self.luci_installed_files("apps/linkeasefull/luci-app-linkeasefull")
+            ),
+            "linkeaselite": (
+                self.makefile_installed_files("apps/linkeaselite/linkeaselite/Makefile")
+                | self.luci_installed_files("apps/linkeaselite/luci-app-linkeaselite")
+            ),
+        }
+
+        names = sorted(packages)
+        for index, left_name in enumerate(names):
+            for right_name in names[index + 1 :]:
+                with self.subTest(left=left_name, right=right_name):
+                    self.assertEqual(
+                        set(),
+                        packages[left_name] & packages[right_name],
+                    )
+
+    def test_syncapps_maps_linkeasefull_slots(self):
+        text = (REPO / "syncapps.yaml").read_text(encoding="utf-8")
+
+        self.assertIn("    linkeasefull:", text)
+        self.assertIn("local: apps/linkeasefull/linkeasefull", text)
+        self.assertIn("remote: nas-packages/network/services/linkeasefull", text)
+        self.assertIn("local: apps/linkeasefull/luci-app-linkeasefull", text)
+        self.assertIn("remote: nas-packages-luci/luci/luci-app-linkeasefull", text)
+        self.assertIn("local: apps/linkeasefull/app-meta-linkeasefull", text)
+        self.assertIn("remote: openwrt-app-meta/applications/app-meta-linkeasefull", text)
+
+    def test_apps_catalog_contains_linkeasefull(self):
+        text = (REPO / "docs/apps-catalog.min.md").read_text(encoding="utf-8")
+        data = json.loads((REPO / "docs/apps-catalog.json").read_text(encoding="utf-8"))
+        ids = {item["id"] for item in data}
+
+        self.assertIn("- linkeasefull — 易有云完整版 —", text)
+        self.assertIn("linkeasefull", ids)
+
+
+if __name__ == "__main__":
+    unittest.main()

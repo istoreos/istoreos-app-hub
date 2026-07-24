@@ -5,9 +5,11 @@ function index()
 		return
 	end
 
-	entry({"admin", "services", "linkeaselite"}, cbi("linkeaselite"), _("LinkEaseLite"), 20).dependent = true
+	local page = entry({"admin", "services", "linkeaselite"}, firstchild(), _("LinkEaseLite"), 20)
+	page.dependent = true
+	entry({"admin", "services", "linkeaselite", "config"}, cbi("linkeaselite"), _("Settings"), 10).leaf = true
 	entry({"admin", "services", "linkeaselite_status"}, call("linkeaselite_status"))
-	entry({"admin", "services", "linkeaselite", "file"}, call("linkeaselite_file_template")).leaf = true
+	entry({"admin", "services", "linkeaselite", "file"}, call("linkeaselite_file_removed")).leaf = true
 end
 
 function linkeaselite_status()
@@ -24,13 +26,6 @@ function linkeaselite_status()
 	luci.http.write_json(status)
 end
 
-function get_params(name)
-	local data = {
-		prefix = luci.dispatcher.build_url(unpack({"admin", "services", "linkeaselite", name})),
-	}
-	return data
-end
-
-function linkeaselite_file_template()
-	luci.template.render("linkeaselite/file", get_params("file"))
+function linkeaselite_file_removed()
+	luci.http.status(404, "Not Found")
 end

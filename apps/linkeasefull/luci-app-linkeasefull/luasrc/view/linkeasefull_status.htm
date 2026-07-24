@@ -1,0 +1,39 @@
+<script type="text/javascript">//<![CDATA[
+	XHR.poll(5, '<%=url("admin/services/linkeasefull_status")%>', null,
+		function(x, st)
+		{
+			var tb = document.getElementById('linkeasefull_status');
+			if (st && tb)
+			{
+				var basePath = st.base_path || "/apps/";
+				if (basePath.charAt(0) !== "/")
+				{
+					basePath = "/" + basePath;
+				}
+				if (basePath.charAt(basePath.length - 1) !== "/")
+				{
+					basePath = basePath + "/";
+				}
+
+				var fullUrl = "http://" + window.location.hostname + ":" + (st.port || 19290) + basePath;
+				var overallStatus = st.running
+					? '<br/><em style=\"color:green\"><%:The LinkEase Full service is running.%></em>'
+					: '<br/><em style=\"color:red\"><%:The LinkEase Full service is not running.%></em>';
+				tb.innerHTML = overallStatus;
+
+				if (st.running)
+				{
+					tb.innerHTML = tb.innerHTML
+						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open LinkEase Full%> \" onclick=\"window.open('" + fullUrl + "')\"/>";
+				}
+			}
+		}
+	);
+//]]></script>
+
+<fieldset class="cbi-section">
+	<legend><%:LinkEase Full Status%></legend>
+	<p id="linkeasefull_status">
+		<em><%:Collecting data...%></em>
+	</p>
+</fieldset>

@@ -12,7 +12,7 @@ META_DESCRIPTION.en:=LinkEaseLite provides remote access and lightweight file ma
 META_AUTHOR:=xiaobao
 META_ARCH:=x86_64 aarch64 arm
 META_TAGS:=nas service
-META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeaselite
+META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeaselite/config
 META_WEBSITE:=https://www.linkease.com/
 META_TUTORIAL:=https://doc.linkease.com/zh/guide/istore/software/linkease.html
 

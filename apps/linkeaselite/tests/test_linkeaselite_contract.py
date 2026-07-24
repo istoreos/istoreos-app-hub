@@ -15,6 +15,34 @@ class LinkEaseLiteContractTest(unittest.TestCase):
     def read_repo(self, relative):
         return (REPO / relative).read_text(encoding="utf-8")
 
+    def make_var(self, text, name):
+        match = re.search(r"^%s:=(.+)$" % re.escape(name), text, re.MULTILINE)
+        self.assertIsNotNone(match, "missing make variable %s" % name)
+        return match.group(1).strip()
+
+    def makefile_installed_files(self, relative):
+        paths = set()
+        for line in self.read_repo(relative).splitlines():
+            if "$(INSTALL_BIN)" not in line and "$(INSTALL_CONF)" not in line:
+                continue
+            matches = re.findall(r"\$\(1\)(/\S+)", line)
+            if matches:
+                paths.add(matches[-1])
+        return paths
+
+    def luci_installed_files(self, relative):
+        root = REPO / relative
+        paths = set()
+        for file in (root / "htdocs").rglob("*"):
+            if file.is_file():
+                paths.add("/www/" + file.relative_to(root / "htdocs").as_posix())
+        for file in (root / "luasrc").rglob("*"):
+            if file.is_file():
+                paths.add(
+                    "/usr/lib/lua/luci/" + file.relative_to(root / "luasrc").as_posix()
+                )
+        return paths
+
     def assert_not_contains_full_runtime(self, text):
         forbidden = [
             "linkease-desktop",
@@ -48,13 +76,39 @@ class LinkEaseLiteContractTest(unittest.TestCase):
         self.assertIn("PKG_NAME:=linkeaselite", text)
         self.assertIn("PKG_SOURCE:=linkeaselite-binary-$(PKG_SOURCE_DATE).tar.gz", text)
         self.assertIn("TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) $(TAR_OPTIONS)", text)
-        self.assertIn("CONFLICTS:=linkease", text)
+        self.assertNotIn("CONFLICTS:=linkease", text)
         self.assertIn("DEPENDS:=@(arm||x86_64||aarch64) +ca-bundle", text)
         self.assertIn("/etc/config/linkeaselite", text)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease-lite.$(ARCH) $(1)/usr/sbin/linkease-lite", text)
         self.assertIn("PKG_HASH:=", text)
         self.assertNotIn("PKG_HASH:=skip", text)
         self.assert_not_contains_full_runtime(text)
+
+    def test_lite_starts_from_standard_linkease_app_version(self):
+        lite_runtime = self.read("linkeaselite/Makefile")
+        lite_meta = self.read("app-meta-linkeaselite/Makefile")
+        standard_meta = self.read_repo("apps/linkease/app-meta-linkease/Makefile")
+
+        self.assertEqual(
+            self.make_var(standard_meta, "PKG_VERSION"),
+            self.make_var(lite_runtime, "PKG_SOURCE_DATE"),
+        )
+        self.assertEqual(
+            self.make_var(standard_meta, "PKG_VERSION"),
+            self.make_var(lite_meta, "PKG_VERSION"),
+        )
+
+    def test_installed_file_paths_do_not_overlap_standard_linkease(self):
+        standard_paths = (
+            self.makefile_installed_files("apps/linkease/linkease/Makefile")
+            | self.luci_installed_files("apps/linkease/luci-app-linkease")
+        )
+        lite_paths = (
+            self.makefile_installed_files("apps/linkeaselite/linkeaselite/Makefile")
+            | self.luci_installed_files("apps/linkeaselite/luci-app-linkeaselite")
+        )
+
+        self.assertEqual(set(), standard_paths & lite_paths)
 
     def test_runtime_config_defaults(self):
         text = self.read("linkeaselite/files/linkeaselite.config")
@@ -70,6 +124,12 @@ class LinkEaseLiteContractTest(unittest.TestCase):
 
         self.assertIn("PROG=/usr/sbin/linkease-lite", text)
         self.assertIn("LOCAL_API=/var/run/linkeaselite.sock", text)
+        self.assertIn("stop_linkease_runtimes()", text)
+        self.assertIn("/etc/init.d/linkeasefull stop", text)
+        self.assertIn("/etc/init.d/linkease stop", text)
+        self.assertIn('uci -q set linkease.@linkease[0].enabled="0"', text)
+        self.assertIn('uci -q set linkeasefull.@linkeasefull[0].enabled="0"', text)
+        self.assertIn("stop_linkease_runtimes", text.split("procd_open_instance")[0])
         self.assertEqual(len(re.findall(r"^[ \t]*procd_open_instance\b", text, re.MULTILINE)), 1)
         block = self.procd_instance_block(text, "linkeaselite")
         self.assertIn('procd_set_param command "$PROG"', block)
@@ -138,41 +198,35 @@ class LinkEaseLiteContractTest(unittest.TestCase):
         self.assertIn("LUCI_TITLE:=LuCI support for linkeaselite", makefile)
         self.assertIn("LUCI_DEPENDS:=+linkeaselite", makefile)
         self.assertIn('/etc/config/linkeaselite', controller)
-        self.assertIn('entry({"admin", "services", "linkeaselite"}, cbi("linkeaselite"), _("LinkEaseLite"), 20)', controller)
+        self.assertIn('local page = entry({"admin", "services", "linkeaselite"}, firstchild(), _("LinkEaseLite"), 20)', controller)
+        self.assertIn("page.dependent = true", controller)
+        self.assertIn('entry({"admin", "services", "linkeaselite", "config"}, cbi("linkeaselite"), _("Settings"), 10).leaf = true', controller)
         self.assertIn('pidof linkease-lite >/dev/null', controller)
         self.assertIn('port = (port or 8897)', controller)
         self.assertIn('Map("linkeaselite"', cbi)
         self.assertIn('s:option(Flag, "allowPublic"', cbi)
         self.assertIn("linkeaselite_status", status)
+        self.assertIn('var legacyUrl = "http://" + window.location.hostname + ":" + (st.port || 8897) + "/"', status)
         self.assertIn("Click to open LinkEaseLite", status)
+        self.assertIn('entry({"admin", "services", "linkeaselite", "file"}, call("linkeaselite_file_removed")).leaf = true', controller)
+        self.assertIn('luci.http.status(404, "Not Found")', controller)
+        self.assertNotIn("linkeaselite_file_template", controller)
+        self.assertNotIn('luci.template.render("linkeaselite/file"', controller)
+        self.assertNotIn("Click to open Files", status)
+        self.assertNotIn("linkeaselite/file", status)
         self.assert_not_contains_full_runtime(makefile + controller + cbi + status)
 
-    def test_luci_backend_proxies_to_lite_socket(self):
-        backend = self.read("luci-app-linkeaselite/luasrc/controller/linkeaselite_backend.lua")
-        file_view = self.read("luci-app-linkeaselite/luasrc/view/linkeaselite/file.htm")
-        static_index = ROOT / "luci-app-linkeaselite/htdocs/luci-static/linkeasefile/index.js"
-        static = static_index.read_text(encoding="utf-8")
+    def test_luci_package_excludes_local_file_manager_surface(self):
+        luci_root = ROOT / "luci-app-linkeaselite"
+        controller = self.read("luci-app-linkeaselite/luasrc/controller/linkeaselite.lua")
 
-        self.assertIn('local LINKEASELITE_UNIX = "/var/run/linkeaselite.sock"', backend)
-        self.assertIn('entry({"linkeaselite"}, call("linkeaselite_backend")).leaf=true', backend)
-        self.assertIn("function linkeaselite_backend()", backend)
-        self.assertIn('local request_uri = http.getenv("REQUEST_URI") or "/"', backend)
-        self.assertIn(
-            'request_uri = request_uri:gsub("^/cgi%-bin/luci/linkeaselite", "")', backend
+        self.assertFalse(
+            (luci_root / "luasrc/controller/linkeaselite_backend.lua").exists()
         )
-        self.assertIn('.. " " .. request_uri .. " HTTP/1.1"', backend)
-        self.assertIn("for k, v in pairs(req.message.env)", backend)
-        self.assertNotIn("function get_session()", backend)
-        self.assertNotIn("X-Forwarded-Sid", backend)
-        self.assertNotIn("X-Forwarded-Token", backend)
-        self.assertIn("luci-static/linkeasefile/index.js", file_view)
-        self.assertIn(
-            'window.LINKEASE_BACKEND_PREFIX = "/cgi-bin/luci/linkeaselite"', file_view
-        )
-        self.assertTrue(static_index.is_file())
-        self.assertNotRegex(static, re.compile(r"(?<!/cgi-bin/luci)/linkeaselite"))
-        self.assertEqual(static.count("/cgi-bin/luci/linkeaselite"), 4)
-        self.assertNotIn('/var/run/linkease.sock', backend)
+        self.assertFalse((luci_root / "luasrc/view/linkeaselite/file.htm").exists())
+        self.assertFalse((luci_root / "htdocs/luci-static/linkeaselitefile").exists())
+        self.assertFalse((luci_root / "htdocs/luci-static/linkeasefile").exists())
+        self.assertNotIn('entry({"linkeaselite"}', controller)
 
     def test_app_meta_declares_linkeaselite(self):
         makefile = self.read("app-meta-linkeaselite/Makefile")
@@ -183,7 +237,7 @@ class LinkEaseLiteContractTest(unittest.TestCase):
         self.assertIn("META_TITLE.en:=LinkEaseLite", makefile)
         self.assertIn("META_DEPENDS:=+linkeaselite +luci-app-linkeaselite +luci-i18n-linkeaselite-zh-cn", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
-        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeaselite", makefile)
+        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeaselite/config", makefile)
         self.assertIn('set linkeaselite.@linkeaselite[0].enabled="1"', config)
         self.assertIn("/etc/init.d/linkeaselite restart", config)
 

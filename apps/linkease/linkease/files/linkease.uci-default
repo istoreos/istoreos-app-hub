@@ -12,15 +12,9 @@ set_default() {
 	uci -q set "linkease.@linkease[0].$key=$value"
 }
 
-uci -q set linkease.@linkease[0].edition='full'
 set_default enabled 1
 set_default port 8897
-set_default desktop_port 19290
-set_default desktop_base_path /apps/
-set_default desktop_enabled 1
-set_default apptunnel_enabled 1
 set_default allowPublic 0
-set_default low_memory_fallback 1
 uci -q commit linkease
 port="$(uci -q get linkease.@linkease[0].port 2>/dev/null || true)"
 [ -n "$port" ] || port=8897

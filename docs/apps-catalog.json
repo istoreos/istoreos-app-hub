@@ -539,8 +539,8 @@
   {
     "id": "linkease",
     "title": "易有云",
-    "description": "易有云提供远程访问、文件管理、相册备份、文件同步、备份仓库和桌面式本地文件管理能力。",
-    "description_en": "LinkEase full provides remote access, file management, photo backup, sync, backup repository, and a local web desktop.",
+    "description": "易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。",
+    "description_en": "LinkEase provides remote access, file management, photo backup, sync, and backup repository.",
     "tags": [
       "nas",
       "service"
@@ -552,6 +552,23 @@
     "depends": "+linkease +luci-app-linkease +luci-i18n-linkease-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease",
     "meta_dir": "apps/linkease/app-meta-linkease"
+  },
+  {
+    "id": "linkeasefull",
+    "title": "易有云完整版",
+    "description": "易有云完整版提供本地 Web 桌面和 8897 兼容入口，运行时会停用标准版易有云。",
+    "description_en": "LinkEase Full provides the local web desktop and legacy 8897 entry, disabling the standard LinkEase runtime while it runs.",
+    "tags": [
+      "nas",
+      "service"
+    ],
+    "website": "https://www.linkease.com/",
+    "author": "xiaobao",
+    "version": "3.0.4",
+    "release": "1",
+    "depends": "+linkeasefull +luci-app-linkeasefull +luci-i18n-linkeasefull-zh-cn",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
+    "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"
   },
   {
     "id": "linkeaselite",
@@ -567,7 +584,7 @@
     "version": "3.0.0",
     "release": "1",
     "depends": "+linkeaselite +luci-app-linkeaselite +luci-i18n-linkeaselite-zh-cn",
-    "luci_entry": "/cgi-bin/luci/admin/services/linkeaselite",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkeaselite/config",
     "meta_dir": "apps/linkeaselite/app-meta-linkeaselite"
   },
   {
