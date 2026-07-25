@@ -10,14 +10,29 @@ function index()
 	entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true
 end
 
+local function uhttpd_has_apps_proxy_prefix()
+	local uci = require "luci.model.uci".cursor()
+	local mappings = uci:get_list("uhttpd", "main", "proxy_prefix") or {}
+
+	for _, mapping in ipairs(mappings) do
+		if mapping == "/apps=http://127.0.0.1:19290" then
+			return true
+		end
+	end
+	return false
+end
+
 function linkeasefull_status()
 	local sys  = require "luci.sys"
+	local uci  = require "luci.model.uci".cursor()
 
 	local status = {
 		running = (sys.call("pidof linkease-full >/dev/null") == 0),
 		full_port = 19290,
 		legacy_port = 8897,
-		base_path = "/apps/"
+		base_path = "/apps/",
+		lan_ip = uci:get("network", "lan", "ipaddr") or "",
+		proxy_prefix_enabled = uhttpd_has_apps_proxy_prefix()
 	}
 
 	luci.http.prepare_content("application/json")
