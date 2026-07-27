@@ -17,13 +17,9 @@ function linkease_status()
 	local sys  = require "luci.sys"
 	local uci  = require "luci.model.uci".cursor()
 	local port = tonumber(uci:get_first("linkease", "linkease", "port"))
-	local legacy_running = (sys.call("pidof linkease >/dev/null") == 0)
-	local full_running = (sys.call("pidof linkease-full >/dev/null") == 0)
 
 	local status = {
-		running = (legacy_running or full_running),
-		legacy_running = legacy_running,
-		full_running = full_running,
+		running = (sys.call("pidof linkease >/dev/null") == 0),
 		port = (port or 8897)
 	}
 
