@@ -19,6 +19,7 @@ Optional:
   BAIDUDRIVE_VERSION=1.0.1
   BAIDUDRIVE_ARCH=<x86_64|aarch64>
   BAIDUDRIVE_TARBALL_URL=<url>
+  BAIDUDRIVE_SDK_TARBALL_URL=<url>
   BAIDUDRIVE_INSTALL_DEPS=1
   BAIDUDRIVE_OVERWRITE_CONFIG=0
   BAIDUDRIVE_RESTART=1
@@ -37,12 +38,14 @@ need_cmd() { command -v "$1" >/dev/null 2>&1 || die "missing required command: $
 PROJECT_ROOT=""
 WORK_DIR=""
 TARBALL_PATH=""
+SDK_TARBALL_PATH=""
 PAYLOAD_PATH=""
 
 cleanup() {
   set +e
   [[ -n "${WORK_DIR:-}" ]] && rm -rf "$WORK_DIR"
   [[ -n "${TARBALL_PATH:-}" ]] && rm -f "$TARBALL_PATH"
+  [[ -n "${SDK_TARBALL_PATH:-}" ]] && rm -f "$SDK_TARBALL_PATH"
   [[ -n "${PAYLOAD_PATH:-}" ]] && rm -f "$PAYLOAD_PATH"
 }
 
@@ -71,21 +74,32 @@ stage_luci() {
   copy_tree_into "$luci_dir/root" "$staging_dir"
 }
 
-stage_runtime() {
-  local extracted_root="$1"
-  local arch="$2"
-  local staging_dir="$3"
-
-  local src_arch="$arch"
+normalize_arch() {
+  local arch="$1"
   case "$arch" in
-    x86_64|aarch64) ;;
-    arm64) src_arch="aarch64" ;;
+    x86_64|aarch64) printf '%s\n' "$arch" ;;
+    arm64) printf 'aarch64\n' ;;
     *) die "unsupported BAIDUDRIVE_ARCH: $arch" ;;
   esac
+}
+
+stage_runtime() {
+  local extracted_root="$1"
+  local sdk_pkg_root="$2"
+  local arch="$3"
+  local staging_dir="$4"
+
+  local src_arch
+  src_arch="$(normalize_arch "$arch")"
 
   local binary="$extracted_root/baidudrive.$src_arch"
   local sdk_dir="$extracted_root/nas_sdk/$src_arch"
   local glibc_dir="$extracted_root/glibc/$src_arch"
+  local split_root="$sdk_pkg_root/$src_arch/usr/lib/baidusdk"
+  if [[ ! -d "$sdk_dir" || ! -d "$glibc_dir" ]]; then
+    sdk_dir="$split_root/nas_sdk"
+    glibc_dir="$split_root/glibc"
+  fi
 
   [[ -x "$binary" ]] || die "missing binary: $binary"
   [[ -x "$sdk_dir/baiduNas" ]] || die "missing SDK binary: $sdk_dir/baiduNas"
@@ -100,12 +114,26 @@ stage_runtime() {
   ln -sfn /usr/sbin/baidudrive "$staging_dir/opt/baidunas-sdk/P2PClient"
   copy_tree_into "$glibc_dir" "$staging_dir/opt/baidunas-glibc"
   if [[ "$src_arch" == "x86_64" ]]; then
-    local loader_src="$staging_dir/opt/baidunas-glibc/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
+    local loader_src="$staging_dir/opt/baidunas-glibc/ld-linux-x86-64.so.2"
+    local legacy_loader_src="$staging_dir/opt/baidunas-glibc/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
+    local legacy_loader_src2="$staging_dir/opt/baidunas-glibc/lib64/ld-linux-x86-64.so.2"
     local loader_dst="$staging_dir/opt/baidunas-glibc/lib64/ld-linux-x86-64.so.2"
+    if [[ ! -e "$loader_src" && -e "$legacy_loader_src" ]]; then
+      cp -a "$legacy_loader_src" "$loader_src"
+    fi
+    if [[ ! -e "$loader_src" && -e "$legacy_loader_src2" ]]; then
+      cp -a "$legacy_loader_src2" "$loader_src"
+    fi
     if [[ -e "$loader_src" ]]; then
       mkdir -p "$(dirname "$loader_dst")"
       rm -f "$loader_dst"
       cp -a "$loader_src" "$loader_dst"
+    fi
+  elif [[ "$src_arch" == "aarch64" ]]; then
+    local loader_src="$staging_dir/opt/baidunas-glibc/ld-linux-aarch64.so.1"
+    local legacy_loader_src="$staging_dir/opt/baidunas-glibc/lib/ld-linux-aarch64.so.1"
+    if [[ ! -e "$loader_src" && -e "$legacy_loader_src" ]]; then
+      cp -a "$legacy_loader_src" "$loader_src"
     fi
   fi
 
@@ -140,12 +168,14 @@ main() {
   PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
   WORK_DIR="$(mktemp -d)"
   TARBALL_PATH="$(mktemp -t baidudrive-prebuilt.XXXXXX.tar.gz)"
+  SDK_TARBALL_PATH="$(mktemp -t baidusdk-prebuilt.XXXXXX.tar.gz)"
   PAYLOAD_PATH="$(mktemp -t baidudrive-install.XXXXXX.tgz)"
   trap cleanup EXIT
 
   local version="${BAIDUDRIVE_VERSION:-1.0.1}"
   local arch="${BAIDUDRIVE_ARCH:-${DEPLOY_ARCH:-x86_64}}"
   local url="${BAIDUDRIVE_TARBALL_URL:-https://github.com/linkease/istore-packages/releases/download/prebuilt/baidudrive-binary-${version}.tar.gz}"
+  local sdk_url="${BAIDUDRIVE_SDK_TARBALL_URL:-https://github.com/linkease/istore-packages/releases/download/prebuilt/baidusdk-binary-${version}.tar.gz}"
   local install_deps="${BAIDUDRIVE_INSTALL_DEPS:-1}"
   local overwrite_config="${BAIDUDRIVE_OVERWRITE_CONFIG:-0}"
   local restart_service="${BAIDUDRIVE_RESTART:-1}"
@@ -155,10 +185,18 @@ main() {
 
   local extracted_root="$WORK_DIR/baidudrive-binary-$version"
   [[ -d "$extracted_root" ]] || die "missing tarball root: baidudrive-binary-$version"
+  local sdk_pkg_root="$WORK_DIR/baidusdk-binary-$version"
+  local src_arch
+  src_arch="$(normalize_arch "$arch")"
+  if [[ ! -d "$extracted_root/nas_sdk/$src_arch" || ! -d "$extracted_root/glibc/$src_arch" ]]; then
+    curl -fsSL "$sdk_url" -o "$SDK_TARBALL_PATH"
+    tar -xzf "$SDK_TARBALL_PATH" -C "$WORK_DIR"
+    [[ -d "$sdk_pkg_root" ]] || die "missing tarball root: baidusdk-binary-$version"
+  fi
 
   local staging_dir="$WORK_DIR/staging"
   mkdir -p "$staging_dir"
-  stage_runtime "$extracted_root" "$arch" "$staging_dir"
+  stage_runtime "$extracted_root" "$sdk_pkg_root" "$arch" "$staging_dir"
   stage_luci "$staging_dir"
 
   tar -C "$staging_dir" -czf "$PAYLOAD_PATH" .
