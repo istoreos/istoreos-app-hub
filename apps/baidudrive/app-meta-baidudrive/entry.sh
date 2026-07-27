@@ -10,12 +10,15 @@ status(){
 
 	local port
 	port="$(uci get baidudrive.@baidudrive[0].port 2>/dev/null)"
-	[ -n "$port" ] || port="8080"
+	[ -n "$port" ] || port="10780"
+	local base_path
+	base_path="$(uci get baidudrive.@baidudrive[0].base_path 2>/dev/null)"
+	[ -n "$base_path" ] || base_path="/apps/baidudrive"
 
 	if pidof baidudrive >/dev/null 2>&1; then
 		json_add_boolean "running" "1"
-		json_add_string "web" ":${port}"
-		json_add_string "href" "http://$host:${port}/"
+		json_add_string "web" "${base_path}/"
+		json_add_string "href" "http://$host${base_path}/"
 		json_add_string "protocol" http
 		json_add_string "port" "${port}"
 		json_add_boolean "deployed" "1"

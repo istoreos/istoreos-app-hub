@@ -29,4 +29,14 @@ port.rmempty = false
 port.datatype = "port"
 port.description = translate("Port for BaiduDrive HTTP server.")
 
+local host = s:option(Value, "host", translate("Listen host"))
+host.default = "127.0.0.1"
+host.rmempty = false
+host.description = translate("Host for BaiduDrive HTTP server. Use 127.0.0.1 when accessed through Linkease Desktop.")
+
+local base_path = s:option(Value, "base_path", translate("Base path"))
+base_path.default = "/apps/baidudrive"
+base_path.rmempty = false
+base_path.description = translate("HTTP base path used by Linkease Desktop reverse proxy.")
+
 return m
