@@ -306,6 +306,18 @@ apps:
         meta:
             - local: apps/linkease/app-meta-linkease
               remote: openwrt-app-meta/applications/app-meta-linkease
+    linkease-common-bin:
+        services:
+            - local: apps/linkease-common-bin/linkease-common-bin
+              remote: nas-packages/network/services/linkease-common-bin
+        luci: []
+        meta: []
+    linkeasefile:
+        services: []
+        luci:
+            - local: apps/linkeasefile/luci-lib-linkeasefile
+              remote: nas-packages-luci/luci/luci-lib-linkeasefile
+        meta: []
     linkeaselite:
         services:
             - local: apps/linkeaselite/linkeaselite

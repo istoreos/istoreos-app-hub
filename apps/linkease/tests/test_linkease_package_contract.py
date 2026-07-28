@@ -56,6 +56,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
 
     def test_standard_linkease_uses_legacy_runtime_only(self):
         makefile = self.read_app("linkease", "linkease/Makefile")
+        common_makefile = self.read_app("linkease-common-bin", "linkease-common-bin/Makefile")
         init = self.read_app("linkease", "linkease/files/linkease.init")
         config = self.read_app("linkease", "linkease/files/linkease.config")
         helper = self.read_app("linkease", "linkease/files/linkease-config.sh")
@@ -70,11 +71,17 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_SOURCE:=linkease-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn("PKG_SOURCE_URL:=https://dl.istoreos.com/binary/LinkEase/LinuxStorage/", makefile)
         self.assertIn("PKG_SOURCE_DATE:=1.7.5", makefile)
-        self.assertIn("DEPENDS:=@(arm||x86_64||aarch64)", makefile)
+        self.assertIn("DEPENDS:=@(arm||x86_64||aarch64) +linkease-common-bin", makefile)
         self.assertNotIn("+linkmount", makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease", makefile)
-        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/heif-converter.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/heif-converter", makefile)
-        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease-media.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease-media", makefile)
+        self.assertNotIn("$(1)/usr/sbin/heif-converter", makefile)
+        self.assertNotIn("$(1)/usr/sbin/linkease-media", makefile)
+        self.assertIn("PKG_NAME:=linkease-common-bin", common_makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/heif-converter.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/heif-converter", common_makefile)
+        self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease-media.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease-media", common_makefile)
+        self.assertNotIn("$(1)/usr/sbin/linkease\n", common_makefile)
+        self.assertNotIn("/etc/config/linkease", common_makefile)
+        self.assertNotIn("/etc/init.d/linkease", common_makefile)
         self.assertNotIn("linkease-migrate.sh", makefile)
         self.assertNotIn("linkease-desktop", makefile)
         self.assertNotIn("apptunnel-client", makefile)
@@ -114,7 +121,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
 
     def test_legacy_luci_file_proxy_uses_shared_unix_socket_only(self):
         backend = self.read_app(
-            "linkease", "luci-app-linkease/luasrc/controller/linkease_backend.lua"
+            "linkeasefile", "luci-lib-linkeasefile/luasrc/controller/linkease_file.lua"
         )
         controller = self.read_app(
             "linkease", "luci-app-linkease/luasrc/controller/linkease.lua"
@@ -136,7 +143,9 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("backend_request_uri(backend_kind)", backend)
         self.assertNotIn('local prefix = "/cgi-bin/luci/linkease"', backend)
         self.assertIn('entry({"linkease"}, call("linkease_backend")).leaf=true', backend)
-        self.assertIn('entry({"admin", "services", "linkease", "file"}, call("linkease_file_template")).leaf = true', controller)
+        self.assertIn('entry({"admin", "services", "linkease", "file"}, call("linkease_file_template"))', backend)
+        self.assertNotIn("linkease_file_template", controller)
+        self.assertNotIn('{"admin", "services", "linkease", "file"}', controller)
         self.assertIn('running = (sys.call("pidof linkease >/dev/null") == 0)', controller)
         self.assertIn("Click to open Files", status)
         self.assertIn("LOCAL_API=/var/run/linkease.sock", full_init)
@@ -163,6 +172,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("LINKEASE_RUNTIME_ARCH:=amd64", makefile)
         self.assertIn("LINKEASE_RUNTIME_ARCH:=arm64", makefile)
         self.assertIn("PKG_SOURCE:=linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz", makefile)
+        self.assertIn("PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/linkeasefull-runtime-v$(PKG_SOURCE_DATE)/", makefile)
+        self.assertNotIn("linkease-desktop", makefile)
         self.assertIn("9e8d7b42d0cfb7ae746a34fb1980978b8a32fc57ac5ad905f27df4229cedeb98", makefile)
         self.assertIn("6a02d5a515e80819693609f042a25f0dd005307d54f7111e5ccf730d683743e3", makefile)
         self.assertIn("TAR_CMD=$(HOST_TAR) -C $(PKG_BUILD_DIR) --strip-components=1 $(TAR_OPTIONS)", makefile)
@@ -172,7 +183,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkmount_bin/linkmount_bin $(1)/usr/libexec/linkeasefull/linkmount_bin/linkmount_bin", makefile)
         self.assertIn("$(CP) $(PKG_BUILD_DIR)/linkmount_bin/lib $(1)/usr/libexec/linkeasefull/linkmount_bin/lib", makefile)
         self.assertIn("$(CP) $(PKG_BUILD_DIR)/scripts/. $(1)/usr/libexec/linkeasefull/scripts/", makefile)
-        self.assertIn("DEPENDS:=@(x86_64||aarch64) +linkease +luci-app-linkease +ca-bundle", makefile)
+        self.assertIn("DEPENDS:=@(x86_64||aarch64) +linkease-common-bin +ca-bundle", makefile)
+        self.assertNotIn("+linkease +luci-app-linkease", makefile)
         self.assertNotIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/heif-converter $(1)/usr/bin/heif-converter", makefile)
         self.assertNotIn("/etc/config/linkease\n", makefile)
         self.assertNotIn("/etc/init.d/linkease\n", makefile)
@@ -260,10 +272,15 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn('"/apps/"', status)
         self.assertNotIn("basePath", status)
         self.assertIn("PKG_VERSION:=3.0.4", meta)
-        self.assertIn("META_DEPENDS:=+linkease +luci-app-linkease +luci-i18n-linkease-zh-cn +linkeasefull +luci-app-linkeasefull +luci-i18n-linkeasefull-zh-cn", meta)
-        self.assertIn("复用标准版易有云 LuCI 文件入口", meta)
+        self.assertIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
+        self.assertNotIn("+linkease +luci-app-linkease", meta)
+        self.assertIn("复用独立的易有云文件管理入口", meta)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeasefull", meta)
         self.assertFalse((REPO / "apps/linkeasefull/luci-app-linkeasefull/htdocs/luci-static/linkeasefile").exists())
+        self.assertFalse((REPO / "apps/linkease/luci-app-linkease/htdocs/luci-static/linkeasefile").exists())
+        self.assertFalse((REPO / "apps/linkease/luci-app-linkease/luasrc/controller/linkease_backend.lua").exists())
+        self.assertTrue((REPO / "apps/linkeasefile/luci-lib-linkeasefile/htdocs/luci-static/linkeasefile").exists())
+        self.assertTrue((REPO / "apps/linkeasefile/luci-lib-linkeasefile/luasrc/controller/linkease_file.lua").exists())
         self.assertNotIn("set_default port", defaults)
         self.assertNotIn("set_default base_path", defaults)
         self.assertNotIn("/etc/init.d/linkease enable", defaults)
@@ -277,6 +294,12 @@ class LinkEasePackageContractTest(unittest.TestCase):
             "linkease": (
                 self.makefile_installed_files("apps/linkease/linkease/Makefile")
                 | self.luci_installed_files("apps/linkease/luci-app-linkease")
+            ),
+            "linkease-common-bin": self.makefile_installed_files(
+                "apps/linkease-common-bin/linkease-common-bin/Makefile"
+            ),
+            "linkeasefile": self.luci_installed_files(
+                "apps/linkeasefile/luci-lib-linkeasefile"
             ),
             "linkeasefull": (
                 self.makefile_installed_files("apps/linkeasefull/linkeasefull/Makefile")
@@ -307,6 +330,12 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("remote: nas-packages-luci/luci/luci-app-linkeasefull", text)
         self.assertIn("local: apps/linkeasefull/app-meta-linkeasefull", text)
         self.assertIn("remote: openwrt-app-meta/applications/app-meta-linkeasefull", text)
+        self.assertIn("    linkease-common-bin:", text)
+        self.assertIn("local: apps/linkease-common-bin/linkease-common-bin", text)
+        self.assertIn("remote: nas-packages/network/services/linkease-common-bin", text)
+        self.assertIn("    linkeasefile:", text)
+        self.assertIn("local: apps/linkeasefile/luci-lib-linkeasefile", text)
+        self.assertIn("remote: nas-packages-luci/luci/luci-lib-linkeasefile", text)
 
     def test_apps_catalog_contains_linkeasefull(self):
         text = (REPO / "docs/apps-catalog.min.md").read_text(encoding="utf-8")

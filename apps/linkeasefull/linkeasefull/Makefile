@@ -19,7 +19,7 @@ PKG_HASH:=6a02d5a515e80819693609f042a25f0dd005307d54f7111e5ccf730d683743e3
 endif
 
 PKG_SOURCE:=linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz
-PKG_SOURCE_URL:=https://github.com/linkease/linkease-desktop/releases/download/linkease-runtime-v$(PKG_SOURCE_DATE)/
+PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/linkeasefull-runtime-v$(PKG_SOURCE_DATE)/
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_SOURCE_DATE)
 
 PKG_BUILD_PARALLEL:=1
@@ -33,12 +33,12 @@ define Package/$(PKG_NAME)
 	CATEGORY:=Network
 	SUBMENU:=Web Servers/Proxies
 	TITLE:=LinkEase Full - the local web desktop
-	DEPENDS:=@(x86_64||aarch64) +linkease +luci-app-linkease +ca-bundle
+	DEPENDS:=@(x86_64||aarch64) +linkease-common-bin +ca-bundle
 	URL:=https://www.linkease.com/
 endef
 
 define Package/$(PKG_NAME)/description
-  LinkEase Full provides the local web desktop entry for LinkEase and reuses the standard LinkEase LuCI file entry.
+  LinkEase Full provides the local web desktop entry for LinkEase and reuses the shared LinkEase file entry.
 endef
 
 define Package/$(PKG_NAME)/conffiles

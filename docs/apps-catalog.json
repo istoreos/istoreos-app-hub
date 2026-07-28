@@ -61,8 +61,8 @@
     ],
     "website": "https://pan.baidu.com",
     "author": "linkease",
-    "version": "1.0.0",
-    "release": "3",
+    "version": "1.0.3",
+    "release": "1",
     "depends": "+luci-i18n-baidudrive-zh-cn +luci-app-baidudrive +baidudrive",
     "luci_entry": "/cgi-bin/luci/admin/services/baidudrive",
     "meta_dir": "apps/baidudrive/app-meta-baidudrive"
@@ -348,8 +348,8 @@
     "website": "https://www.immich.app",
     "author": "immich",
     "version": "1.0.2",
-    "release": "20250321",
-    "depends": "+vmease +luci-app-immich +luci-i18n-immich-zh-cn +docker-deps",
+    "release": "20260722",
+    "depends": "+luci-app-immich +luci-i18n-immich-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/immich",
     "meta_dir": "apps/immich/app-meta-immich"
   },
@@ -364,8 +364,8 @@
     "website": "https://www.istoreos.com",
     "author": "xiaobao",
     "version": "1.1.6",
-    "release": "20250325",
-    "depends": "+vmease +luci-app-istoredup +luci-i18n-istoredup-zh-cn +docker-deps",
+    "release": "20260722",
+    "depends": "+luci-app-istoredup +luci-i18n-istoredup-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/istoredup",
     "meta_dir": "apps/istoredup/app-meta-istoredup"
   },
@@ -414,8 +414,8 @@
     "website": "https://github.com/linkease/nas-packages-luci",
     "author": "Carseason",
     "version": "0.6.6",
-    "release": "3",
-    "depends": "+luci-app-istorex +luci-js-deps",
+    "release": "4",
+    "depends": "+luci-app-istorex",
     "luci_entry": "/cgi-bin/luci/admin/istorex",
     "meta_dir": "apps/istorex/app-meta-istorex"
   },
@@ -549,15 +549,15 @@
     "author": "xiaobao",
     "version": "3.0.0",
     "release": "1",
-    "depends": "+linkease +luci-app-linkease +luci-i18n-linkease-zh-cn",
+    "depends": "+linkease +linkease-common-bin +luci-app-linkease +luci-lib-linkeasefile +luci-i18n-linkease-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease",
     "meta_dir": "apps/linkease/app-meta-linkease"
   },
   {
     "id": "linkeasefull",
     "title": "易有云完整版",
-    "description": "易有云完整版提供本地 Web 桌面和 8897 兼容入口，复用标准版易有云 LuCI 文件入口，运行时会停用标准版易有云。",
-    "description_en": "LinkEase Full provides the local web desktop and legacy 8897 entry, reuses the standard LinkEase LuCI file entry, and disables the standard LinkEase runtime while it runs.",
+    "description": "易有云完整版提供本地 Web 桌面和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。",
+    "description_en": "LinkEase Full provides the local web desktop and legacy 8897 entry, reuses the shared LinkEase file entry, and disables the standard LinkEase runtime while it runs.",
     "tags": [
       "nas",
       "service"
@@ -566,7 +566,7 @@
     "author": "xiaobao",
     "version": "3.0.4",
     "release": "1",
-    "depends": "+linkease +luci-app-linkease +luci-i18n-linkease-zh-cn +linkeasefull +luci-app-linkeasefull +luci-i18n-linkeasefull-zh-cn",
+    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
     "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"
   },
@@ -834,8 +834,8 @@
     "website": "https://pve.proxmox.com/",
     "author": "Proxmox",
     "version": "8.3.2",
-    "release": "20250325",
-    "depends": "+vmease +luci-app-pve +luci-i18n-pve-zh-cn +docker-deps",
+    "release": "20260722",
+    "depends": "+luci-app-pve +luci-i18n-pve-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/pve",
     "meta_dir": "apps/pve/app-meta-pve"
   },
@@ -1036,8 +1036,8 @@
     "website": "https://webvirt.cloud/",
     "author": "webvirtcloud",
     "version": "0.8.5",
-    "release": "20250325",
-    "depends": "+vmease +luci-app-webvirtcloud +luci-i18n-webvirtcloud-zh-cn +docker-deps",
+    "release": "20260722",
+    "depends": "+luci-app-webvirtcloud +luci-i18n-webvirtcloud-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/webvirtcloud",
     "meta_dir": "apps/webvirtcloud/app-meta-webvirtcloud"
   },

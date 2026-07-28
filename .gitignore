@@ -7,3 +7,5 @@ bin/
 .it-runner/envs/080-secret-local.env
 .it-runner/tasks/**/task.local.yaml
 tmp
+__pycache__
+
