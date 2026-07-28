@@ -45,18 +45,8 @@ resolve_data_root_parent() {
 	return 1
 }
 
-stop_other_linkease_runtimes() {
-	[ -x /etc/init.d/linkease ] && /etc/init.d/linkease stop >/dev/null 2>&1
-	[ -x /etc/init.d/linkeaselite ] && /etc/init.d/linkeaselite stop >/dev/null 2>&1
-
-	if uci -q get linkease.@linkease[0] >/dev/null 2>&1; then
-		uci -q set linkease.@linkease[0].enabled="0"
-		uci -q commit linkease
-	fi
-	if uci -q get linkeaselite.@linkeaselite[0] >/dev/null 2>&1; then
-		uci -q set linkeaselite.@linkeaselite[0].enabled="0"
-		uci -q commit linkeaselite
-	fi
+linkease_enabled() {
+	[ "$(uci -q get linkease.@linkease[0].enabled 2>/dev/null)" = "1" ]
 }
 
 read_config() {
@@ -77,12 +67,15 @@ start_service() {
 	config_foreach read_config linkeasefull
 	[ "$enabled" = "1" ] || return 1
 	[ -x "$PROG" ] || return 1
+	if linkease_enabled; then
+		echo "linkeasefull: linkease is enabled; please disable linkease before starting linkeasefull" >&2
+		return 1
+	fi
 	if [ -z "$data_root_parent" ]; then
 		echo "linkeasefull: please choose a persistent disk storage path in LuCI" >&2
 		return 1
 	fi
 
-	stop_other_linkease_runtimes
 	rm -f "$LOCAL_API"
 	mkdir -p "$data_root/users/admin" "$data_root/system" "$data_root/tmp" "$recycle_root"
 	mkdir -p "$data_root/apptunnel" "$data_root/mountremote" "$data_root/logs"
@@ -103,6 +96,7 @@ start_service() {
 		"LINKEASE_APPTUNNEL_INTERNAL_ADDR=127.0.0.1:19810" \
 		"LINKEASE_APPTUNNEL_LEGACY_ADDR=$LINKEASE_LEGACY_ADDR" \
 		"LINKEASE_APPTUNNEL_LOCAL_API=$LOCAL_API" \
+		"LINKEASE_CONFIG=$data_root/apptunnel" \
 		"LINKEASE_APPTUNNEL_DATA_DIR=$data_root/apptunnel" \
 		"LINKEASE_APPTUNNEL_CACHE_DIR=$data_root/apptunnel/cache" \
 		"LINKEASE_APPTUNNEL_RUNTIME_DIR=$data_root/apptunnel/runtime" \
