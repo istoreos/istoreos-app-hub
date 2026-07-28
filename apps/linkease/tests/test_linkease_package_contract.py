@@ -104,7 +104,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("Click to open LinkEase Full", status)
         self.assertNotIn("Click to open LinkEase Legacy", status)
         self.assertIn('pidof linkease >/dev/null', controller)
-        self.assertIn('pidof linkease-full >/dev/null', controller)
+        self.assertNotIn('pidof linkease-full >/dev/null', controller)
         self.assertNotIn("desktop_running", controller)
         self.assertNotIn("apptunnel_running", controller)
         self.assertNotIn("desktop_port", helper)
@@ -112,7 +112,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("desktop_url", helper)
         self.assertNotIn("data_root_parent", helper)
 
-    def test_legacy_luci_file_proxy_falls_back_to_full_legacy_tcp(self):
+    def test_legacy_luci_file_proxy_uses_shared_unix_socket_only(self):
         backend = self.read_app(
             "linkease", "luci-app-linkease/luasrc/controller/linkease_backend.lua"
         )
@@ -122,25 +122,26 @@ class LinkEasePackageContractTest(unittest.TestCase):
         status = self.read_app(
             "linkease", "luci-app-linkease/luasrc/view/linkease_status.htm"
         )
+        full_init = self.read_app("linkeasefull", "linkeasefull/files/linkeasefull.init")
 
         self.assertIn('local LINKEASE_UNIX = "/var/run/linkease.sock"', backend)
-        self.assertIn('local LINKEASE_FULL_LEGACY_HOST = "127.0.0.1"', backend)
-        self.assertIn('local LINKEASE_FULL_LEGACY_PORT = 8897', backend)
-        self.assertIn("connect_linkease_backend()", backend)
+        self.assertNotIn("LINKEASE_FULL_LEGACY_HOST", backend)
+        self.assertNotIn("LINKEASE_FULL_LEGACY_PORT", backend)
+        self.assertNotIn("connect_linkease_backend()", backend)
         self.assertIn('nixio.socket("unix", "stream")', backend)
-        self.assertIn('nixio.socket("inet", "stream")', backend)
+        self.assertNotIn('nixio.socket("inet", "stream")', backend)
         self.assertIn("sock:connect(LINKEASE_UNIX)", backend)
-        self.assertIn("sock:connect(LINKEASE_FULL_LEGACY_HOST, LINKEASE_FULL_LEGACY_PORT)", backend)
-        self.assertIn('return sock, "unix"', backend)
-        self.assertIn('return sock, "tcp"', backend)
-        self.assertIn("backend_request_uri(backend_kind)", backend)
-        self.assertIn('local prefix = "/cgi-bin/luci/linkease"', backend)
-        self.assertIn('k ~= "HTTP_CONNECTION"', backend)
-        self.assertIn('"Connection: close"', backend)
+        self.assertNotIn("sock:connect(LINKEASE_FULL_LEGACY_HOST, LINKEASE_FULL_LEGACY_PORT)", backend)
+        self.assertNotIn('return sock, "tcp"', backend)
+        self.assertNotIn("backend_request_uri(backend_kind)", backend)
+        self.assertNotIn('local prefix = "/cgi-bin/luci/linkease"', backend)
         self.assertIn('entry({"linkease"}, call("linkease_backend")).leaf=true', backend)
         self.assertIn('entry({"admin", "services", "linkease", "file"}, call("linkease_file_template")).leaf = true', controller)
-        self.assertIn('running = (legacy_running or full_running)', controller)
+        self.assertIn('running = (sys.call("pidof linkease >/dev/null") == 0)', controller)
         self.assertIn("Click to open Files", status)
+        self.assertIn("LOCAL_API=/var/run/linkease.sock", full_init)
+        self.assertIn('rm -f "$LOCAL_API"', full_init)
+        self.assertIn("LINKEASE_APPTUNNEL_LOCAL_API=$LOCAL_API", full_init)
 
     def test_linkeasefull_is_dependent_full_runtime_package(self):
         makefile = self.read_app("linkeasefull", "linkeasefull/Makefile")
@@ -190,12 +191,15 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("LINKEASE_FULL_PORT=19290", init)
         self.assertIn("LINKEASE_BASE_PATH=/apps/", init)
         self.assertIn("LINKEASE_LEGACY_ADDR=0.0.0.0:8897", init)
+        self.assertIn("LOCAL_API=/var/run/linkease.sock", init)
+        self.assertIn('rm -f "$LOCAL_API"', init)
         self.assertIn("SERVER_PORT=$LINKEASE_FULL_PORT", init)
         self.assertIn("SERVER_BASE_PATH=$LINKEASE_BASE_PATH", init)
         self.assertIn("LINKEASE_AUTH_PROVIDER=openwrt_luci", init)
         self.assertIn("LINKEASE_EDITION=nas-full", init)
         self.assertIn("LINKEASE_APPTUNNEL_INTERNAL_ADDR=127.0.0.1:19810", init)
         self.assertIn("LINKEASE_APPTUNNEL_LEGACY_ADDR=$LINKEASE_LEGACY_ADDR", init)
+        self.assertIn("LINKEASE_APPTUNNEL_LOCAL_API=$LOCAL_API", init)
         self.assertIn("LINKEASE_APPTUNNEL_DATA_DIR=$data_root/apptunnel", init)
         self.assertIn("APPTUNNEL_MOUNTREMOTE_MODE=real", init)
         self.assertIn("APPTUNNEL_MOUNTREMOTE_LINKREMOTE_AGENT_BINARY=/usr/bin/linkremote-agent", init)
@@ -212,8 +216,6 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("data_root_parent=/tmp/linkeasefull", init)
         self.assertNotIn("config_get port", init)
         self.assertNotIn("config_get base_path", init)
-        self.assertNotIn("--deviceAddr", init)
-        self.assertNotIn("--localApi", init)
 
         self.assertIn("option enabled '1'", config)
         self.assertNotIn("option port", config)
