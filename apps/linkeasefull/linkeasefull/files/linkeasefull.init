@@ -65,6 +65,7 @@ read_config() {
 	fi
 	data_root="$data_root_parent/.linkease_data"
 	recycle_root="$data_root_parent/.linkease_recycle"
+	apptunnel_config_dir="/tmp/linkeasefull/apptunnel-config"
 }
 
 start_service() {
@@ -85,6 +86,20 @@ start_service() {
 	rm -f "$LOCAL_API"
 	mkdir -p "$data_root/users/admin" "$data_root/system" "$data_root/tmp" "$recycle_root"
 	mkdir -p "$data_root/apptunnel" "$data_root/mountremote" "$data_root/logs"
+	mkdir -p "$apptunnel_config_dir"
+
+	# Do not set LINKEASE_CONFIG on OpenWrt. That variable belongs to
+	# Docker/file-backend deployments where users explicitly mount
+	# LINKEASE_CONFIG/preconfig.data. OpenWrt binding state is authoritative in
+	# UCI and must be accessed through /usr/sbin/linkease-config.sh. This is
+	# intentional: the user's data disk may be replaced, and the device must
+	# still be able to recover its binding from flash-backed OpenWrt config.
+	#
+	# Do not export LINKEASE_APPTUNNEL_PRECONFIG_SCRIPT or
+	# LINKEASE_APPTUNNEL_DEFAULT_ROOT_DIR here. Different devices have different
+	# storage roots, and hard-coded env wiring can pin apptunnel to a removed
+	# disk. The embedded clientruntime must discover linkease-config.sh and call
+	# local_load/local_save-compatible business APIs for the current root.
 
 	procd_open_instance linkeasefull
 	procd_set_param limits nofile="65535 65535"
@@ -102,6 +117,7 @@ start_service() {
 		"LINKEASE_APPTUNNEL_INTERNAL_ADDR=127.0.0.1:19810" \
 		"LINKEASE_APPTUNNEL_LEGACY_ADDR=$LINKEASE_LEGACY_ADDR" \
 		"LINKEASE_APPTUNNEL_LOCAL_API=$LOCAL_API" \
+		"LINKEASE_APPTUNNEL_CONFIG_DIR=$apptunnel_config_dir" \
 		"LINKEASE_APPTUNNEL_DATA_DIR=$data_root/apptunnel" \
 		"LINKEASE_APPTUNNEL_CACHE_DIR=$data_root/apptunnel/cache" \
 		"LINKEASE_APPTUNNEL_RUNTIME_DIR=$data_root/apptunnel/runtime" \
