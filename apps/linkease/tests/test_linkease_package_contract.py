@@ -59,7 +59,9 @@ class LinkEasePackageContractTest(unittest.TestCase):
         common_makefile = self.read_app("linkease-common-bin", "linkease-common-bin/Makefile")
         init = self.read_app("linkease", "linkease/files/linkease.init")
         config = self.read_app("linkease", "linkease/files/linkease.config")
-        helper = self.read_app("linkease", "linkease/files/linkease-config.sh")
+        helper = self.read_app(
+            "linkease-common-bin", "linkease-common-bin/files/linkease-config.sh"
+        )
         status = self.read_app(
             "linkease", "luci-app-linkease/luasrc/view/linkease_status.htm"
         )
@@ -79,6 +81,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_NAME:=linkease-common-bin", common_makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/heif-converter.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/heif-converter", common_makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/linkease-media.$(PKG_ARCH_LINKEASE) $(1)/usr/sbin/linkease-media", common_makefile)
+        self.assertIn("$(INSTALL_BIN) ./files/linkease-config.sh $(1)/usr/sbin/linkease-config.sh", common_makefile)
+        self.assertNotIn("$(INSTALL_BIN) ./files/linkease-config.sh $(1)/usr/sbin/linkease-config.sh", makefile)
         self.assertNotIn("$(1)/usr/sbin/linkease\n", common_makefile)
         self.assertNotIn("/etc/config/linkease", common_makefile)
         self.assertNotIn("/etc/init.d/linkease", common_makefile)
@@ -118,7 +122,14 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("desktop_port", helper)
         self.assertNotIn("desktop_base_path", helper)
         self.assertNotIn("desktop_url", helper)
-        self.assertNotIn("data_root_parent", helper)
+        self.assertIn("ensure_linkease_config()", helper)
+        self.assertIn("sync_linkeasefull_local_home()", helper)
+        self.assertIn("uci -q set linkease.@linkease[0].enabled='0'", helper)
+        self.assertIn("uci -q set linkease.@linkease[0].port='8897'", helper)
+        self.assertIn("uci -q set linkease.@linkease[0].allowPublic='0'", helper)
+        self.assertIn("uci -q set \"linkeasefull.@linkeasefull[0].data_root_parent=$1\"", helper)
+        self.assertIn("uci -q get linkeasefull.@linkeasefull[0].data_root_parent", helper)
+        self.assertIn("uci commit linkease", helper)
 
     def test_legacy_luci_file_proxy_uses_shared_unix_socket_only(self):
         backend = self.read_app(
@@ -226,6 +237,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("LINKEASE_LINKMOUNT_BIN=$LINKEASE_LIBEXEC/linkmount_bin/linkmount_bin", init)
         self.assertIn("LINKEASE_LINKMOUNT_LIB_DIR=$LINKEASE_LIBEXEC/linkmount_bin/lib", init)
         self.assertIn("is_persistent_data_root_parent()", init)
+        self.assertIn("sync_shared_local_home()", init)
+        self.assertIn('/usr/sbin/linkease-config.sh local_save "$data_root_parent"', init)
         self.assertIn("please choose a persistent disk storage path", init)
         self.assertNotIn("data_root_parent=/tmp/linkeasefull", init)
         self.assertNotIn("config_get port", init)

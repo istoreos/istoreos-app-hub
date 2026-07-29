@@ -45,6 +45,11 @@ resolve_data_root_parent() {
 	return 1
 }
 
+sync_shared_local_home() {
+	[ -x /usr/sbin/linkease-config.sh ] || return 0
+	/usr/sbin/linkease-config.sh local_save "$data_root_parent" >/dev/null 2>&1 || true
+}
+
 linkease_enabled() {
 	[ "$(uci -q get linkease.@linkease[0].enabled 2>/dev/null)" = "1" ]
 }
@@ -75,6 +80,7 @@ start_service() {
 		echo "linkeasefull: please choose a persistent disk storage path in LuCI" >&2
 		return 1
 	fi
+	sync_shared_local_home
 
 	rm -f "$LOCAL_API"
 	mkdir -p "$data_root/users/admin" "$data_root/system" "$data_root/tmp" "$recycle_root"
