@@ -203,8 +203,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         meta_config = self.read_app("linkeasefull", "app-meta-linkeasefull/config.sh")
 
         self.assertIn("PKG_NAME:=linkeasefull", makefile)
-        self.assertIn("PKG_VERSION:=3.0.4", makefile)
-        self.assertIn("PKG_SOURCE_DATE:=$(PKG_VERSION)", makefile)
+        self.assertNotIn("PKG_VERSION:=3.0.4", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=3.0.4", makefile)
         self.assertIn("LINKEASE_RUNTIME_ARCH:=amd64", makefile)
         self.assertIn("LINKEASE_RUNTIME_ARCH:=arm64", makefile)
         self.assertIn("PKG_SOURCE:=linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz", makefile)
