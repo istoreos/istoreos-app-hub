@@ -205,8 +205,12 @@ class LinkEasePackageContractTest(unittest.TestCase):
         meta_config = self.read_app("linkeasefull", "app-meta-linkeasefull/config.sh")
 
         self.assertIn("PKG_NAME:=linkeasefull", makefile)
+        self.assertIn("PKG_ARCH_LINKEASE:=$(ARCH)", makefile)
         self.assertNotIn("PKG_VERSION:=3.0.4", makefile)
         self.assertIn("PKG_SOURCE_DATE:=3.0.4", makefile)
+        self.assertIn("ARCH_HEXCODE=8664", makefile)
+        self.assertIn("ARCH_HEXCODE=aa64", makefile)
+        self.assertIn("PKG_SOURCE_VERSION:=$(ARCH_HEXCODE)", makefile)
         self.assertIn("LINKEASE_RUNTIME_ARCH:=amd64", makefile)
         self.assertIn("LINKEASE_RUNTIME_ARCH:=arm64", makefile)
         self.assertIn("PKG_SOURCE:=linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz", makefile)
@@ -230,6 +234,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("/etc/init.d/linkease\n", makefile)
         self.assertNotIn("/usr/sbin/linkease", makefile)
         self.assertNotIn("apptunnel-client", makefile)
+        self.assertIn("PKGARCH:=all", makefile)
 
         self.assertIn("PROG=/usr/bin/linkease-full", init)
         self.assertIn("config_load linkeasefull", init)
