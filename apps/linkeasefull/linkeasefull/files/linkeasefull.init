@@ -10,23 +10,45 @@ LINKEASE_FULL_PORT=19290
 LINKEASE_BASE_PATH=/apps/
 LINKEASE_LEGACY_ADDR=0.0.0.0:8897
 LOCAL_API=/var/run/linkease.sock
+DATA_ROOT_WAIT_SECONDS=${LINKEASEFULL_DATA_ROOT_WAIT_SECONDS:-60}
 
-is_persistent_data_root_parent() {
+is_allowed_data_root_parent() {
 	[ -n "$1" ] || return 1
 	case "$1" in
 		/tmp|/tmp/*|/var|/var/*|/run|/run/*|/dev|/dev/*|/proc|/proc/*|/sys|/sys/*|/rom|/rom/*|/overlay|/overlay/*) return 1 ;;
 	esac
+	return 0
+}
+
+wait_for_data_root_parent() {
+	is_allowed_data_root_parent "$1" || return 1
+	wait_left="$DATA_ROOT_WAIT_SECONDS"
+	case "$wait_left" in
+		""|*[!0-9]*) wait_left=60 ;;
+	esac
+	while [ "$wait_left" -gt 0 ]; do
+		[ -d "$1" ] && return 0
+		sleep 1
+		wait_left=$((wait_left - 1))
+	done
+	[ -d "$1" ]
+}
+
+is_persistent_data_root_parent() {
+	is_allowed_data_root_parent "$1" || return 1
 	[ -d "$1" ] || return 1
 	return 0
 }
 
 resolve_data_root_parent() {
 	if [ -n "$data_root_parent" ]; then
+		wait_for_data_root_parent "$data_root_parent"
 		is_persistent_data_root_parent "$data_root_parent"
 		return $?
 	fi
 
 	local_home="$(uci -q get linkease.@linkease[0].local_home || true)"
+	wait_for_data_root_parent "$local_home"
 	if is_persistent_data_root_parent "$local_home"; then
 		data_root_parent="$local_home"
 		return 0
@@ -35,6 +57,7 @@ resolve_data_root_parent() {
 	if [ -f /etc/config/quickstart ]; then
 		quickstart_main_dir="$(uci -q get quickstart.main.main_dir || true)"
 		if [ -n "$quickstart_main_dir" ]; then
+			wait_for_data_root_parent "$quickstart_main_dir"
 			if is_persistent_data_root_parent "$quickstart_main_dir"; then
 				data_root_parent="$quickstart_main_dir"
 				return 0
