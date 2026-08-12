@@ -564,7 +564,7 @@
     ],
     "website": "https://www.linkease.com/",
     "author": "xiaobao",
-    "version": "3.0.7",
+    "version": "3.0.8",
     "release": "1",
     "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
