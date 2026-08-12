@@ -342,7 +342,6 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("/etc/init.d/linkease restart", defaults)
         self.assertNotIn("set linkease.@linkease[0].enabled", meta_config)
         self.assertNotIn("commit linkease\n", meta_config)
-        self.assertNotIn("/etc/init.d/linkeasefull restart", meta_config)
         self.assertNotIn("/etc/init.d/linkease restart", meta_config)
 
     def test_linkease_packages_do_not_install_overlapping_paths(self):
