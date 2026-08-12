@@ -336,6 +336,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertTrue((REPO / "apps/linkeasefile/luci-lib-linkeasefile/luasrc/controller/linkease_file.lua").exists())
         self.assertNotIn("set_default port", defaults)
         self.assertNotIn("set_default base_path", defaults)
+        self.assertIn("/etc/init.d/linkeasefull enable", defaults)
+        self.assertNotIn("/etc/init.d/linkeasefull restart", defaults)
         self.assertNotIn("/etc/init.d/linkease enable", defaults)
         self.assertNotIn("/etc/init.d/linkease restart", defaults)
         self.assertNotIn("set linkease.@linkease[0].enabled", meta_config)
