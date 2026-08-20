@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import re
 import unittest
 
@@ -10,6 +11,36 @@ LEGACY_PORT = str(8200 - 2)
 class KaiPlusOpenWrtContractTest(unittest.TestCase):
     def read(self, relative):
         return (ROOT / relative).read_text(encoding="utf-8")
+
+    def test_linkeasefull_desktop_plugin_manifest_contract(self):
+        manifest = json.loads(self.read("kaiplus/files/kaiplus-plugin.json"))
+
+        self.assertEqual(manifest["schemaVersion"], 1)
+        self.assertEqual(manifest["id"], "kaiplus")
+        self.assertEqual(manifest["name"], "KaiPlus")
+        self.assertEqual(manifest["icon"], "logo.png")
+        self.assertEqual(manifest["staticRoot"], "/usr/share/kaiplus/www")
+        self.assertEqual(manifest["desktop"]["mode"], "module")
+        self.assertEqual(manifest["desktop"]["entry"], "desktop-entry.js")
+        self.assertEqual(manifest["desktop"]["isolation"], "shadow-dom")
+        self.assertEqual(manifest["standalone"]["basePath"], "/apps/kaiplus/")
+        self.assertEqual(manifest["backend"]["portFromUci"], "kaiplus.@kaiplus[0].port")
+        self.assertEqual(manifest["backend"]["defaultPort"], 8189)
+        self.assertEqual(manifest["backend"]["upstreamBasePath"], "/apps/kaiplus/")
+        self.assertEqual(manifest["backend"]["apiPath"], "api/")
+        self.assertEqual(manifest["backend"]["pathMode"], "preserve")
+        self.assertTrue(manifest["window"]["singleton"])
+
+    def test_kaiplus_package_install_registers_linkeasefull_desktop_plugin(self):
+        makefile = self.read("kaiplus/Makefile")
+
+        self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertIn("$(INSTALL_DATA) ./files/kaiplus-plugin.json $(1)/usr/share/kaiplus/kaiplus-plugin.json", makefile)
+        self.assertIn("$(INSTALL_DATA) ../app-meta-kaiplus/logo.png $(1)/usr/share/kaiplus/www/logo.png", makefile)
+        self.assertIn(
+            "ln -sf /usr/share/kaiplus/kaiplus-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json",
+            makefile,
+        )
 
     def test_config_defaults_to_standalone_url_contract(self):
         text = self.read("kaiplus/files/kaiplus.config")
