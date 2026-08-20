@@ -304,6 +304,10 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn('uci:get_list("uhttpd", "main", "proxy_prefix")', controller)
         self.assertIn('mapping == "/apps=http://127.0.0.1:19290"', controller)
         self.assertIn('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true', controller)
+        self.assertLess(
+            controller.index('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true'),
+            controller.index('if not nixio.fs.access("/etc/config/linkeasefull") then'),
+        )
         self.assertIn('http.getcookie(key)', controller)
         self.assertIn('"sysauth_https", "sysauth_http", "sysauth"', controller)
         self.assertIn('util.ubus("session", "get", { ubus_rpc_session = sid })', controller)
