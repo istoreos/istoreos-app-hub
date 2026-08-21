@@ -30,6 +30,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
         self.assertEqual(manifest["backend"]["pathMode"], "preserve")
         self.assertTrue(manifest["window"]["singleton"])
+        self.assertNotIn("desktopPriority", manifest)
 
     def test_kaiplus_package_install_registers_linkeasefull_desktop_plugin(self):
         makefile = self.read("kaiplus/Makefile")
@@ -41,6 +42,14 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
             "ln -sf /usr/share/kaiplus/kaiplus-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json",
             makefile,
         )
+
+    def test_kaiplus_package_unregisters_linkeasefull_desktop_plugin_on_remove(self):
+        makefile = self.read("kaiplus/Makefile")
+
+        self.assertIn("define Package/$(PKG_NAME)/prerm", makefile)
+        self.assertIn("readlink /usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json", makefile)
+        self.assertIn('= "/usr/share/kaiplus/kaiplus-plugin.json"', makefile)
+        self.assertIn("rm -f /usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json", makefile)
 
     def test_config_defaults_to_standalone_url_contract(self):
         text = self.read("kaiplus/files/kaiplus.config")

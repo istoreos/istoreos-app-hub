@@ -37,6 +37,16 @@ define Package/$(PKG_NAME)/conffiles
 /etc/config/kaiplus
 endef
 
+define Package/$(PKG_NAME)/prerm
+#!/bin/sh
+if [ "$${IPKG_INSTROOT}" = "" ]; then
+	if [ "$$(readlink /usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json 2>/dev/null)" = "/usr/share/kaiplus/kaiplus-plugin.json" ]; then
+		rm -f /usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json
+	fi
+fi
+exit 0
+endef
+
 define Build/Configure
 endef
 
