@@ -11,6 +11,19 @@ LINKEASE_LEGACY_ADDR=0.0.0.0:8897
 LOCAL_API=/var/run/linkease.sock
 DATA_ROOT_WAIT_SECONDS=${LINKEASEFULL_DATA_ROOT_WAIT_SECONDS:-60}
 
+ensure_linkease_config() {
+	if [ ! -f /etc/config/linkease ]; then
+		touch /etc/config/linkease || return 1
+	fi
+	if ! uci -q get linkease.@linkease[0] >/dev/null; then
+		uci -q add linkease linkease >/dev/null || return 1
+		uci -q set linkease.@linkease[0].enabled='0' || return 1
+		uci -q set linkease.@linkease[0].port='8897' || return 1
+		uci -q set linkease.@linkease[0].allowPublic='0' || return 1
+		uci -q commit linkease || return 1
+	fi
+}
+
 is_allowed_data_root_parent() {
 	[ -n "$1" ] || return 1
 	case "$1" in
@@ -39,39 +52,6 @@ is_persistent_data_root_parent() {
 	return 0
 }
 
-resolve_data_root_parent() {
-	if [ -n "$data_root_parent" ]; then
-		wait_for_data_root_parent "$data_root_parent"
-		is_persistent_data_root_parent "$data_root_parent"
-		return $?
-	fi
-
-	local_home="$(uci -q get linkease.@linkease[0].local_home || true)"
-	wait_for_data_root_parent "$local_home"
-	if is_persistent_data_root_parent "$local_home"; then
-		data_root_parent="$local_home"
-		return 0
-	fi
-
-	if [ -f /etc/config/quickstart ]; then
-		quickstart_main_dir="$(uci -q get quickstart.main.main_dir || true)"
-		if [ -n "$quickstart_main_dir" ]; then
-			wait_for_data_root_parent "$quickstart_main_dir"
-			if is_persistent_data_root_parent "$quickstart_main_dir"; then
-				data_root_parent="$quickstart_main_dir"
-				return 0
-			fi
-		fi
-	fi
-
-	return 1
-}
-
-sync_shared_local_home() {
-	[ -x /usr/sbin/linkease-config.sh ] || return 0
-	/usr/sbin/linkease-config.sh local_save "$data_root_parent" >/dev/null 2>&1 || true
-}
-
 linkease_enabled() {
 	[ "$(uci -q get linkease.@linkease[0].enabled 2>/dev/null)" = "1" ]
 }
@@ -79,14 +59,19 @@ linkease_enabled() {
 read_config() {
 	section="$1"
 	config_get_bool enabled "$section" enabled 1
-	config_get data_root_parent "$section" data_root_parent ""
+	ensure_linkease_config || true
+	data_root_parent="$(uci -q get linkease.@linkease[0].local_home 2>/dev/null || true)"
 
-	if ! resolve_data_root_parent; then
+	if [ -n "$data_root_parent" ] && ! wait_for_data_root_parent "$data_root_parent"; then
 		data_root_parent=""
-		return 1
 	fi
-	data_root="$data_root_parent/.linkease_data"
-	recycle_root="$data_root_parent/.linkease_recycle"
+	if [ -n "$data_root_parent" ] && ! is_persistent_data_root_parent "$data_root_parent"; then
+		data_root_parent=""
+	fi
+	if [ -n "$data_root_parent" ]; then
+		data_root="$data_root_parent/.linkease_data"
+		recycle_root="$data_root_parent/.linkease_recycle"
+	fi
 	log_root="/tmp/linkeasefull/logs"
 }
 
@@ -99,15 +84,14 @@ start_service() {
 		echo "linkeasefull: linkease is enabled; please disable linkease before starting linkeasefull" >&2
 		return 1
 	fi
-	if [ -z "$data_root_parent" ]; then
-		echo "linkeasefull: please choose a persistent disk storage path in LuCI" >&2
-		return 1
-	fi
-	sync_shared_local_home
 
 	rm -f "$LOCAL_API"
-	mkdir -p "$data_root/users/admin" "$data_root/system" "$data_root/tmp" "$recycle_root"
-	mkdir -p "$data_root/config" "$data_root/apptunnel" "$data_root/mountremote"
+	if [ -n "$data_root_parent" ]; then
+		mkdir -p "$data_root/users/admin" "$data_root/system" "$data_root/tmp" "$recycle_root"
+		mkdir -p "$data_root/config" "$data_root/apptunnel" "$data_root/mountremote"
+	else
+		echo "linkeasefull: data root is not initialized; starting for first-run setup" >&2
+	fi
 	mkdir -p "$log_root"
 
 	# Do not set LINKEASE_CONFIG on OpenWrt. That variable belongs to
@@ -125,18 +109,16 @@ start_service() {
 
 	procd_open_instance linkeasefull
 	procd_set_param limits nofile="65535 65535"
-	procd_set_param command "$PROG"
+	procd_set_param command "$PROG" \
+		--host "0.0.0.0" \
+		--port "$LINKEASE_FULL_PORT" \
+		--mode "release" \
+		--basePath "$LINKEASE_BASE_PATH" \
+		--deviceAddr "$LINKEASE_LEGACY_ADDR" \
+		--localApi "$LOCAL_API" \
+		--supplierCode "linkease"
 	procd_set_param env \
-		"SERVER_HOST=0.0.0.0" \
-		"SERVER_PORT=$LINKEASE_FULL_PORT" \
-		"SERVER_MODE=release" \
-		"SERVER_BASE_PATH=$LINKEASE_BASE_PATH" \
-		"LINKEASE_AUTH_PROVIDER=openwrt_luci" \
-		"LINKEASE_EDITION=nas-full" \
-		"KAIPLUS_ENABLED=0" \
-		"LINKEASE_APPTUNNEL_INTERNAL_ADDR=127.0.0.1:19810" \
-		"LINKEASE_APPTUNNEL_LEGACY_ADDR=$LINKEASE_LEGACY_ADDR" \
-		"LINKEASE_APPTUNNEL_LOCAL_API=$LOCAL_API"
+		"KAIPLUS_ENABLED=0"
 	procd_set_param respawn
 	procd_set_param stdout 1
 	procd_set_param stderr 1

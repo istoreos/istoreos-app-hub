@@ -13,7 +13,7 @@ msgstr "Arcadia 平台面向脚本语言编程与运维场景，提供定时任�
 msgid "The initial username and password are 'useradmin' and 'passwd' respectively."
 msgstr "初始的用户名和密码分别是 'useradmin' 和 'passwd'。"
 
-msgid "Image"
+msgid "Docker Image"
 msgstr "镜像"
 
 msgid "Default"
