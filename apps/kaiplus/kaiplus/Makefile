@@ -10,10 +10,10 @@ PKG_ARCH_kaiplus:=$(ARCH)
 
 PKG_NAME:=kaiplus
 PKG_VERSION:=1.0.5
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/linkease/istore-packages/releases/download/kaiplus/
-PKG_HASH:=58e480a191e8e3c08ed7814df368c79109d2def1fd1b0734d9054fd5b364ee99
+PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/kaiplus-runtime-v$(PKG_VERSION)/
+PKG_HASH:=9ca0430642ea9ecb601763f9d37d8957543d55ac249c82a75846be7ff71bb89c
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1

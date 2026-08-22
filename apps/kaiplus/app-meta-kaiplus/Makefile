@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=1.0.5
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 META_TITLE:=KaiPlus
 META_TITLE.en:=KaiPlus
 META_DEPENDS:=+luci-app-kaiplus +kaiplus
