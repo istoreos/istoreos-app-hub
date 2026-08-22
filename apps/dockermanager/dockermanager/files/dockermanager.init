@@ -38,7 +38,8 @@ start_service() {
 		DOCKER_MANAGER_BASE_PATH="$base_path" \
 		DOCKER_MANAGER_DATA_DIR="$data_dir" \
 		DOCKER_MANAGER_STATIC_ROOT="/usr/share/dockermanager/www" \
-		DOCKER_MANAGER_PLATFORM="openwrt"
+		DOCKER_MANAGER_PLATFORM="openwrt" \
+		DOCKER_MANAGER_AUTH_MODE="openwrt_luci"
 	procd_set_param command /usr/sbin/docker-manager
 	procd_set_param stdout 1
 	procd_set_param stderr 1
