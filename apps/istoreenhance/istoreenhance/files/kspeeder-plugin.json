@@ -11,7 +11,15 @@
   },
   "standalone": {
     "entry": "index.html",
-    "basePath": "/apps/kspeeder/"
+    "basePath": "/apps/kspeeder/",
+    "externalOpen": {
+      "enabled": true,
+      "label": "打开 KSpeeder 独立页面",
+      "scheme": "http",
+      "hostMode": "request-host",
+      "defaultPort": 5003,
+      "path": "/"
+    }
   },
   "backend": {
     "type": "http",

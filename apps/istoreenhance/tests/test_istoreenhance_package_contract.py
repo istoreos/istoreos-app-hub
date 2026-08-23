@@ -36,6 +36,9 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertIn("$(1)/usr/share/kspeeder/www", makefile)
         self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("./files/kspeeder-plugin.json", makefile)
+        self.assertIn("KSPEEDER_WEB_ROOT:=$(PKG_BUILD_DIR)/wwwroot", makefile)
+        self.assertIn("$(KSPEEDER_WEB_ROOT)/desktop-entry.js", makefile)
+        self.assertIn("$(CP) $(KSPEEDER_WEB_ROOT)/* $(1)/usr/share/kspeeder/www/", makefile)
         self.assertIn("./files/www/desktop-entry.js", makefile)
         self.assertIn("/usr/share/linkeasefull/desktop-apps.d/20-kspeeder.json", makefile)
 
@@ -46,6 +49,8 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertEqual(manifest["staticRoot"], "/usr/share/kspeeder/www")
         self.assertEqual(manifest["desktop"]["entry"], "desktop-entry.js")
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/kspeeder/")
+        self.assertTrue(manifest["standalone"]["externalOpen"]["enabled"])
+        self.assertEqual(manifest["standalone"]["externalOpen"]["defaultPort"], 5003)
         self.assertEqual(manifest["backend"]["portFromUci"], "istoreenhance.@istoreenhance[0].adminport")
         self.assertEqual(manifest["backend"]["defaultPort"], 5003)
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
