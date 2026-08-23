@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import unittest
 
 
@@ -28,6 +29,39 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.7.15", makefile)
+
+    def test_runtime_package_installs_kspeeder_desktop_module(self):
+        makefile = self.read("istoreenhance/Makefile")
+
+        self.assertIn("$(1)/usr/share/kspeeder/www", makefile)
+        self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertIn("./files/kspeeder-plugin.json", makefile)
+        self.assertIn("./files/www/desktop-entry.js", makefile)
+        self.assertIn("/usr/share/linkeasefull/desktop-apps.d/20-kspeeder.json", makefile)
+
+    def test_kspeeder_desktop_manifest_uses_linkease_runtime_proxy(self):
+        manifest = json.loads(self.read("istoreenhance/files/kspeeder-plugin.json"))
+
+        self.assertEqual(manifest["id"], "kspeeder")
+        self.assertEqual(manifest["staticRoot"], "/usr/share/kspeeder/www")
+        self.assertEqual(manifest["desktop"]["entry"], "desktop-entry.js")
+        self.assertEqual(manifest["standalone"]["basePath"], "/apps/kspeeder/")
+        self.assertEqual(manifest["backend"]["portFromUci"], "istoreenhance.@istoreenhance[0].adminport")
+        self.assertEqual(manifest["backend"]["defaultPort"], 5003)
+        self.assertEqual(manifest["backend"]["apiPath"], "api/")
+        self.assertEqual(manifest["backend"]["upstreamBasePath"], "/apps/kspeeder/")
+        self.assertEqual(manifest["backend"]["pathMode"], "preserve")
+
+    def test_kspeeder_desktop_entry_is_browser_safe_single_spa_module(self):
+        entry = self.read("istoreenhance/files/www/desktop-entry.js")
+
+        self.assertIn("export async function bootstrap", entry)
+        self.assertIn("export async function mount", entry)
+        self.assertIn("export async function unmount", entry)
+        self.assertIn("context.apiBase", entry)
+        self.assertIn("normalizeAPIBase(context)", entry)
+        self.assertNotIn("process.", entry)
+        self.assertNotIn("require(", entry)
 
 
 if __name__ == "__main__":
