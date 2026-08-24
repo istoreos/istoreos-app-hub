@@ -311,12 +311,20 @@ class LinkEasePackageContractTest(unittest.TestCase):
         )
 
         self.assertIn("LUCI_DEPENDS:=+linkeasefull +luci-lib-linkeaseauth +luci-lib-linkeasefile", luci_makefile)
-        self.assertIn('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true', controller)
+        auth_entry = 'local auth = entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth"))'
+        auth_start = controller.index(auth_entry)
+        auth_finish = controller.index('local auth_finish = entry({"admin", "services", "linkeasefull", "auth_finish"}')
+        auth_block = controller[auth_start:auth_finish]
+        self.assertIn(auth_entry, controller)
+        self.assertIn('auth.leaf = true', auth_block)
+        self.assertIn('auth.dependent = false', auth_block)
+        self.assertIn('auth.sysauth = "root"', auth_block)
+        self.assertIn('auth.sysauth_authenticator = "htmlauth"', auth_block)
         self.assertIn('entry({"admin", "services", "linkeasefull", "auth_finish"}, call("linkeasefull_auth_finish"))', controller)
         self.assertIn('auth_finish.sysauth = "root"', controller)
         self.assertIn('auth_finish.sysauth_authenticator = "htmlauth"', controller)
         self.assertLess(
-            controller.index('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true'),
+            auth_start,
             controller.index('if not nixio.fs.access("/etc/config/linkeasefull") then'),
         )
         self.assertIn('return dispatcher.build_url("admin", "services", "linkease_auth", name)', controller)
@@ -334,8 +342,11 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn('path == "/apps"', auth_controller)
         self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', auth_controller)
         self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', auth_controller)
-        self.assertIn('request_host .. ":19290"', auth_controller)
-        self.assertIn('lan_host .. ":19290"', auth_controller)
+        self.assertIn("authority_host(authority)", auth_controller)
+        self.assertIn("authority_host(request_host)", auth_controller)
+        self.assertIn("authority_host(lan_host)", auth_controller)
+        self.assertNotIn('request_host .. ":19290"', auth_controller)
+        self.assertNotIn('lan_host .. ":19290"', auth_controller)
         self.assertIn("valid_cookie_value(sid)", auth_controller)
         self.assertIn('local pending_return_cookie = "linkease_openwrt_pending_return"', auth_controller)
         self.assertIn('set_pending_return_cookie(target)', auth_controller)

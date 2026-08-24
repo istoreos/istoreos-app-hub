@@ -13,7 +13,14 @@ class LinkEaseFullOpenWrtAuthShimContractTest(unittest.TestCase):
         controller = self.read("luci-app-linkeasefull/luasrc/controller/linkeasefull.lua")
         makefile = self.read("luci-app-linkeasefull/Makefile")
 
-        self.assertIn('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true', controller)
+        auth_start = controller.index('local auth = entry({"admin", "services", "linkeasefull", "auth"}')
+        auth_finish = controller.index('local auth_finish = entry({"admin", "services", "linkeasefull", "auth_finish"}')
+        auth_block = controller[auth_start:auth_finish]
+
+        self.assertIn('auth.leaf = true', auth_block)
+        self.assertIn('auth.dependent = false', auth_block)
+        self.assertIn('auth.sysauth = "root"', auth_block)
+        self.assertIn('auth.sysauth_authenticator = "htmlauth"', auth_block)
         self.assertIn('entry({"admin", "services", "linkeasefull", "auth_finish"}, call("linkeasefull_auth_finish"))', controller)
         self.assertIn('auth_finish.sysauth = "root"', controller)
         self.assertIn('auth_finish.sysauth_authenticator = "htmlauth"', controller)

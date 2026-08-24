@@ -2,7 +2,11 @@ module("luci.controller.linkeasefull", package.seeall)
 
 function index()
 	entry({"admin", "services", "linkeasefull_status"}, call("linkeasefull_status"))
-	entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true
+	local auth = entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth"))
+	auth.leaf = true
+	auth.dependent = false
+	auth.sysauth = "root"
+	auth.sysauth_authenticator = "htmlauth"
 	local auth_finish = entry({"admin", "services", "linkeasefull", "auth_finish"}, call("linkeasefull_auth_finish"))
 	auth_finish.leaf = true
 	auth_finish.dependent = false

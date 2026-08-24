@@ -22,23 +22,32 @@ class LinkEaseAuthOpenWrtContractTest(unittest.TestCase):
     def test_auth_bridge_defers_missing_luci_session_to_finish_route(self):
         controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
 
+        auth_start = controller.index('local auth = entry({"admin", "services", "linkease_auth", "auth"}')
+        auth_finish = controller.index('local auth_finish = entry({"admin", "services", "linkease_auth", "auth_finish"}')
+        self.assertIn('auth.sysauth = "root"', controller[auth_start:auth_finish])
+        self.assertIn('auth.sysauth_authenticator = "htmlauth"', controller[auth_start:auth_finish])
         self.assertIn('auth_finish.sysauth = "root"', controller)
         self.assertIn('auth_finish.sysauth_authenticator = "htmlauth"', controller)
         self.assertIn('set_pending_return_cookie(target)', controller)
         self.assertIn('http.redirect(auth_finish_url())', controller)
 
-        auth_start = controller.index("function linkease_auth()")
-        auth_finish = controller.index("function linkease_auth_finish()")
-        self.assertNotIn('http.status(403, "Forbidden")', controller[auth_start:auth_finish])
+        auth_function = controller.index("function linkease_auth()")
+        finish_function = controller.index("function linkease_auth_finish()")
+        self.assertNotIn('http.status(403, "Forbidden")', controller[auth_function:finish_function])
 
     def test_pending_return_cookie_preserves_hash_route_across_luci_login(self):
         controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
 
         self.assertIn('local pending_return_cookie = "linkease_openwrt_pending_return"', controller)
+        self.assertIn('local bridge_return_cookie = "linkease_openwrt_return"', controller)
         self.assertIn('local pending_return_cookie_path = "/cgi-bin/luci/admin/services/linkease_auth"', controller)
+        self.assertIn('local bridge_return_cookie_path = "/cgi-bin/luci/admin/services/linkease_auth/auth"', controller)
         self.assertIn('Max-Age=300; HttpOnly; SameSite=Lax', controller)
         self.assertIn('function cookie_encode(value)', controller)
         self.assertIn('function cookie_decode(value)', controller)
+        self.assertIn('function requested_return_target()', controller)
+        self.assertIn('http.formvalue("return") or cookie_decode(http.getcookie(bridge_return_cookie)) or "/apps/"', controller)
+        self.assertIn('clear_bridge_return_cookie()', controller)
         self.assertIn('return safe_return_target(cookie_decode(http.getcookie(pending_return_cookie)))', controller)
 
     def test_finish_route_sets_apps_cookie_and_redirects_sanitized_return(self):
@@ -60,9 +69,20 @@ class LinkEaseAuthOpenWrtContractTest(unittest.TestCase):
         self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', controller)
         self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', controller)
         self.assertIn("request_host", controller)
-        self.assertIn('request_host .. ":19290"', controller)
         self.assertIn("lan_host", controller)
-        self.assertIn('lan_host .. ":19290"', controller)
+        self.assertIn("authority_host(authority)", controller)
+        self.assertIn("authority_host(request_host)", controller)
+        self.assertIn("authority_host(lan_host)", controller)
+        self.assertNotIn('request_host .. ":19290"', controller)
+        self.assertNotIn('lan_host .. ":19290"', controller)
+
+    def test_absolute_apps_return_allows_same_device_dynamic_port(self):
+        controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
+
+        self.assertIn('local authority_host_value = authority_host(authority)', controller)
+        self.assertIn('authority_host_value == authority_host(request_host)', controller)
+        self.assertIn('authority_host_value == authority_host(lan_host)', controller)
+        self.assertIn('http://192.168.30.93:8192/apps/dockermanager/', controller)
 
 
 if __name__ == "__main__":
