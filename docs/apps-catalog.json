@@ -566,7 +566,7 @@
     "author": "xiaobao",
     "version": "3.0.8",
     "release": "1",
-    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
+    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeaseauth +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
     "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"
   },

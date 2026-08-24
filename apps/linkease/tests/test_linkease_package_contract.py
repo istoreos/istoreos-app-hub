@@ -209,7 +209,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_NAME:=linkeasefull", makefile)
         self.assertIn("PKG_ARCH_LINKEASE:=$(ARCH)", makefile)
         self.assertNotIn("PKG_VERSION:=3.0.9", makefile)
-        self.assertIn("PKG_SOURCE_DATE:=3.0.11", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=3.0.12", makefile)
         self.assertIn("ARCH_HEXCODE=8664", makefile)
         self.assertIn("ARCH_HEXCODE=aa64", makefile)
         self.assertIn("PKG_SOURCE_VERSION:=$(ARCH_HEXCODE)", makefile)
@@ -219,8 +219,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/linkeasefull-runtime-v$(PKG_SOURCE_DATE)/", makefile)
         self.assertIn("PKG_BUILD_DIR:=$(BUILD_DIR)/linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH)", makefile)
         self.assertNotIn("linkease-desktop", makefile)
-        self.assertIn("c9595a8e21cc01a1ffdd328f5b03b7ec226ba48bfefc3a4c59002f9c0b60e656", makefile)
-        self.assertIn("7122c5a6e181a7eeb61e4c33ed9a4040e3c0419782d0b672b10f7fb1b5853c7c", makefile)
+        self.assertIn("96ca2bc9f3ea43ad88f21c903dcf3c2b9a3ef2c1ef790a0169586a02a7971b9e", makefile)
+        self.assertIn("5de0a6244be966fce1074a7a92c96f5da85dea335a9a5d05ed22a943c896e0e0", makefile)
         self.assertNotIn("TAR_CMD=", makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-full $(1)/usr/bin/linkease-full", makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkremote-agent $(1)/usr/bin/linkremote-agent", makefile)
@@ -305,23 +305,43 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn('proxy_prefix_enabled = uhttpd_has_apps_proxy_prefix()', controller)
         self.assertIn('uci:get_list("uhttpd", "main", "proxy_prefix")', controller)
         self.assertIn('mapping == "/apps=http://127.0.0.1:19290"', controller)
+        luci_makefile = self.read_app("linkeasefull", "luci-app-linkeasefull/Makefile")
+        auth_controller = self.read_app(
+            "linkeaseauth", "luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua"
+        )
+
+        self.assertIn("LUCI_DEPENDS:=+linkeasefull +luci-lib-linkeaseauth +luci-lib-linkeasefile", luci_makefile)
         self.assertIn('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true', controller)
+        self.assertIn('entry({"admin", "services", "linkeasefull", "auth_finish"}, call("linkeasefull_auth_finish"))', controller)
+        self.assertIn('auth_finish.sysauth = "root"', controller)
+        self.assertIn('auth_finish.sysauth_authenticator = "htmlauth"', controller)
         self.assertLess(
             controller.index('entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true'),
             controller.index('if not nixio.fs.access("/etc/config/linkeasefull") then'),
         )
-        self.assertIn('http.getcookie(key)', controller)
-        self.assertIn('"sysauth_https", "sysauth_http", "sysauth"', controller)
-        self.assertIn('util.ubus("session", "get", { ubus_rpc_session = sid })', controller)
-        self.assertIn('"linkease_openwrt_sid=" .. sid .. "; Path=/apps; HttpOnly; SameSite=Lax"', controller)
-        self.assertIn("valid_apps_return(value)", controller)
-        self.assertIn('path == "/apps"', controller)
-        self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', controller)
-        self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', controller)
-        self.assertIn('request_host .. ":19290"', controller)
-        self.assertIn('lan_host .. ":19290"', controller)
-        self.assertIn("valid_cookie_value(sid)", controller)
-        self.assertIn('target = "/apps/"', controller)
+        self.assertIn('return dispatcher.build_url("admin", "services", "linkease_auth", name)', controller)
+        self.assertIn('http.redirect(linkease_auth_url("auth") .. "?return=" .. cookie_encode(target))', controller)
+        self.assertIn('http.redirect(linkease_auth_url("auth_finish"))', controller)
+        self.assertNotIn('util.ubus("session", "get", { ubus_rpc_session = sid })', controller)
+        self.assertNotIn('local pending_return_cookie = "linkease_openwrt_pending_return"', controller)
+        self.assertIn('entry({"admin", "services", "linkease_auth", "auth"}, call("linkease_auth"))', auth_controller)
+        self.assertIn('entry({"admin", "services", "linkease_auth", "auth_finish"}, call("linkease_auth_finish"))', auth_controller)
+        self.assertIn('http.getcookie(key)', auth_controller)
+        self.assertIn('"sysauth_https", "sysauth_http", "sysauth"', auth_controller)
+        self.assertIn('util.ubus("session", "get", { ubus_rpc_session = sid })', auth_controller)
+        self.assertIn('"linkease_openwrt_sid=" .. sid .. "; Path=/apps; HttpOnly; SameSite=Lax"', auth_controller)
+        self.assertIn("valid_apps_return(value)", auth_controller)
+        self.assertIn('path == "/apps"', auth_controller)
+        self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', auth_controller)
+        self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', auth_controller)
+        self.assertIn('request_host .. ":19290"', auth_controller)
+        self.assertIn('lan_host .. ":19290"', auth_controller)
+        self.assertIn("valid_cookie_value(sid)", auth_controller)
+        self.assertIn('local pending_return_cookie = "linkease_openwrt_pending_return"', auth_controller)
+        self.assertIn('set_pending_return_cookie(target)', auth_controller)
+        self.assertIn('http.redirect(auth_finish_url())', auth_controller)
+        self.assertIn('function linkease_auth_finish()', auth_controller)
+        self.assertIn('local target = pending_return_target()', auth_controller)
         self.assertNotIn("get_first(\"linkeasefull\", \"linkeasefull\", \"port\")", controller)
         self.assertNotIn("get_first(\"linkeasefull\", \"linkeasefull\", \"base_path\")", controller)
         self.assertNotIn("linkease_file_template", controller)
@@ -336,8 +356,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("st.legacy_port || 8897", status)
         self.assertIn('"/apps/"', status)
         self.assertNotIn("basePath", status)
-        self.assertIn("PKG_VERSION:=3.0.11", meta)
-        self.assertIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
+        self.assertIn("PKG_VERSION:=3.0.12", meta)
+        self.assertIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeaseauth +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
         self.assertNotIn("+linkease +luci-app-linkease", meta)
         self.assertIn("复用独立的易有云文件管理入口", meta)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeasefull", meta)
@@ -367,6 +387,9 @@ class LinkEasePackageContractTest(unittest.TestCase):
             ),
             "linkeasefile": self.luci_installed_files(
                 "apps/linkeasefile/luci-lib-linkeasefile"
+            ),
+            "linkeaseauth": self.luci_installed_files(
+                "apps/linkeaseauth/luci-lib-linkeaseauth"
             ),
             "linkeasefull": (
                 self.makefile_installed_files("apps/linkeasefull/linkeasefull/Makefile")
@@ -399,6 +422,9 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("    linkeasefile:", text)
         self.assertIn("local: apps/linkeasefile/luci-lib-linkeasefile", text)
         self.assertIn("remote: nas-packages-luci/luci/luci-lib-linkeasefile", text)
+        self.assertIn("    linkeaseauth:", text)
+        self.assertIn("local: apps/linkeaseauth/luci-lib-linkeaseauth", text)
+        self.assertIn("remote: nas-packages-luci/luci/luci-lib-linkeaseauth", text)
 
     def test_apps_catalog_contains_linkeasefull(self):
         text = (REPO / "docs/apps-catalog.min.md").read_text(encoding="utf-8")

@@ -3,6 +3,11 @@ module("luci.controller.linkeasefull", package.seeall)
 function index()
 	entry({"admin", "services", "linkeasefull_status"}, call("linkeasefull_status"))
 	entry({"admin", "services", "linkeasefull", "auth"}, call("linkeasefull_auth")).leaf = true
+	local auth_finish = entry({"admin", "services", "linkeasefull", "auth_finish"}, call("linkeasefull_auth_finish"))
+	auth_finish.leaf = true
+	auth_finish.dependent = false
+	auth_finish.sysauth = "root"
+	auth_finish.sysauth_authenticator = "htmlauth"
 
 	if not nixio.fs.access("/etc/config/linkeasefull") then
 		return
@@ -42,79 +47,24 @@ function linkeasefull_status()
 	luci.http.write_json(status)
 end
 
-local function retrieve_luci_session()
-	local http = require "luci.http"
-	local util = require "luci.util"
-
-	for _, key in ipairs({"sysauth_https", "sysauth_http", "sysauth"}) do
-		local sid = http.getcookie(key)
-		if sid and sid ~= "" then
-			local sdat = util.ubus("session", "get", { ubus_rpc_session = sid })
-			if sdat and type(sdat.values) == "table" then
-				return sid
-			end
-		end
-	end
-	return nil
+local function cookie_encode(value)
+	return tostring(value or ""):gsub("([^A-Za-z0-9._~-])", function(char)
+		return string.format("%%%02X", char:byte())
+	end)
 end
 
-local function valid_apps_return(value)
-	if not value or value == "" then
-		return false
-	end
-	local function valid_path(path)
-		if path == "/apps" then
-			return true
-		end
-		local prefix = path:sub(1, 6)
-		return prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"
-	end
-	if value:sub(1, 1) == "/" then
-		return valid_path(value)
-	end
-
-	local scheme, authority, path = value:match("^(https?://)([^/]+)(/.*)$")
-	if not scheme or not authority or not valid_path(path) then
-		return false
-	end
-
-	local http = require "luci.http"
-	local uci = require "luci.model.uci".cursor()
-	local request_host = http.getenv("HTTP_HOST") or ""
-	local lan_host = uci:get("network", "lan", "ipaddr") or ""
-	local allowed_authorities = {
-		request_host,
-		request_host .. ":19290",
-		lan_host,
-		lan_host .. ":19290"
-	}
-
-	for _, host in ipairs(allowed_authorities) do
-		if host ~= "" and authority == host then
-			return true
-		end
-	end
-	return false
-end
-
-local function valid_cookie_value(value)
-	return value and value:match("^[A-Za-z0-9._%-_]+$") ~= nil
+local function linkease_auth_url(name)
+	local dispatcher = require "luci.dispatcher"
+	return dispatcher.build_url("admin", "services", "linkease_auth", name)
 end
 
 function linkeasefull_auth()
 	local http = require "luci.http"
-	local sid = retrieve_luci_session()
-
-	if not valid_cookie_value(sid) then
-		http.status(403, "Forbidden")
-		return
-	end
-
 	local target = http.formvalue("return") or "/apps/"
-	if not valid_apps_return(target) then
-		target = "/apps/"
-	end
+	http.redirect(linkease_auth_url("auth") .. "?return=" .. cookie_encode(target))
+end
 
-	http.header("Set-Cookie", "linkease_openwrt_sid=" .. sid .. "; Path=/apps; HttpOnly; SameSite=Lax")
-	http.redirect(target)
+function linkeasefull_auth_finish()
+	local http = require "luci.http"
+	http.redirect(linkease_auth_url("auth_finish"))
 end

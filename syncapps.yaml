@@ -318,6 +318,12 @@ apps:
             - local: apps/linkeasefile/luci-lib-linkeasefile
               remote: nas-packages-luci/luci/luci-lib-linkeasefile
         meta: []
+    linkeaseauth:
+        services: []
+        luci:
+            - local: apps/linkeaseauth/luci-lib-linkeaseauth
+              remote: nas-packages-luci/luci/luci-lib-linkeaseauth
+        meta: []
     linkeasefull:
         services:
             - local: apps/linkeasefull/linkeasefull
