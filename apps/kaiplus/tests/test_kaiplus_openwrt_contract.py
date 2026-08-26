@@ -37,7 +37,9 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/kaiplus-plugin.json $(1)/usr/share/kaiplus/kaiplus-plugin.json", makefile)
-        self.assertIn("$(INSTALL_DATA) ../app-meta-kaiplus/logo.png $(1)/usr/share/kaiplus/www/logo.png", makefile)
+        self.assertIn("KAIPLUS_LOGO:=./files/logo.png", makefile)
+        self.assertIn("KAIPLUS_LOGO:=../app-meta-kaiplus/logo.png", makefile)
+        self.assertIn("$(INSTALL_DATA) $(KAIPLUS_LOGO) $(1)/usr/share/kaiplus/www/logo.png", makefile)
         self.assertIn(
             "ln -sf /usr/share/kaiplus/kaiplus-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json",
             makefile,

@@ -19,6 +19,9 @@ class DockerManagerPackageContractTest(unittest.TestCase):
             makefile,
         )
         self.assertIn("PKG_HASH:=6bd0a5b91d32125879fa5ae54ca3a00df1a3b37bffadda8f986fbf1c4a3e0919", makefile)
+        self.assertIn("DOCKERMANAGER_LOGO:=./files/logo.svg", makefile)
+        self.assertIn("DOCKERMANAGER_LOGO:=../app-meta-dockermanager/logo.svg", makefile)
+        self.assertIn("$(INSTALL_DATA) $(DOCKERMANAGER_LOGO) $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertIn("PKG_VERSION:=0.1.1", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +luci-lib-linkeaseauth", makefile)
         self.assertIn("META_DEPENDS:=+dockermanager +luci-lib-linkeaseauth", meta)
