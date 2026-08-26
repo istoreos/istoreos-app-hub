@@ -31,6 +31,25 @@ class IstorexNewUiContractTest(unittest.TestCase):
             self.assertIn(f"+{package}", makefile)
         self.assertNotIn("+luci-app-istorex", makefile)
 
+    def test_istorex_meta_configures_istorenas_login_landing_page(self):
+        config = self.read("apps/istorex/app-meta-istorex/config.sh")
+
+        self.assertIn('[ -z "$ISTORE_CONF_DIR" ] && exit 1', config)
+        self.assertIn('LANDING_PAGE="/cgi-bin/luci/admin/services/linkeasefull/open"', config)
+        self.assertIn("[ -e /etc/config/luci ] || touch /etc/config/luci", config)
+        self.assertIn("[ -e /etc/config/istorenas ] || touch /etc/config/istorenas", config)
+        self.assertIn("uci -q show luci.main", config)
+        self.assertIn("uci -q set luci.main=core", config)
+        self.assertIn("uci -q show luci.themes", config)
+        self.assertIn("uci -q set luci.themes=internal", config)
+        self.assertIn("uci -q show istorenas.@login[0]", config)
+        self.assertIn("uci -q add istorenas login", config)
+        self.assertIn('set luci.themes.iStoreNAS="/luci-static/istorenas"', config)
+        self.assertIn('set luci.main.mediaurlbase="/luci-static/istorenas"', config)
+        self.assertIn('set istorenas.@login[0].landing_page="$LANDING_PAGE"', config)
+        self.assertIn("commit luci", config)
+        self.assertIn("commit istorenas", config)
+
     def test_syncapps_maps_theme_and_dockermanager_meta(self):
         syncapps = self.read("syncapps.yaml")
 
