@@ -13,14 +13,14 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
     def test_runtime_package_tracks_kspeeder_release_asset(self):
         makefile = self.read("istoreenhance/Makefile")
 
-        self.assertIn("PKG_SOURCE_DATE:=0.7.15", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=0.7.16", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
             "PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_SOURCE_DATE)/",
             makefile,
         )
         self.assertIn(
-            "PKG_HASH:=1957ff2f4957e655b7c6eb9db227abbdd3b2da6d0cb623978c7da18b61035494",
+            "PKG_HASH:=d6fffad59a2a496e64cfe4d883ec042daccb0a4b123c964cc3084860e98bf179",
             makefile,
         )
         self.assertIn("PKG_BUILD_DIR:=$(BUILD_DIR)/iStoreEnhance-binary-$(PKG_SOURCE_DATE)", makefile)
@@ -28,7 +28,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
     def test_meta_package_shows_runtime_version(self):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
-        self.assertIn("PKG_VERSION:=0.7.15", makefile)
+        self.assertIn("PKG_VERSION:=0.7.16", makefile)
 
     def test_runtime_package_installs_kspeeder_desktop_module(self):
         makefile = self.read("istoreenhance/Makefile")
