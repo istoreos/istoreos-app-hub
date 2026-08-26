@@ -87,16 +87,13 @@ class IstorexNewUiContractTest(unittest.TestCase):
         self.assertIn("proxy_prefix_supported = uhttpd_supports_proxy_prefix()", controller)
         self.assertIn("proxy_prefix_enabled = uhttpd_apps_proxy_available()", controller)
 
-    def test_linkeasefull_uci_defaults_enables_supported_proxy_prefix(self):
+    def test_linkeasefull_package_does_not_modify_uhttpd(self):
         defaults = self.read("apps/linkeasefull/linkeasefull/files/linkeasefull.uci-default")
 
-        self.assertIn("uhttpd_supports_proxy_prefix()", defaults)
-        self.assertIn("uhttpd_has_apps_proxy_prefix()", defaults)
-        self.assertIn(
-            'uci -q add_list uhttpd.main.proxy_prefix="/apps=http://127.0.0.1:19290"',
-            defaults,
-        )
-        self.assertIn("/etc/init.d/uhttpd reload", defaults)
+        self.assertNotIn("proxy_prefix", defaults)
+        self.assertNotIn("add_list uhttpd", defaults)
+        self.assertNotIn("commit uhttpd", defaults)
+        self.assertNotIn("/etc/init.d/uhttpd", defaults)
 
     def test_theme_package_was_imported(self):
         theme_root = ROOT / "apps/istorex/luci-theme-istorenas"
