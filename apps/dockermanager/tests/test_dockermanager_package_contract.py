@@ -14,6 +14,10 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         meta = self.read("app-meta-dockermanager/Makefile")
 
         self.assertIn("PKG_VERSION:=0.1.1", makefile)
+        self.assertIn(
+            "PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/dockermanager-runtime-v$(PKG_VERSION)/",
+            makefile,
+        )
         self.assertIn("PKG_HASH:=6bd0a5b91d32125879fa5ae54ca3a00df1a3b37bffadda8f986fbf1c4a3e0919", makefile)
         self.assertIn("PKG_VERSION:=0.1.1", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +luci-lib-linkeaseauth", makefile)
