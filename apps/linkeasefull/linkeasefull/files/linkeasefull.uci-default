@@ -15,6 +15,20 @@ set_default() {
 set_default enabled 1
 uci -q commit linkeasefull
 
+uhttpd_supports_proxy_prefix() {
+	grep -qr "proxy_prefix" /etc/init.d/uhttpd /lib/functions /usr/share/uhttpd 2>/dev/null
+}
+
+uhttpd_has_apps_proxy_prefix() {
+	uci -q get uhttpd.main.proxy_prefix 2>/dev/null | grep -Fx "/apps=http://127.0.0.1:19290" >/dev/null
+}
+
+if uhttpd_supports_proxy_prefix && ! uhttpd_has_apps_proxy_prefix; then
+	uci -q add_list uhttpd.main.proxy_prefix="/apps=http://127.0.0.1:19290"
+	uci -q commit uhttpd
+	/etc/init.d/uhttpd reload >/dev/null 2>&1 || /etc/init.d/uhttpd restart >/dev/null 2>&1 || true
+fi
+
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@linkeasefull[-1]
 	add ucitrack linkeasefull

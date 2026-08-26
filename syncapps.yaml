@@ -101,7 +101,9 @@ apps:
             - local: apps/dockermanager/dockermanager
               remote: nas-packages/network/services/dockermanager
         luci: []
-        meta: []
+        meta:
+            - local: apps/dockermanager/app-meta-dockermanager
+              remote: openwrt-app-meta/applications/app-meta-dockermanager
     dpanel:
         services: []
         luci:
@@ -237,6 +239,8 @@ apps:
         luci:
             - local: apps/istorex/luci-app-istorex
               remote: nas-packages-luci/luci/luci-app-istorex
+            - local: apps/istorex/luci-theme-istorenas
+              remote: nas-packages-luci/luci/luci-theme-istorenas
         meta:
             - local: apps/istorex/app-meta-istorex
               remote: openwrt-app-meta/applications/app-meta-istorex
