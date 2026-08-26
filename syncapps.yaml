@@ -96,6 +96,12 @@ apps:
               remote: openwrt-app-actions/applications/docker-lan-bridge
         luci: []
         meta: []
+    dockermanager:
+        services:
+            - local: apps/dockermanager/dockermanager
+              remote: nas-packages/network/services/dockermanager
+        luci: []
+        meta: []
     dpanel:
         services: []
         luci:
