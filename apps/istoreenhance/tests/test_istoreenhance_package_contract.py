@@ -40,9 +40,8 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertIn("$(KSPEEDER_WEB_ROOT)/desktop-entry.js", makefile)
         self.assertIn("$(CP) $(KSPEEDER_WEB_ROOT)/* $(1)/usr/share/kspeeder/www/", makefile)
         self.assertIn("./files/www/desktop-entry.js", makefile)
-        self.assertIn("ISTOREENHANCE_LOGO:=./files/logo.png", makefile)
-        self.assertIn("ISTOREENHANCE_LOGO:=../app-meta-istoreenhance/logo.png", makefile)
-        self.assertIn("$(INSTALL_DATA) $(ISTOREENHANCE_LOGO) $(1)/usr/share/kspeeder/www/logo.png", makefile)
+        self.assertIn("$(INSTALL_DATA) ./files/logo.png $(1)/usr/share/kspeeder/www/logo.png", makefile)
+        self.assertNotIn("../app-meta-", makefile)
         self.assertIn("/usr/share/linkeasefull/desktop-apps.d/20-kspeeder.json", makefile)
 
     def test_kspeeder_desktop_manifest_uses_linkease_runtime_proxy(self):
