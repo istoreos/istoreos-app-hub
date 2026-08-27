@@ -100,7 +100,9 @@ apps:
         services:
             - local: apps/dockermanager/dockermanager
               remote: nas-packages/network/services/dockermanager
-        luci: []
+        luci:
+            - local: apps/dockermanager/luci-app-dockermanager
+              remote: nas-packages-luci/luci/luci-app-dockermanager
         meta:
             - local: apps/dockermanager/app-meta-dockermanager
               remote: openwrt-app-meta/applications/app-meta-dockermanager

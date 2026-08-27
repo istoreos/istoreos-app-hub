@@ -12,6 +12,10 @@ class DockerManagerPackageContractTest(unittest.TestCase):
     def test_package_depends_on_shared_linkease_openwrt_auth_bridge(self):
         makefile = self.read("dockermanager/Makefile")
         meta = self.read("app-meta-dockermanager/Makefile")
+        luci_makefile = self.read("luci-app-dockermanager/Makefile")
+        controller = self.read("luci-app-dockermanager/luasrc/controller/dockermanager.lua")
+        cbi = self.read("luci-app-dockermanager/luasrc/model/cbi/dockermanager.lua")
+        status = self.read("luci-app-dockermanager/luasrc/view/dockermanager_status.htm")
 
         self.assertIn("PKG_VERSION:=0.1.1", makefile)
         self.assertIn(
@@ -22,10 +26,24 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("PKG_VERSION:=0.1.1", meta)
-        self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +luci-lib-linkeaseauth", makefile)
-        self.assertIn("META_DEPENDS:=+dockermanager +luci-lib-linkeaseauth", meta)
+        self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle", makefile)
+        self.assertNotIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth", luci_makefile)
+        self.assertIn("META_DEPENDS:=+dockermanager +luci-app-dockermanager", meta)
+        self.assertNotIn("+luci-lib-linkeaseauth", meta)
+        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/dockermanager/open", meta)
         self.assertNotIn("+luci-app-linkeasefull", makefile)
         self.assertNotIn("+luci-app-linkeasefull", meta)
+        self.assertIn('entry({"admin", "services", "dockermanager", "open"}', controller)
+        self.assertIn("function dockermanager_open()", controller)
+        self.assertIn("uhttpd_apps_proxy_available()", controller)
+        self.assertIn("return base_path", controller)
+        self.assertIn("url_authority(request_or_lan_host(), port)", controller)
+        self.assertIn('linkease_auth_url("auth")', controller)
+        self.assertIn('Map("dockermanager"', cbi)
+        self.assertIn('"data_dir"', cbi)
+        self.assertIn('"port"', cbi)
+        self.assertIn('url("admin/services/dockermanager/open")', status)
 
     def test_package_registers_desktop_plugin_without_owning_auth_bridge(self):
         makefile = self.read("dockermanager/Makefile")
