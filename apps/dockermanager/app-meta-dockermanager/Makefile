@@ -4,10 +4,10 @@ include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=0.1.1
 PKG_RELEASE:=1
-META_TITLE:=Docker Manager
+META_TITLE:=Docker管理
 META_TITLE.en:=Docker Manager
 META_DEPENDS:=+dockermanager +luci-app-dockermanager
-META_DESCRIPTION:=Docker management module for LinkEase Desktop.
+META_DESCRIPTION:=更简单专业的 Docker 管理器，加速更快更方便.
 META_DESCRIPTION.en:=Docker management module for LinkEase Desktop.
 META_AUTHOR:=linkease
 META_ARCH:=x86_64 aarch64
