@@ -3,12 +3,12 @@
   "id": "ddnsto",
   "name": "DDNSTO",
   "icon": "logo.png",
-  "staticRoot": "/usr/share/linkeasefull/ddnsto",
+  "staticRoot": "/usr/share/linkeasefull/app-meta/ddnsto",
   "desktop": {
     "mode": "builtin",
     "component": "LuciContainer",
     "props": {
-      "initialPath": "/cgi-bin/luci/admin/services/ddnsto/page",
+      "initialPath": "/cgi-bin/luci/admin/services/ddnsto",
       "contentOnly": true,
       "isolation": "scoped-dom-css",
       "mountIds": [
@@ -25,13 +25,22 @@
     }
   },
   "standalone": {
-    "url": "/cgi-bin/luci/admin/services/ddnsto/page"
+    "url": "/cgi-bin/luci/admin/services/ddnsto"
   },
   "window": {
     "width": 980,
     "height": 700,
     "singleton": true
   },
-  "capabilities": ["ddnsto", "openwrt", "luci", "network"],
-  "categories": ["network", "service", "openwrt"]
+  "capabilities": [
+    "ddnsto",
+    "openwrt",
+    "luci",
+    "network"
+  ],
+  "categories": [
+    "network",
+    "service",
+    "openwrt"
+  ]
 }

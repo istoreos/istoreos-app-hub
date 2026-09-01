@@ -56,8 +56,8 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertEqual(manifest["backend"]["portFromUci"], "istoreenhance.@istoreenhance[0].adminport")
         self.assertEqual(manifest["backend"]["defaultPort"], 5003)
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
-        self.assertEqual(manifest["backend"]["upstreamBasePath"], "/apps/kspeeder/")
-        self.assertEqual(manifest["backend"]["pathMode"], "preserve")
+        self.assertEqual(manifest["backend"]["upstreamBasePath"], "/")
+        self.assertEqual(manifest["backend"]["pathMode"], "strip-public-base")
 
     def test_kspeeder_desktop_entry_is_browser_safe_single_spa_module(self):
         entry = self.read("istoreenhance/files/www/desktop-entry.js")
