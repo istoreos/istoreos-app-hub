@@ -32,6 +32,12 @@ class LinkEaseFullOpenWrtAuthShimContractTest(unittest.TestCase):
         self.assertNotIn('util.ubus("session", "get", { ubus_rpc_session = sid })', controller)
         self.assertNotIn('local pending_return_cookie = "linkease_openwrt_pending_return"', controller)
 
+    def test_init_script_selects_openwrt_auth_provider_explicitly(self):
+        init_script = self.read("linkeasefull/files/linkeasefull.init")
+
+        self.assertIn('procd_set_param env \\', init_script)
+        self.assertIn('"LINKEASE_AUTH_PROVIDER=openwrt"', init_script)
+
 
 if __name__ == "__main__":
     unittest.main()
