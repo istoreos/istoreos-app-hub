@@ -30,6 +30,7 @@ class LinkEaseAuthOpenWrtContractTest(unittest.TestCase):
         self.assertIn('auth_finish.sysauth_authenticator = "htmlauth"', controller)
         self.assertIn('set_pending_return_cookie(target)', controller)
         self.assertIn('http.redirect(auth_finish_url())', controller)
+        self.assertIn('absolute_luci_url(dispatcher.build_url("admin", "services", "linkease_auth", "auth_finish"))', controller)
 
         auth_function = controller.index("function linkease_auth()")
         finish_function = controller.index("function linkease_auth_finish()")
@@ -69,6 +70,8 @@ class LinkEaseAuthOpenWrtContractTest(unittest.TestCase):
         self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', controller)
         self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', controller)
         self.assertIn("request_host", controller)
+        self.assertIn('http.getenv("HTTP_X_FORWARDED_HOST")', controller)
+        self.assertIn('http.getenv("HTTP_X_FORWARDED_PROTO")', controller)
         self.assertIn("lan_host", controller)
         self.assertIn("authority_host(authority)", controller)
         self.assertIn("authority_host(request_host)", controller)
