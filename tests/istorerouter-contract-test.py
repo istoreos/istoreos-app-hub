@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
+import re
+import subprocess
 import unittest
 
 
@@ -47,15 +49,57 @@ class IstoreRouterContractTest(unittest.TestCase):
 
     def test_meta_and_syncapps_use_istorerouter(self):
         meta = self.read("apps/istorerouter/app-meta-istorerouter/Makefile")
+        config = self.read("apps/istorerouter/app-meta-istorerouter/config.sh")
         syncapps = self.read("syncapps.yaml")
 
         self.assertIn("META_TITLE:=iStoreRouter", meta)
-        self.assertIn("META_DEPENDS:=+luci-app-istorerouter", meta)
+        self.assertIn("META_DEPENDS:=+luci-app-istorerouter +luci-theme-istorenas", meta)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/istorerouter", meta)
+        self.assertIn('LANDING_PAGE="/cgi-bin/luci/admin/istorerouter"', config)
+        self.assertIn("[ -e /etc/config/luci ] || touch /etc/config/luci", config)
+        self.assertIn("[ -e /etc/config/istorenas ] || touch /etc/config/istorenas", config)
+        self.assertIn("uci -q show luci.main", config)
+        self.assertIn("uci -q set luci.main=core", config)
+        self.assertIn("uci -q show luci.themes", config)
+        self.assertIn("uci -q set luci.themes=internal", config)
+        self.assertIn("uci -q show istorenas.@login[0]", config)
+        self.assertIn("uci -q add istorenas login", config)
+        self.assertIn('set luci.themes.iStoreNAS="/luci-static/istorenas"', config)
+        self.assertIn('set luci.main.mediaurlbase="/luci-static/istorenas"', config)
+        self.assertIn('set istorenas.@login[0].landing_page="$LANDING_PAGE"', config)
+        self.assertIn("commit luci", config)
+        self.assertIn("commit istorenas", config)
+        self.assertIn("rm -f /tmp/luci-indexcache /tmp/luci-indexcache.*", config)
+        self.assertIn("define Package/app-meta-istorerouter/prerm", meta)
+        self.assertIn('LANDING_PAGE="/cgi-bin/luci/admin/istorerouter"', meta)
+        self.assertIn("uci -q show istorenas.@login[0]", meta)
+        self.assertIn(
+            'CURRENT_LANDING_PAGE="$$(uci -q get istorenas.@login[0].landing_page)"',
+            meta,
+        )
+        self.assertIn('[ "$$CURRENT_LANDING_PAGE" = "$$LANDING_PAGE" ]', meta)
+        self.assertIn("uci -q delete istorenas.@login[0].landing_page || true", meta)
+        self.assertIn("uci -q commit istorenas || true", meta)
+        self.assertIn("rm -f /tmp/luci-indexcache /tmp/luci-indexcache.*", meta)
         self.assertIn("local: apps/istorerouter/luci-app-istorerouter", syncapps)
         self.assertIn("remote: nas-packages-luci/luci/luci-app-istorerouter", syncapps)
         self.assertIn("local: apps/istorerouter/app-meta-istorerouter", syncapps)
         self.assertIn("remote: openwrt-app-meta/applications/app-meta-istorerouter", syncapps)
+
+    def test_istorerouter_meta_shell_hooks_are_valid_shell(self):
+        config_path = ROOT / "apps/istorerouter/app-meta-istorerouter/config.sh"
+        self.assertTrue(config_path.stat().st_mode & 0o111)
+        subprocess.run(["sh", "-n", str(config_path)], check=True)
+
+        meta = self.read("apps/istorerouter/app-meta-istorerouter/Makefile")
+        prerm_match = re.search(
+            r"define Package/app-meta-istorerouter/prerm\n(.*?)\nendef",
+            meta,
+            re.S,
+        )
+        self.assertIsNotNone(prerm_match)
+        prerm_script = prerm_match.group(1).replace("$$", "$")
+        subprocess.run(["sh", "-n"], input=prerm_script, text=True, check=True)
 
     def test_built_router_view_slots_do_not_destructure_missing_slot_props(self):
         static_root = (
