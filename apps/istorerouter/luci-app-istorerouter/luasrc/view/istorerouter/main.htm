@@ -29,6 +29,9 @@
                                      }
         })();
     </script>
+    <%
+      local luci_main = type(luci.config) == "table" and type(luci.config.main) == "table" and luci.config.main or {}
+    -%>
     <script type="text/javascript">
       L = new LuCI(<%= luci.http.write_json({
         token          = token,
@@ -39,8 +42,8 @@
         documentroot   = luci.http.getenv("DOCUMENT_ROOT"),
         requestpath    = luci.dispatcher.context.requestpath,
         dispatchpath   = luci.dispatcher.context.path,
-        pollinterval   = luci.config.main.pollinterval or 5,
-        ubuspath       = luci.config.main.ubuspath or '/ubus/',
+        pollinterval   = luci_main.pollinterval or 5,
+        ubuspath       = luci_main.ubuspath or '/ubus/',
         sessionid      = luci.dispatcher.context.authsession,
         nodespec       = luci.dispatcher.context.dispatched,
         apply_rollback = math.max(applyconf and applyconf.rollback or 90, 30),
@@ -52,6 +55,6 @@
     </script>
     <div id="app"></div>
     <link rel="stylesheet" href="/luci-static/istorerouter/style.css?v=<%=cache_tag%>">
-    <script type="module" crossorigin src="/luci-static/istorerouter/index.js"></script>
+    <script type="module" crossorigin src="/luci-static/istorerouter/index.js?v=<%=cache_tag%>"></script>
 </body>
 </html>
