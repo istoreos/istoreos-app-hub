@@ -246,6 +246,14 @@ apps:
         meta:
             - local: apps/istorex/app-meta-istorex
               remote: openwrt-app-meta/applications/app-meta-istorex
+    istorerouter:
+        services: []
+        luci:
+            - local: apps/istorerouter/luci-app-istorerouter
+              remote: nas-packages-luci/luci/luci-app-istorerouter
+        meta:
+            - local: apps/istorerouter/app-meta-istorerouter
+              remote: openwrt-app-meta/applications/app-meta-istorerouter
     ittools:
         services: []
         luci:
