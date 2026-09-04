@@ -46,12 +46,19 @@ function get_config_data()
     return data
 end
 
+local function static_cache_tag()
+    local fs = require "nixio.fs"
+    local stat = fs.stat("/www/luci-static/istorerouter/index.js")
+    return stat and stat.mtime or os.time()
+end
+
 function get_params()
     local config = get_config_data()
     local data = {
         prefix=luci.dispatcher.build_url(unpack({"admin", "istorerouter"})),
         id=user_id(),
         model = config.model,
+        cache_tag = static_cache_tag(),
     }
     return data
 end
@@ -62,6 +69,7 @@ function get_dev_params()
         prefix=luci.dispatcher.build_url(unpack({"admin", "istorerouter_dev"})),
         id=user_id(),
         model = config.model,
+        cache_tag = static_cache_tag(),
     }
     return data
 end
