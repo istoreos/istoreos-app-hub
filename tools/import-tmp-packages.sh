@@ -15,7 +15,7 @@ usage() {
     cat <<'USAGE'
 Usage: import-tmp-packages.sh [options] [SOURCE_DIR]
 
-Download arm64.zip and x64.zip from urls.env, import their ipk/apk packages
+Download available arm64.zip and x64.zip archives from urls.env, import their ipk/apk packages
 into an istore-repo branch, commit the changes, and push the branch.
 
 If SOURCE_DIR is omitted, TARGET_TMP is used, falling back to /projects/repos/tmp.
@@ -26,8 +26,8 @@ Required environment or options:
 
 urls.env variables:
   OPENWRT_ACTIONS_RUN_ID
-  ARM64_DOWNLOAD_URL
-  X64_DOWNLOAD_URL
+  ARM64_DOWNLOAD_URL  Optional
+  X64_DOWNLOAD_URL    Optional
 
 Options:
   --source-dir DIR   Directory containing urls.env and downloaded zips.
@@ -35,7 +35,7 @@ Options:
   --repo-root DIR    Repository root to receive bin/packages and bin/apks.
   --run-id ID        Override OPENWRT_ACTIONS_RUN_ID.
   --branch NAME      Override branch name. Defaults to zip-RUN_ID.
-  --skip-download    Use existing arm64.zip and x64.zip.
+  --skip-download    Use existing arm64.zip and/or x64.zip.
   --no-push          Commit locally but do not push.
   --dry-run          Print actions without downloading, writing, committing, or pushing.
   -h, --help         Show this help.
@@ -158,7 +158,11 @@ download_archive() {
     local dest="$2"
     local label="$3"
 
-    [ -n "${url}" ] || die "missing ${label} download URL"
+    if [ -z "${url}" ]; then
+        echo "skip ${label}: download URL not set"
+        rm -f "${dest}" "${dest}.tmp"
+        return
+    fi
 
     if [ "${dry_run}" -eq 1 ]; then
         echo "download ${label}: ${#url} byte URL -> ${dest}"
@@ -176,9 +180,24 @@ if [ "${skip_download}" -eq 0 ]; then
     download_archive "${X64_DOWNLOAD_URL:-}" "${x64_zip}" "x64"
 fi
 
+have_arm64=0
+have_x64=0
 if [ "${dry_run}" -eq 0 ]; then
-    [ -f "${arm_zip}" ] || die "missing archive: ${arm_zip}"
-    [ -f "${x64_zip}" ] || die "missing archive: ${x64_zip}"
+    if [ -f "${arm_zip}" ]; then
+        have_arm64=1
+    fi
+    if [ -f "${x64_zip}" ]; then
+        have_x64=1
+    fi
+    [ "${have_arm64}" -eq 1 ] || [ "${have_x64}" -eq 1 ] || die "no archives available to import"
+else
+    if [ -n "${ARM64_DOWNLOAD_URL:-}" ] || { [ "${skip_download}" -eq 1 ] && [ -f "${arm_zip}" ]; }; then
+        have_arm64=1
+    fi
+    if [ -n "${X64_DOWNLOAD_URL:-}" ] || { [ "${skip_download}" -eq 1 ] && [ -f "${x64_zip}" ]; }; then
+        have_x64=1
+    fi
+    [ "${have_arm64}" -eq 1 ] || [ "${have_x64}" -eq 1 ] || die "no archives available to import"
 fi
 
 tmpdir="$(mktemp -d)"
@@ -291,8 +310,16 @@ fi
 arm_dir="${tmpdir}/arm64"
 x64_dir="${tmpdir}/x64"
 
-extract_archive "${arm_zip}" "${arm_dir}"
-extract_archive "${x64_zip}" "${x64_dir}"
+if [ "${have_arm64}" -eq 1 ]; then
+    extract_archive "${arm_zip}" "${arm_dir}"
+else
+    echo "skip arm64: archive not available"
+fi
+if [ "${have_x64}" -eq 1 ]; then
+    extract_archive "${x64_zip}" "${x64_dir}"
+else
+    echo "skip x64: archive not available"
+fi
 
 all_luci_dir="${tmpdir}/all_nas_luci"
 merge_luci_dir "${arm_dir}/ipk/nas_luci" "${all_luci_dir}" "arm64 luci all"

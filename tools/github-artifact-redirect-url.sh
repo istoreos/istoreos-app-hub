@@ -97,15 +97,23 @@ else
   [[ -n "$token" ]] || die "GH_TOKEN, GITHUB_TOKEN, or LINKEASE_GH_TOKEN is required"
 
   need_cmd gh
+  need_cmd jq
 
   escaped_artifact="${artifact//\\/\\\\}"
   escaped_artifact="${escaped_artifact//\"/\\\"}"
+  artifacts_json="$(GH_TOKEN="$token" gh api "repos/${repo}/actions/runs/${run_id}/artifacts")"
   archive_url="$(
-    GH_TOKEN="$token" gh api "repos/${repo}/actions/runs/${run_id}/artifacts" \
-      --jq ".artifacts[] | select(.name == \"${escaped_artifact}\") | .archive_download_url" |
+    printf '%s\n' "$artifacts_json" |
+      jq -r ".artifacts[] | select(.name == \"${escaped_artifact}\") | .archive_download_url" |
       sed -n '1p'
   )"
-  [[ -n "$archive_url" ]] || die "artifact not found: ${artifact}"
+  if [[ -z "$archive_url" ]]; then
+    available_artifacts="$(
+      printf '%s\n' "$artifacts_json" |
+        jq -r '[.artifacts[].name] | if length == 0 then "(none)" else join(", ") end'
+    )"
+    die "artifact not found: ${artifact}; available artifacts for run ${run_id}: ${available_artifacts}"
+  fi
 fi
 
 need_cmd curl

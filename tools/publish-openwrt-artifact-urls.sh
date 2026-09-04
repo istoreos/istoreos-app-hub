@@ -6,7 +6,7 @@ usage() {
 Usage:
   publish-openwrt-artifact-urls.sh RUN_ID
 
-Resolve arm64 and x64 GitHub Actions artifact redirect URLs for a run, then
+Resolve available arm64 and x64 GitHub Actions artifact redirect URLs for a run, then
 write them as environment variables into TARGET_FILE on TARGET_SSH.
 
 Required environment:
@@ -131,13 +131,37 @@ validate_env_name "$run_id_env_name"
 
 need_cmd ssh
 
-arm64_url="$("$redirect_script" --repo "$repo" --run-id "$run_id" --artifact arm64)"
-x64_url="$("$redirect_script" --repo "$repo" --run-id "$run_id" --artifact x64)"
+resolve_optional_url() {
+  local artifact="$1"
+  local output
+
+  if output="$("$redirect_script" --repo "$repo" --run-id "$run_id" --artifact "$artifact" 2>&1)"; then
+    printf '%s\n' "$output"
+    return
+  fi
+
+  if [[ "$output" == error:\ artifact\ not\ found:\ "$artifact"* ]]; then
+    printf 'warning: skip missing artifact %s for run %s\n' "$artifact" "$run_id" >&2
+    return
+  fi
+
+  printf '%s\n' "$output" >&2
+  return 1
+}
+
+arm64_url="$(resolve_optional_url arm64)"
+x64_url="$(resolve_optional_url x64)"
+
+[[ -n "$arm64_url" || -n "$x64_url" ]] || die "no supported artifacts found for run ${run_id}"
 
 payload="$(
   printf 'export %s=%s\n' "$run_id_env_name" "$(env_quote "$run_id")"
-  printf 'export %s=%s\n' "$arm64_env_name" "$(env_quote "$arm64_url")"
-  printf 'export %s=%s\n' "$x64_env_name" "$(env_quote "$x64_url")"
+  if [[ -n "$arm64_url" ]]; then
+    printf 'export %s=%s\n' "$arm64_env_name" "$(env_quote "$arm64_url")"
+  fi
+  if [[ -n "$x64_url" ]]; then
+    printf 'export %s=%s\n' "$x64_env_name" "$(env_quote "$x64_url")"
+  fi
 )"
 
 if [[ "$dry_run" == "1" ]]; then
