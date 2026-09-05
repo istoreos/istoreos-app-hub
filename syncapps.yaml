@@ -9,6 +9,8 @@ rsync:
         - .DS_Store
         - .idea
         - .vscode
+        - __pycache__
+        - "*.pyc"
         - node_modules
     exclude_files: []
 apps:
@@ -22,6 +24,14 @@ apps:
         meta:
             - local: apps/airconnect/app-meta-airconnect
               remote: openwrt-app-meta/applications/app-meta-airconnect
+    agentflow:
+        services:
+            - local: apps/agentflow/agentflow
+              remote: openwrt-app-actions/applications/agentflow
+        luci:
+            - local: apps/agentflow/luci-app-agentflow
+              remote: openwrt-app-actions/applications/luci-app-agentflow
+        meta: []
     ap-modem:
         services: []
         luci:
@@ -362,6 +372,12 @@ apps:
         meta:
             - local: apps/memos/app-meta-memos
               remote: openwrt-app-meta/applications/app-meta-memos
+    mise:
+        services:
+            - local: apps/mise/mise
+              remote: openwrt-app-actions/applications/mise
+        luci: []
+        meta: []
     mtphotos:
         services: []
         luci:
