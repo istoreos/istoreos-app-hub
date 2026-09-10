@@ -126,11 +126,11 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         luci_makefile = self.read("luci-app-kaiplus/Makefile")
         meta_makefile = self.read("app-meta-kaiplus/Makefile")
 
-        self.assertIn("+luci-lib-openwrtauth", luci_makefile)
-        self.assertIn("+luci-lib-openwrtauth", meta_makefile)
-        self.assertNotIn("+luci-lib-openwrtauth", runtime_makefile)
-        self.assertNotIn("+luci-lib-linkeaseauth", luci_makefile)
-        self.assertNotIn("+luci-lib-linkeaseauth", meta_makefile)
+        self.assertIn("+luci-lib-linkeaseauth", luci_makefile)
+        self.assertIn("+luci-lib-linkeaseauth", meta_makefile)
+        self.assertNotIn("luci-lib-openwrtauth", luci_makefile)
+        self.assertNotIn("luci-lib-openwrtauth", meta_makefile)
+        self.assertNotIn("+luci-lib-linkeaseauth", runtime_makefile)
 
     def test_runtime_and_plugin_versions_are_pinned_for_release_traceability(self):
         runtime_makefile = self.read("kaiplus/Makefile")

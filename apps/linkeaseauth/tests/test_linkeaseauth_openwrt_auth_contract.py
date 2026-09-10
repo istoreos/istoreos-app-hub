@@ -14,7 +14,7 @@ class LinkEaseAuthOpenWrtContractTest(unittest.TestCase):
         controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
 
         self.assertIn("LUCI_TITLE:=LuCI shared OpenWrt auth bridge for LinkEase apps", makefile)
-        self.assertIn("PKG_PROVIDES:=luci-lib-openwrtauth", makefile)
+        self.assertNotIn("luci-lib-openwrtauth", makefile)
         self.assertNotIn("+linkeasefull", makefile)
         self.assertNotIn("+luci-app-linkeasefull", makefile)
         self.assertIn('entry({"admin", "services", "linkease_auth", "auth"}, call("linkease_auth"))', controller)
