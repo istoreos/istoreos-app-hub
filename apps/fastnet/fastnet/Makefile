@@ -10,12 +10,12 @@ PKG_ARCH_FASTNET:=$(ARCH)
 
 PKG_NAME:=fastnet
 # use PKG_SOURCE_DATE instead of PKG_VERSION for compatible
-PKG_SOURCE_DATE:=0.7.2
+PKG_SOURCE_DATE:=0.7.6
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_SOURCE_DATE).tar.gz
 PKG_SOURCE_URL:=http://dl.istoreos.com/binary/fastnet/
-PKG_HASH:=aa8c0a3aa6885536d0ab9efc25df4191de78e3d0bc1077607874f64100d82f98
+PKG_HASH:=d7751f47c0a56dfe6bfb4417fd39d3fe9f9053fbb914f2d9b11b4e6f98dce490
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_SOURCE_DATE)
 
@@ -57,7 +57,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/fastnet.$(PKG_ARCH_FASTNET) $(1)/usr/sbin/fastnet
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/FastNet.$(PKG_ARCH_FASTNET) $(1)/usr/sbin/FastNet
 	$(INSTALL_CONF) ./files/fastnet.config $(1)/etc/config/fastnet
 	$(INSTALL_BIN) ./files/fastnet.init $(1)/etc/init.d/fastnet
 	$(INSTALL_BIN) ./files/fastnet.uci-default $(1)/etc/uci-defaults/fastnet
