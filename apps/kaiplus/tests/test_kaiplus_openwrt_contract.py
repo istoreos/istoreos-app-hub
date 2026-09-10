@@ -84,6 +84,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn("option 'bind_addr' '0.0.0.0'", text)
         self.assertIn("option 'base_path' '/apps/kaiplus/'", text)
         self.assertIn("option 'system_role' 'istoreos'", text)
+        self.assertIn("option 'auth_mode' 'disabled'", text)
 
     def test_init_reads_listen_config_and_passes_it_to_kaiplus_web(self):
         text = self.read("kaiplus/files/kaiplus.init")
@@ -95,6 +96,9 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('config_get port "$1" port "8189"', text)
         self.assertIn('config_get bind_addr "$1" bind_addr "0.0.0.0"', text)
         self.assertIn('config_get base_path "$1" base_path "/apps/kaiplus/"', text)
+        self.assertIn('config_get auth_mode "$1" auth_mode "disabled"', text)
+        self.assertIn('KAIPLUS_AUTH_MODE="$auth_mode"', text)
+        self.assertIn('LINKEASE_AUTH_PROVIDER="$auth_mode"', text)
         self.assertIn('KAIPLUS_LISTEN_MODE="unix"', text)
         self.assertIn('KAIPLUS_SOCKET_PATH="$socket_path"', text)
         self.assertIn('KAIPLUS_LISTEN_MODE="tcp"', text)
@@ -114,7 +118,30 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('set kaiplus.@kaiplus[0].port="8189"', text)
         self.assertIn('set kaiplus.@kaiplus[0].bind_addr="0.0.0.0"', text)
         self.assertIn('set kaiplus.@kaiplus[0].base_path="/apps/kaiplus/"', text)
+        self.assertIn('set kaiplus.@kaiplus[0].auth_mode="openwrt_luci"', text)
         self.assertNotIn('port="{}"'.format(LEGACY_PORT), text)
+
+    def test_openwrt_auth_bridge_is_declared_as_package_dependency(self):
+        runtime_makefile = self.read("kaiplus/Makefile")
+        luci_makefile = self.read("luci-app-kaiplus/Makefile")
+        meta_makefile = self.read("app-meta-kaiplus/Makefile")
+
+        self.assertIn("+luci-lib-openwrtauth", luci_makefile)
+        self.assertIn("+luci-lib-openwrtauth", meta_makefile)
+        self.assertNotIn("+luci-lib-openwrtauth", runtime_makefile)
+        self.assertNotIn("+luci-lib-linkeaseauth", luci_makefile)
+        self.assertNotIn("+luci-lib-linkeaseauth", meta_makefile)
+
+    def test_runtime_and_plugin_versions_are_pinned_for_release_traceability(self):
+        runtime_makefile = self.read("kaiplus/Makefile")
+        luci_makefile = self.read("luci-app-kaiplus/Makefile")
+        meta_makefile = self.read("app-meta-kaiplus/Makefile")
+
+        for text in (runtime_makefile, luci_makefile, meta_makefile):
+            self.assertIn("PKG_VERSION:=1.0.7", text)
+            self.assertIn("PKG_RELEASE:=1", text)
+        self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
+        self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
 
     def test_kaiplus_package_contains_no_legacy_port_value(self):
         for path in ROOT.rglob("*"):
