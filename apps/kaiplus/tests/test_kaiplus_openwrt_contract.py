@@ -138,7 +138,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         meta_makefile = self.read("app-meta-kaiplus/Makefile")
 
         for text in (runtime_makefile, luci_makefile, meta_makefile):
-            self.assertIn("PKG_VERSION:=1.0.7", text)
+            self.assertIn("PKG_VERSION:=1.0.8", text)
             self.assertIn("PKG_RELEASE:=1", text)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
         self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
