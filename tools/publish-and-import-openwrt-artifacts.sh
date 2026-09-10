@@ -8,7 +8,8 @@ Usage:
 
 Resolve arm64/x64 artifact redirect URLs for a GitHub Actions run, write them
 to TARGET_TMP/urls.env on TARGET_SSH, upload import-tmp-packages.sh to
-TARGET_TMP, and execute it on the target server.
+TARGET_TMP, upload the shared download environment, and execute the importer
+on the target server.
 
 Environment:
   KSPEEDER_GH_TOKEN_FILE  Defaults to ~/.config/gh-tokens/kspeeder.env
@@ -43,6 +44,7 @@ need_cmd() {
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 publish_urls_script="${script_dir}/publish-openwrt-artifact-urls.sh"
 import_script="${script_dir}/import-tmp-packages.sh"
+download_env="${script_dir}/openwrt-artifact-download.env"
 
 token_file="${KSPEEDER_GH_TOKEN_FILE:-${HOME}/.config/gh-tokens/kspeeder.env}"
 if [[ -f "$token_file" ]]; then
@@ -114,6 +116,7 @@ if [[ -n "$target_ssh_port" ]]; then
 fi
 [[ -x "$publish_urls_script" ]] || die "missing executable helper: $publish_urls_script"
 [[ -x "$import_script" ]] || die "missing executable helper: $import_script"
+[[ -r "$download_env" ]] || die "missing download environment: $download_env"
 
 need_cmd scp
 need_cmd ssh
@@ -129,10 +132,12 @@ fi
 
 remote_import="${target_tmp%/}/import-tmp-packages.sh"
 remote_urls="${target_tmp%/}/urls.env"
+remote_download_env="${target_tmp%/}/openwrt-artifact-download.env"
 
 if [[ "$dry_run" == "1" ]]; then
   "$publish_urls_script" "${publish_args[@]}" --dry-run "$run_id"
   printf 'would upload %s to %s:%s\n' "$import_script" "$target_ssh" "$remote_import"
+  printf 'would upload %s to %s:%s\n' "$download_env" "$target_ssh" "$remote_download_env"
   [[ -z "$target_ssh_port" ]] || printf 'would use SSH port %s\n' "$target_ssh_port"
   printf 'would execute remote import for branch zip-%s\n' "$run_id"
   exit 0
@@ -142,11 +147,13 @@ fi
 
 "${ssh_cmd[@]}" "$target_ssh" "mkdir -p -- $(shell_quote "$target_tmp")"
 "${scp_cmd[@]}" "$import_script" "${target_ssh}:${remote_import}"
-"${ssh_cmd[@]}" "$target_ssh" "chmod +x -- $(shell_quote "$remote_import")"
+"${scp_cmd[@]}" "$download_env" "${target_ssh}:${remote_download_env}"
+"${ssh_cmd[@]}" "$target_ssh" "chmod +x -- $(shell_quote "$remote_import") && chmod 600 -- $(shell_quote "$remote_download_env")"
 
 remote_args=(
   "--source-dir" "$target_tmp"
   "--urls-env" "$remote_urls"
+  "--download-env" "$remote_download_env"
   "--repo-root" "$istore_repo"
   "--run-id" "$run_id"
 )

@@ -5,6 +5,7 @@ source_dir="${TARGET_TMP:-}"
 source_dir_set=0
 repo_root="${ISTORE_REPO:-}"
 urls_env=""
+download_env="${OPENWRT_ARTIFACT_ENV:-}"
 run_id="${OPENWRT_ACTIONS_RUN_ID:-}"
 branch_name=""
 dry_run=0
@@ -23,6 +24,7 @@ If SOURCE_DIR is omitted, TARGET_TMP is required.
 Required environment or options:
   TARGET_TMP     Directory containing urls.env and receiving downloaded zips
   ISTORE_REPO    istore-repo checkout
+  OPENWRT_ARTIFACT_ENV  Optional environment file loaded before downloads
 
 urls.env variables:
   OPENWRT_ACTIONS_RUN_ID
@@ -32,6 +34,7 @@ urls.env variables:
 Options:
   --source-dir DIR   Directory containing urls.env and downloaded zips.
   --urls-env FILE    Env file to source. Defaults to SOURCE_DIR/urls.env.
+  --download-env FILE  Environment file to source before downloads.
   --repo-root DIR    Repository root to receive bin/packages and bin/apks.
   --run-id ID        Override OPENWRT_ACTIONS_RUN_ID.
   --branch NAME      Override branch name. Defaults to zip-RUN_ID.
@@ -63,6 +66,11 @@ while [ "$#" -gt 0 ]; do
         --urls-env)
             [ "$#" -ge 2 ] || die "missing value for --urls-env"
             urls_env="$2"
+            shift 2
+            ;;
+        --download-env)
+            [ "$#" -ge 2 ] || die "missing value for --download-env"
+            download_env="$2"
             shift 2
             ;;
         --repo-root)
@@ -131,6 +139,15 @@ require_cmd git
 
 source_dir="$(cd "${source_dir}" && pwd)"
 repo_root="$(cd "${repo_root}" && pwd)"
+
+if [ -n "${download_env}" ]; then
+    [ -f "${download_env}" ] || die "download environment not found: ${download_env}"
+    set +u
+    # shellcheck source=/dev/null
+    source "${download_env}"
+    set -u
+    echo "download environment: ${download_env}"
+fi
 
 [ -n "${urls_env}" ] || urls_env="${source_dir}/urls.env"
 [ -f "${urls_env}" ] || die "urls env file not found: ${urls_env}"
