@@ -24,6 +24,10 @@ git -C "${repo}" commit -q --allow-empty -m "chore: import OpenWrt artifacts ${r
 git -C "${repo}" push -q origin "${branch}"
 git -C "${repo}" switch -q main
 git -C "${repo}" branch -q -D "${branch}"
+git -C "${repo}" config --unset-all remote.origin.fetch
+git -C "${repo}" config --add remote.origin.fetch \
+    '+refs/heads/main:refs/remotes/origin/main'
+git -C "${repo}" update-ref -d "refs/remotes/origin/${branch}"
 
 mkdir -p "${source_dir}"
 touch "${source_dir}/arm64.zip"
@@ -38,6 +42,12 @@ output="$(${root_dir}/tools/import-tmp-packages.sh \
     --no-push)"
 printf '%s\n' "${output}" | grep -F \
     "artifact run ${run_id} is already imported on remote branch ${branch}" >/dev/null
+[ "$(git -C "${repo}" rev-parse "refs/heads/${branch}")" = \
+    "$(git -C "${repo}" rev-parse "refs/remotes/origin/${branch}")" ]
+[ "$(git -C "${repo}" config --get "branch.${branch}.remote")" = origin ]
+[ "$(git -C "${repo}" config --get "branch.${branch}.merge")" = "refs/heads/${branch}" ]
+[ "$(git -C "${repo}" for-each-ref --format='%(upstream)' "refs/heads/${branch}")" = \
+    "refs/remotes/origin/${branch}" ]
 [ "$(git -C "${repo}" branch --show-current)" = main ]
 [ -z "$(git -C "${repo}" status --short)" ]
 

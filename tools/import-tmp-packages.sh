@@ -170,16 +170,54 @@ esac
 
 completed_commit_subject="chore: import OpenWrt artifacts ${run_id}"
 
+ensure_branch_fetch_refspec() {
+    local branch_refspec="refs/heads/${branch_name}:refs/remotes/origin/${branch_name}"
+    local refspec
+
+    while IFS= read -r refspec; do
+        case "${refspec#+}" in
+            "${branch_refspec}"|'refs/heads/*:refs/remotes/origin/*')
+                return
+                ;;
+        esac
+    done < <(git -C "${repo_root}" config --get-all remote.origin.fetch || true)
+
+    git -C "${repo_root}" config --add remote.origin.fetch "+${branch_refspec}" || \
+        die "failed to configure fetching for origin/${branch_name}"
+}
+
 check_completed_import() {
+    local local_ref="refs/heads/${branch_name}"
     local remote_ref="refs/remotes/origin/${branch_name}"
+    local local_oid
+    local remote_oid
     local remote_status
     local remote_subject
 
     if git -C "${repo_root}" ls-remote --exit-code --heads origin "refs/heads/${branch_name}" >/dev/null; then
-        git -C "${repo_root}" fetch --quiet origin "+refs/heads/${branch_name}:${remote_ref}"
-        remote_subject="$(git -C "${repo_root}" log -1 --format=%s "${remote_ref}")"
+        ensure_branch_fetch_refspec
+        git -C "${repo_root}" fetch --quiet origin "+refs/heads/${branch_name}:${remote_ref}" || \
+            die "failed to fetch remote branch: ${branch_name}"
+        remote_subject="$(git -C "${repo_root}" log -1 --format=%s "${remote_ref}")" || \
+            die "failed to inspect remote branch: ${branch_name}"
         if [ "${remote_subject}" != "${completed_commit_subject}" ]; then
             die "remote branch ${branch_name} exists but does not belong to artifact run ${run_id}"
+        fi
+
+        remote_oid="$(git -C "${repo_root}" rev-parse "${remote_ref}")" || \
+            die "failed to resolve remote branch: ${branch_name}"
+        if git -C "${repo_root}" show-ref --verify --quiet "${local_ref}"; then
+            local_oid="$(git -C "${repo_root}" rev-parse "${local_ref}")" || \
+                die "failed to resolve local branch: ${branch_name}"
+            if [ "${local_oid}" != "${remote_oid}" ]; then
+                die "local branch ${branch_name} differs from origin/${branch_name}; refusing to overwrite it"
+            fi
+            git -C "${repo_root}" branch --set-upstream-to="origin/${branch_name}" "${branch_name}" >/dev/null || \
+                die "failed to configure tracking for local branch: ${branch_name}"
+        else
+            git -C "${repo_root}" branch --track "${branch_name}" "origin/${branch_name}" >/dev/null || \
+                die "failed to create local tracking branch: ${branch_name}"
+            echo "created local branch ${branch_name} tracking origin/${branch_name}"
         fi
 
         echo "artifact run ${run_id} is already imported on remote branch ${branch_name}"
