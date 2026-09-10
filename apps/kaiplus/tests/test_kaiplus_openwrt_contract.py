@@ -24,6 +24,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertEqual(manifest["desktop"]["entry"], "desktop-entry.js")
         self.assertEqual(manifest["desktop"]["isolation"], "shadow-dom")
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/kaiplus/")
+        self.assertEqual(manifest["standalone"]["url"], "/apps/kaiplus/")
         self.assertEqual(manifest["config"]["providerOrder"], ["uci"])
         self.assertEqual(manifest["config"]["providers"]["uci"]["type"], "uci")
         self.assertEqual(manifest["backend"]["transport"], "unix")
