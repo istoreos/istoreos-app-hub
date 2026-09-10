@@ -10,7 +10,7 @@ PKG_ARCH_kaiplus:=$(ARCH)
 
 PKG_NAME:=kaiplus
 PKG_VERSION:=1.0.6
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/kaiplus-runtime-v$(PKG_VERSION)/
 PKG_HASH:=2fcf0f6483e61e9e59ed832e574b696915449a1ad3ab232547c4139adada5777
