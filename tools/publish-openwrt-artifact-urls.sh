@@ -16,6 +16,7 @@ Required environment:
 Optional environment:
   KSPEEDER_GH_TOKEN_FILE  Defaults to ~/.config/gh-tokens/kspeeder.env
   REPO                    Defaults to linkease/openwrt-app-actions
+  TARGET_SSH_PORT         Optional SSH port
   TARGET_FILE             Overrides TARGET_TMP/urls.env
   ARM64_ENV_NAME          Defaults to ARM64_DOWNLOAD_URL
   X64_ENV_NAME            Defaults to X64_DOWNLOAD_URL
@@ -24,6 +25,7 @@ Optional environment:
 Options:
   --repo OWNER/REPO
   --target-ssh SSH_TARGET
+  --target-ssh-port PORT
   --target-tmp DIR
   --target-file PATH
   --dry-run
@@ -68,6 +70,7 @@ fi
 
 repo="${REPO:-linkease/openwrt-app-actions}"
 target_ssh="${TARGET_SSH:-}"
+target_ssh_port="${TARGET_SSH_PORT:-}"
 target_tmp="${TARGET_TMP:-}"
 target_file="${TARGET_FILE:-}"
 arm64_env_name="${ARM64_ENV_NAME:-ARM64_DOWNLOAD_URL}"
@@ -86,6 +89,11 @@ while [[ $# -gt 0 ]]; do
     --target-ssh)
       [[ $# -ge 2 ]] || die "--target-ssh requires a value"
       target_ssh="$2"
+      shift 2
+      ;;
+    --target-ssh-port)
+      [[ $# -ge 2 ]] || die "--target-ssh-port requires a value"
+      target_ssh_port="$2"
       shift 2
       ;;
     --target-file)
@@ -119,6 +127,10 @@ done
 
 [[ -n "$run_id" ]] || die "RUN_ID is required"
 [[ -n "$target_ssh" ]] || die "TARGET_SSH or --target-ssh is required"
+if [[ -n "$target_ssh_port" ]]; then
+  [[ "$target_ssh_port" =~ ^[0-9]+$ ]] || die "TARGET_SSH_PORT must be numeric: $target_ssh_port"
+  ((target_ssh_port >= 1 && target_ssh_port <= 65535)) || die "TARGET_SSH_PORT is out of range: $target_ssh_port"
+fi
 if [[ -z "$target_file" ]]; then
   [[ -n "$target_tmp" ]] || die "TARGET_TMP, TARGET_FILE, --target-tmp, or --target-file is required"
   target_file="${target_tmp%/}/urls.env"
@@ -130,6 +142,11 @@ validate_env_name "$x64_env_name"
 validate_env_name "$run_id_env_name"
 
 need_cmd ssh
+
+ssh_cmd=(ssh)
+if [[ -n "$target_ssh_port" ]]; then
+  ssh_cmd+=(-p "$target_ssh_port")
+fi
 
 resolve_optional_url() {
   local artifact="$1"
@@ -176,7 +193,7 @@ target_file_q="$(shell_quote "$target_file")"
 var_re="${run_id_env_name}|${arm64_env_name}|${x64_env_name}"
 var_re_q="$(shell_quote "$var_re")"
 
-ssh "$target_ssh" "TARGET_FILE=${target_file_q} VAR_RE=${var_re_q} bash -s" <<REMOTE_SCRIPT
+"${ssh_cmd[@]}" "$target_ssh" "TARGET_FILE=${target_file_q} VAR_RE=${var_re_q} bash -s" <<REMOTE_SCRIPT
 set -euo pipefail
 
 target_dir="\$(dirname -- "\$TARGET_FILE")"

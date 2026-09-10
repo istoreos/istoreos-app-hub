@@ -13,11 +13,13 @@ TARGET_TMP, and execute it on the target server.
 Environment:
   KSPEEDER_GH_TOKEN_FILE  Defaults to ~/.config/gh-tokens/kspeeder.env
   TARGET_SSH              SSH target
+  TARGET_SSH_PORT         Optional SSH port
   TARGET_TMP              Remote temp directory
   ISTORE_REPO             Remote istore-repo checkout
 
 Options:
   --repo OWNER/REPO       Defaults to linkease/openwrt-app-actions
+  --target-ssh-port PORT  Override TARGET_SSH_PORT
   --dry-run               Resolve URLs and print intended actions without remote writes
   --remote-dry-run        Upload and execute import script with --dry-run
   --no-push               Execute import script with --no-push
@@ -51,6 +53,7 @@ fi
 
 repo="${REPO:-linkease/openwrt-app-actions}"
 target_ssh="${TARGET_SSH:-}"
+target_ssh_port="${TARGET_SSH_PORT:-}"
 target_tmp="${TARGET_TMP:-}"
 istore_repo="${ISTORE_REPO:-}"
 dry_run=0
@@ -63,6 +66,11 @@ while [[ $# -gt 0 ]]; do
     --repo)
       [[ $# -ge 2 ]] || die "--repo requires a value"
       repo="$2"
+      shift 2
+      ;;
+    --target-ssh-port)
+      [[ $# -ge 2 ]] || die "--target-ssh-port requires a value"
+      target_ssh_port="$2"
       shift 2
       ;;
     --dry-run)
@@ -100,27 +108,41 @@ esac
 [[ -n "$target_ssh" ]] || die "TARGET_SSH is required"
 [[ -n "$target_tmp" ]] || die "TARGET_TMP is required"
 [[ -n "$istore_repo" ]] || die "ISTORE_REPO is required"
+if [[ -n "$target_ssh_port" ]]; then
+  [[ "$target_ssh_port" =~ ^[0-9]+$ ]] || die "TARGET_SSH_PORT must be numeric: $target_ssh_port"
+  ((target_ssh_port >= 1 && target_ssh_port <= 65535)) || die "TARGET_SSH_PORT is out of range: $target_ssh_port"
+fi
 [[ -x "$publish_urls_script" ]] || die "missing executable helper: $publish_urls_script"
 [[ -x "$import_script" ]] || die "missing executable helper: $import_script"
 
 need_cmd scp
 need_cmd ssh
 
+ssh_cmd=(ssh)
+scp_cmd=(scp)
+publish_args=(--repo "$repo" --target-ssh "$target_ssh" --target-tmp "$target_tmp")
+if [[ -n "$target_ssh_port" ]]; then
+  ssh_cmd+=(-p "$target_ssh_port")
+  scp_cmd+=(-P "$target_ssh_port")
+  publish_args+=(--target-ssh-port "$target_ssh_port")
+fi
+
 remote_import="${target_tmp%/}/import-tmp-packages.sh"
 remote_urls="${target_tmp%/}/urls.env"
 
 if [[ "$dry_run" == "1" ]]; then
-  "$publish_urls_script" --repo "$repo" --target-ssh "$target_ssh" --target-tmp "$target_tmp" --dry-run "$run_id"
+  "$publish_urls_script" "${publish_args[@]}" --dry-run "$run_id"
   printf 'would upload %s to %s:%s\n' "$import_script" "$target_ssh" "$remote_import"
+  [[ -z "$target_ssh_port" ]] || printf 'would use SSH port %s\n' "$target_ssh_port"
   printf 'would execute remote import for branch zip-%s\n' "$run_id"
   exit 0
 fi
 
-"$publish_urls_script" --repo "$repo" --target-ssh "$target_ssh" --target-tmp "$target_tmp" "$run_id"
+"$publish_urls_script" "${publish_args[@]}" "$run_id"
 
-ssh "$target_ssh" "mkdir -p -- $(shell_quote "$target_tmp")"
-scp "$import_script" "${target_ssh}:${remote_import}"
-ssh "$target_ssh" "chmod +x -- $(shell_quote "$remote_import")"
+"${ssh_cmd[@]}" "$target_ssh" "mkdir -p -- $(shell_quote "$target_tmp")"
+"${scp_cmd[@]}" "$import_script" "${target_ssh}:${remote_import}"
+"${ssh_cmd[@]}" "$target_ssh" "chmod +x -- $(shell_quote "$remote_import")"
 
 remote_args=(
   "--source-dir" "$target_tmp"
@@ -141,4 +163,4 @@ for arg in "${remote_args[@]}"; do
   remote_cmd+=" $(shell_quote "$arg")"
 done
 
-ssh "$target_ssh" "$remote_cmd"
+"${ssh_cmd[@]}" "$target_ssh" "$remote_cmd"

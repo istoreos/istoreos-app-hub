@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source_dir="${TARGET_TMP:-/projects/repos/tmp}"
+source_dir="${TARGET_TMP:-}"
 source_dir_set=0
 repo_root="${ISTORE_REPO:-}"
 urls_env=""
@@ -18,7 +18,7 @@ Usage: import-tmp-packages.sh [options] [SOURCE_DIR]
 Download available arm64.zip and x64.zip archives from urls.env, import their ipk/apk packages
 into an istore-repo branch, commit the changes, and push the branch.
 
-If SOURCE_DIR is omitted, TARGET_TMP is used, falling back to /projects/repos/tmp.
+If SOURCE_DIR is omitted, TARGET_TMP is required.
 
 Required environment or options:
   TARGET_TMP     Directory containing urls.env and receiving downloaded zips
@@ -125,6 +125,7 @@ require_cmd mktemp
 require_cmd git
 
 [ -n "${repo_root}" ] || repo_root="$(git rev-parse --show-toplevel)"
+[ -n "${source_dir}" ] || die "TARGET_TMP or --source-dir is required"
 [ -d "${source_dir}" ] || die "source directory not found: ${source_dir}"
 [ -d "${repo_root}" ] || die "repo root not found: ${repo_root}"
 
@@ -268,7 +269,8 @@ merge_luci_dir() {
 prepare_branch() {
     cd "${repo_root}"
 
-    [ -z "$(git status --short)" ] || die "repo has uncommitted changes"
+    [ -z "$(git status --short --untracked-files=no)" ] || die "repo has tracked changes"
+    [ -z "$(git status --short --untracked-files=all -- bin/packages bin/apks)" ] || die "package directories have uncommitted changes"
 
     echo "prepare branch ${branch_name} from origin/main"
     if git show-ref --verify --quiet "refs/heads/${branch_name}"; then
