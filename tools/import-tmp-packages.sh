@@ -168,6 +168,34 @@ case "${branch_name}" in
     *[!A-Za-z0-9._/-]*) die "invalid branch name: ${branch_name}" ;;
 esac
 
+completed_commit_subject="chore: import OpenWrt artifacts ${run_id}"
+
+check_completed_import() {
+    local remote_ref="refs/remotes/origin/${branch_name}"
+    local remote_status
+    local remote_subject
+
+    if git -C "${repo_root}" ls-remote --exit-code --heads origin "refs/heads/${branch_name}" >/dev/null; then
+        git -C "${repo_root}" fetch --quiet origin "+refs/heads/${branch_name}:${remote_ref}"
+        remote_subject="$(git -C "${repo_root}" log -1 --format=%s "${remote_ref}")"
+        if [ "${remote_subject}" != "${completed_commit_subject}" ]; then
+            die "remote branch ${branch_name} exists but does not belong to artifact run ${run_id}"
+        fi
+
+        echo "artifact run ${run_id} is already imported on remote branch ${branch_name}"
+        return 0
+    else
+        remote_status=$?
+        [ "${remote_status}" -eq 2 ] || die "failed to query remote branch: ${branch_name}"
+    fi
+
+    return 1
+}
+
+if check_completed_import; then
+    exit 0
+fi
+
 arm_zip="${source_dir}/arm64.zip"
 x64_zip="${source_dir}/x64.zip"
 
@@ -312,7 +340,7 @@ finish_branch() {
         return
     fi
 
-    git commit -m "chore: import OpenWrt artifacts ${run_id}"
+    git commit -m "${completed_commit_subject}"
     if [ "${push_branch}" -eq 1 ]; then
         git push -u origin "${branch_name}"
     else
