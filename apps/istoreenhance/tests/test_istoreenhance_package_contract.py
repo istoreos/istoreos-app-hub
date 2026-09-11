@@ -29,6 +29,15 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.8.0", makefile)
+        self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
+        self.assertIn(
+            "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
+            makefile,
+        )
+        self.assertIn(
+            "META_DESCRIPTION.en:=KSpeeder accelerates Docker images, package/file downloads, and public GitHub/GitLab repository clones.",
+            makefile,
+        )
 
     def test_runtime_package_installs_kspeeder_desktop_module(self):
         makefile = self.read("istoreenhance/Makefile")
