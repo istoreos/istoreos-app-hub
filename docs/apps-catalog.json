@@ -228,8 +228,8 @@
     ],
     "website": "https://www.koolcenter.com/t/topic/9148",
     "author": "xiaobao",
-    "version": "0.7.5",
-    "release": "5",
+    "version": "0.7.7",
+    "release": "1",
     "depends": "+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/fastnet",
     "meta_dir": "apps/fastnet/app-meta-fastnet"
