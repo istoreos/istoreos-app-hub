@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import re
+import subprocess
 import unittest
 
 
@@ -84,6 +85,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn("option 'bind_addr' '0.0.0.0'", text)
         self.assertIn("option 'base_path' '/apps/kaiplus/'", text)
         self.assertIn("option 'system_role' 'istoreos'", text)
+        self.assertIn("option 'release_channel' 'stable'", text)
         self.assertIn("option 'auth_mode' 'disabled'", text)
 
     def test_init_reads_listen_config_and_passes_it_to_kaiplus_web(self):
@@ -97,6 +99,9 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('config_get bind_addr "$1" bind_addr "0.0.0.0"', text)
         self.assertIn('config_get base_path "$1" base_path "/apps/kaiplus/"', text)
         self.assertIn('config_get auth_mode "$1" auth_mode "disabled"', text)
+        self.assertIn('config_get release_channel "$1" release_channel "stable"', text)
+        self.assertIn('KAIPLUS_RELEASE_CHANNEL="$release_channel"', text)
+        self.assertIn('procd_append_param command --release-channel "$release_channel"', text)
         self.assertIn('KAIPLUS_AUTH_MODE="$auth_mode"', text)
         self.assertIn('LINKEASE_AUTH_PROVIDER="$auth_mode"', text)
         self.assertIn('KAIPLUS_LISTEN_MODE="unix"', text)
@@ -109,6 +114,19 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('procd_append_param command --base-path "$base_path"', text)
         self.assertNotIn('port "{}"'.format(LEGACY_PORT), text)
 
+    def test_router_runtime_directories_are_private_and_init_is_ash_compatible(self):
+        text = self.read("kaiplus/files/kaiplus.init")
+        self.assertIn("umask 077", text)
+        self.assertIn('chmod 0700 "$data_dir/config" "$data_dir/state"', text)
+        self.assertIn('procd_append_param command --system-role "$system_role"', text)
+        subprocess.run(["sh", "-n", str(ROOT / "kaiplus/files/kaiplus.init")], check=True)
+
+    def test_bubblewrap_is_not_a_current_runtime_dependency(self):
+        makefile = self.read("kaiplus/Makefile")
+        package_block = makefile.split("define Package/$(PKG_NAME)", 1)[1].split("endef", 1)[0]
+        self.assertNotIn("bubblewrap", package_block.lower())
+        self.assertNotIn("bwrap", package_block.lower())
+
     def test_app_meta_config_writes_listen_defaults_and_base_path(self):
         text = self.read("app-meta-kaiplus/config.sh")
 
@@ -119,6 +137,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('set kaiplus.@kaiplus[0].bind_addr="0.0.0.0"', text)
         self.assertIn('set kaiplus.@kaiplus[0].base_path="/apps/kaiplus/"', text)
         self.assertIn('set kaiplus.@kaiplus[0].auth_mode="openwrt_luci"', text)
+        self.assertIn('set kaiplus.@kaiplus[0].release_channel="stable"', text)
         self.assertNotIn('port="{}"'.format(LEGACY_PORT), text)
 
     def test_openwrt_auth_bridge_is_declared_as_package_dependency(self):
