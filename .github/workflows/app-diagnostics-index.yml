@@ -1,0 +1,23 @@
+name: App diagnostics index
+
+on:
+  pull_request:
+  push:
+    paths:
+      - 'apps/**'
+      - 'tools/cmd/appcatalog/**'
+      - 'tools/tests/test-app-diagnostics-index.sh'
+      - 'docs/app-diagnostics.jsonl'
+      - 'Makefile'
+      - '.github/workflows/app-diagnostics-index.yml'
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: tools/go.mod
+      - name: Verify generated diagnostic index
+        run: make apps-diagnostics-check
