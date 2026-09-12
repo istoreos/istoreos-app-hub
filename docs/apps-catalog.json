@@ -61,7 +61,7 @@
     ],
     "website": "https://pan.baidu.com",
     "author": "linkease",
-    "version": "1.0.3",
+    "version": "1.0.6",
     "release": "1",
     "depends": "+luci-i18n-baidudrive-zh-cn +luci-app-baidudrive +baidudrive",
     "luci_entry": "/cgi-bin/luci/admin/services/baidudrive",
@@ -129,7 +129,7 @@
     ],
     "website": "https://www.ddnsto.com/",
     "author": "xiaobao",
-    "version": "4.2.2",
+    "version": "4.2.6",
     "release": "1",
     "depends": "+ddnsto +luci-app-ddnsto +luci-i18n-ddnsto-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/ddnsto",
@@ -149,6 +149,23 @@
     "depends": "+luci-app-demon +luci-i18n-demon-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/demon",
     "meta_dir": "apps/demon/app-meta-demon"
+  },
+  {
+    "id": "dockermanager",
+    "title": "Docker管理",
+    "description": "更简单专业的 Docker 管理器，加速更快更方便.",
+    "description_en": "Docker management module for LinkEase Desktop.",
+    "tags": [
+      "docker",
+      "system"
+    ],
+    "website": "https://github.com/linkease/linkease-docker-manager",
+    "author": "linkease",
+    "version": "0.1.1",
+    "release": "1",
+    "depends": "+dockermanager +luci-app-dockermanager",
+    "luci_entry": "/cgi-bin/luci/admin/services/dockermanager/open",
+    "meta_dir": "apps/dockermanager/app-meta-dockermanager"
   },
   {
     "id": "dpanel",
@@ -372,16 +389,16 @@
   {
     "id": "istoreenhance",
     "title": "KSpeeder(原iStore增强)",
-    "description": "KSpeeder增强插件可以有效的解决Docker等网络问题，让 iStore 更好用。",
-    "description_en": "KSpeeder is a tool to fix network issues for iStore.",
+    "description": "KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
+    "description_en": "KSpeeder accelerates Docker images, package/file downloads, and public GitHub/GitLab repository clones.",
     "tags": [
       "nas",
       "service"
     ],
     "website": "https://kspeeder.com/",
     "author": "xiaobao",
-    "version": "0.7.5",
-    "release": "2",
+    "version": "0.8.0",
+    "release": "1",
     "depends": "+istoreenhance +luci-app-istoreenhance +luci-i18n-istoreenhance-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/istoreenhance",
     "meta_dir": "apps/istoreenhance/app-meta-istoreenhance"
@@ -403,20 +420,37 @@
     "meta_dir": "apps/istorepanel/app-meta-istorepanel"
   },
   {
+    "id": "istorerouter",
+    "title": "iStoreRouter",
+    "description": "为 iStoreOS 提供路由状态、网络配置、无线设置、DDNS、存储管理和应用商店入口。",
+    "description_en": "Router dashboard for iStoreOS with network, Wi-Fi, DDNS, storage, and app store entry points.",
+    "tags": [
+      "net",
+      "system"
+    ],
+    "website": "https://github.com/linkease",
+    "author": "Xiaobao",
+    "version": "1.0.0",
+    "release": "1",
+    "depends": "+luci-app-istorerouter +luci-theme-istorenas",
+    "luci_entry": "/cgi-bin/luci/admin/istorerouter",
+    "meta_dir": "apps/istorerouter/app-meta-istorerouter"
+  },
+  {
     "id": "istorex",
-    "title": "istorex",
-    "description": "为iStoreOS适配的全新首页。",
-    "description_en": "A new homepage for iStoreOS.",
+    "title": "iStoreNAS(原iStoreX)",
+    "description": "把 iStoreOS 一键变成 NAS 系统，网盘，同步，组网，时光机，AI 等一网打尽。",
+    "description_en": "Turn iStoreOS into a NAS system in one click, covering cloud drives, sync, networking, Time Machine, AI, and more.",
     "tags": [
       "net",
       "system"
     ],
     "website": "https://github.com/linkease/nas-packages-luci",
-    "author": "Carseason",
-    "version": "0.6.6",
-    "release": "4",
-    "depends": "+luci-app-istorex",
-    "luci_entry": "/cgi-bin/luci/admin/istorex",
+    "author": "Xiaobao",
+    "version": "1.0.0",
+    "release": "1",
+    "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kaiplus +app-meta-kai +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull/open",
     "meta_dir": "apps/istorex/app-meta-istorex"
   },
   {
@@ -463,44 +497,27 @@
     ],
     "website": "https://jellyfin.org",
     "author": "Jellyfin/jjm2473",
-    "version": "1.2.2",
-    "release": "20250325",
+    "version": "1.2.3",
+    "release": "20260828",
     "depends": "+luci-app-jellyfin +luci-i18n-jellyfin-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/jellyfin",
     "meta_dir": "apps/jellyfin/app-meta-jellyfin"
   },
   {
-    "id": "kai",
-    "title": "酷友社KAI",
-    "description": "KAI安装软件助手(iStoreOS 24版本以上适用)",
-    "description_en": "AI software installation assistant",
-    "tags": [
-      "ai",
-      "system"
-    ],
-    "website": "https://www.koolcenter.com",
-    "author": "koolcenter",
-    "version": "1.0.2",
-    "release": "2",
-    "depends": "+luci-app-kai +kai +kai_session",
-    "luci_entry": "/cgi-bin/luci/admin/services/kai",
-    "meta_dir": "apps/kai/app-meta-kai"
-  },
-  {
     "id": "kaiplus",
-    "title": "KaiPlus",
-    "description": "KaiPlus AI 工作台(iStoreOS 24版本以上适用)",
-    "description_en": "KaiPlus AI workspace",
+    "title": "酷友社Kai",
+    "description": "KaiPlus AI 解决各种问题，加速软件安装",
+    "description_en": "KaiPlus AI solve various network issues and speed up software installation.",
     "tags": [
       "ai",
       "system"
     ],
     "website": "https://ai.koolcenter.com",
     "author": "koolcenter",
-    "version": "1.0.5",
+    "version": "1.0.9",
     "release": "1",
-    "depends": "+luci-app-kaiplus +kaiplus",
-    "luci_entry": "/cgi-bin/luci/admin/services/kaiplus",
+    "depends": "+luci-app-kaiplus +kaiplus +luci-lib-linkeaseauth",
+    "luci_entry": "/cgi-bin/luci/admin/services/kaiplus/open",
     "meta_dir": "apps/kaiplus/app-meta-kaiplus"
   },
   {
@@ -564,28 +581,11 @@
     ],
     "website": "https://www.linkease.com/",
     "author": "xiaobao",
-    "version": "3.0.8",
+    "version": "3.0.20",
     "release": "1",
-    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeaseauth +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
+    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
     "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"
-  },
-  {
-    "id": "linkeaselite",
-    "title": "易有云Lite",
-    "description": "易有云Lite提供适合小内存设备的远程访问和轻量文件管理能力。",
-    "description_en": "LinkEaseLite provides remote access and lightweight file management for small-memory devices.",
-    "tags": [
-      "nas",
-      "service"
-    ],
-    "website": "https://www.linkease.com/",
-    "author": "xiaobao",
-    "version": "3.0.0",
-    "release": "1",
-    "depends": "+linkeaselite +luci-app-linkeaselite +luci-i18n-linkeaselite-zh-cn",
-    "luci_entry": "/cgi-bin/luci/admin/services/linkeaselite/config",
-    "meta_dir": "apps/linkeaselite/app-meta-linkeaselite"
   },
   {
     "id": "memos",
@@ -884,7 +884,7 @@
     ],
     "website": "https://www.istoreos.com",
     "author": "jjm2473",
-    "version": "1.1.8",
+    "version": "1.3.0",
     "release": "1",
     "depends": "+luci-app-shadowrt +luci-i18n-shadowrt-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/shadowrt",

@@ -18,6 +18,7 @@ help:
   "  make build-syncapps-autogen Build $(BIN_DIR)/syncapps-autogen" \
   "  make build-appcatalog       Build $(APPCATALOG_BIN)" \
   "  make apps-catalog           Generate docs/apps-catalog*.{md,json}" \
+  "  make apps-diagnostics-check Verify compact app diagnostic index is current" \
   "  make deploy-app             Deploy one app to remote (APP=..., uses task env or local overrides)" \
   "  make deploy-app-dry         Show what would be deployed (APP=...)" \
   "  make deploy-single-app      Deploy DEPLOY_SINGLE_APP to remote" \
@@ -65,7 +66,11 @@ $(APPCATALOG_BIN): $(BIN_DIR) $(TOOLS_GO_SRCS)
 
 .PHONY: apps-catalog
 apps-catalog: build-appcatalog
->@"./$(APPCATALOG_BIN)" --apps-root apps --out-json docs/apps-catalog.json --out-md docs/apps-catalog.min.md --out-md-full docs/apps-catalog.md
+>@"./$(APPCATALOG_BIN)" --apps-root apps --out-json docs/apps-catalog.json --out-md docs/apps-catalog.min.md --out-md-full docs/apps-catalog.md --out-diagnostics-jsonl docs/app-diagnostics.jsonl
+
+.PHONY: apps-diagnostics-check
+apps-diagnostics-check: build-appcatalog
+>@tools/tests/test-app-diagnostics-index.sh "./$(APPCATALOG_BIN)"
 
 .PHONY: tidy-tools
 tidy-tools:

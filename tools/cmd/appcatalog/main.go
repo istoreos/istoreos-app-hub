@@ -27,6 +27,17 @@ type App struct {
 	MetaDir       string   `json:"meta_dir,omitempty"`
 }
 
+type DiagnosticApp struct {
+	ID       string   `json:"id"`
+	Type     string   `json:"type"`
+	Depends  []string `json:"depends,omitempty"`
+	Autoconf bool     `json:"autoconf"`
+	Istorec  bool     `json:"istorec"`
+	Init     bool     `json:"init"`
+	Config   bool     `json:"config"`
+	Luci     bool     `json:"luci"`
+}
+
 var (
 	assignRe = regexp.MustCompile(`^\s*([A-Za-z0-9_.-]+)\s*(?::=|=)\s*(.*?)\s*$`)
 )
@@ -79,12 +90,14 @@ func main() {
 		outJSON   string
 		outMDMin  string
 		outMDFull string
+		outDiag   string
 	)
 
 	flag.StringVar(&appsRoot, "apps-root", "apps", "apps root (default: apps)")
 	flag.StringVar(&outJSON, "out-json", "docs/apps-catalog.json", "output JSON path")
 	flag.StringVar(&outMDMin, "out-md", "docs/apps-catalog.min.md", "output minimal Markdown path")
 	flag.StringVar(&outMDFull, "out-md-full", "docs/apps-catalog.md", "output full Markdown path")
+	flag.StringVar(&outDiag, "out-diagnostics-jsonl", "docs/app-diagnostics.jsonl", "output compact diagnostics JSON Lines path")
 	flag.Parse()
 
 	appsRoot = filepath.Clean(appsRoot)
@@ -165,6 +178,79 @@ func main() {
 		fmt.Fprintln(os.Stderr, "error: write full md:", err)
 		os.Exit(1)
 	}
+	if err := writeDiagnosticsJSONL(outDiag, apps); err != nil {
+		fmt.Fprintln(os.Stderr, "error: write diagnostics jsonl:", err)
+		os.Exit(1)
+	}
+}
+
+func writeDiagnosticsJSONL(path string, apps []*App) error {
+	var sb strings.Builder
+	encoder := json.NewEncoder(&sb)
+	encoder.SetEscapeHTML(false)
+	for _, app := range apps {
+		familyRoot := filepath.Dir(app.MetaDir)
+		entry := DiagnosticApp{
+			ID:       app.ID,
+			Depends:  normalizeDepends(app.Depends),
+			Autoconf: fileExists(filepath.Join(app.MetaDir, "config.sh")),
+			Istorec:  treeHasSuffix(familyRoot, filepath.Join("root", "usr", "libexec", "istorec", app.ID+".sh")),
+			Init:     treeHasSuffix(familyRoot, filepath.Join("root", "etc", "init.d", app.ID)),
+			Config:   treeHasSuffix(familyRoot, filepath.Join("root", "etc", "config", app.ID)),
+			Luci:     app.LuciEntry != "",
+		}
+		entry.Type = "native"
+		if entry.Istorec || contains(entry.Depends, "docker-deps") {
+			entry.Type = "docker"
+		}
+		if err := encoder.Encode(entry); err != nil {
+			return err
+		}
+	}
+	return writeFileWithDirs(path, []byte(sb.String()))
+}
+
+func normalizeDepends(raw string) []string {
+	var out []string
+	seen := map[string]bool{}
+	for _, dependency := range strings.Fields(raw) {
+		dependency = strings.TrimPrefix(dependency, "+")
+		if dependency == "" || strings.HasPrefix(dependency, "@") || seen[dependency] {
+			continue
+		}
+		seen[dependency] = true
+		out = append(out, dependency)
+	}
+	sort.Strings(out)
+	return out
+}
+
+func contains(values []string, needle string) bool {
+	for _, value := range values {
+		if value == needle {
+			return true
+		}
+	}
+	return false
+}
+
+func fileExists(path string) bool {
+	info, err := os.Stat(path)
+	return err == nil && !info.IsDir()
+}
+
+func treeHasSuffix(root, suffix string) bool {
+	found := false
+	_ = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil || found || d.IsDir() {
+			return nil
+		}
+		if strings.HasSuffix(filepath.Clean(path), filepath.Clean(suffix)) {
+			found = true
+		}
+		return nil
+	})
+	return found
 }
 
 func firstNonEmpty(existing, candidate string) string {
