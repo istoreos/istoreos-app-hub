@@ -27,7 +27,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=System
 	SUBMENU:=
 	TITLE:=KAI
-	DEPENDS:=+kai_session +kai-agent
+	DEPENDS:=+kai_session +kai-agent +luci-lib-linkeaseauth
 	URL:=https://github.com/Carseason/openwrt-packages
 endef
 

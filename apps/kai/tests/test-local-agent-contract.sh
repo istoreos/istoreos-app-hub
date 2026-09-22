@@ -15,6 +15,12 @@ grep -F 'OPENCODE_CONFIG="${agent_root}/opencode.json"' "$init" >/dev/null ||
 	fail "init does not use local OPENCODE_CONFIG"
 grep -F 'KAIPLUS_SKILLS_DIR="${agent_root}/skills"' "$init" >/dev/null ||
 	fail "init does not expose the local skills root"
+grep -F 'KAI_AUTH_MODE="$auth_mode"' "$init" >/dev/null ||
+	fail "init does not enable the OpenWrt auth middleware"
+grep -F "option 'auth_mode' 'openwrt_luci'" "$root/kai/files/kai.config" >/dev/null ||
+	fail "kai does not default to LuCI authentication"
+grep -F '+luci-lib-linkeaseauth' "$root/kai/Makefile" >/dev/null ||
+	fail "kai does not depend on the shared auth bridge"
 if grep -E 'OPENCODE_CWD|/agentconf/(opencode|skills)' "$init" >/dev/null; then
 	fail "init still depends on the legacy HTTP/cwd contract"
 fi
