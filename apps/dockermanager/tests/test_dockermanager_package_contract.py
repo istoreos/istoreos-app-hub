@@ -31,7 +31,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("PKG_VERSION:=0.1.1", meta)
-        self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle", makefile)
+        self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth", luci_makefile)
         self.assertIn("META_DEPENDS:=+dockermanager +luci-app-dockermanager", meta)
@@ -42,7 +42,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn('entry({"admin", "services", "dockermanager", "open"}', controller)
         self.assertIn("function dockermanager_open()", controller)
         self.assertIn("uhttpd_apps_proxy_available()", controller)
-        self.assertIn("linkeasefull_running()", controller)
+        self.assertIn("app_entry_running()", controller)
         self.assertIn("return base_path", controller)
         self.assertIn("external_port_enabled", controller)
         self.assertIn("enable_port=1", controller)
@@ -88,8 +88,13 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         makefile = self.read("dockermanager/Makefile")
 
         self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
         self.assertIn(
             "ln -sf /usr/share/dockermanager/dockermanager-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/20-dockermanager-plugin.json",
+            makefile,
+        )
+        self.assertIn(
+            "ln -sf /usr/share/dockermanager/dockermanager-plugin.json $(1)/usr/share/linkease/apps.d/20-dockermanager-plugin.json",
             makefile,
         )
         self.assertNotIn("/cgi-bin/luci/admin/services/linkeasefull/auth", makefile)

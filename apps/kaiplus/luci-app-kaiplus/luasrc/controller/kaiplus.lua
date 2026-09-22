@@ -39,9 +39,11 @@ local function uhttpd_apps_proxy_available()
 	return uhttpd_supports_proxy_prefix() and uhttpd_has_apps_proxy_prefix()
 end
 
-local function linkeasefull_running()
-	local sys = require "luci.sys"
-	return sys.call("[ -x /etc/init.d/linkeasefull ] && /etc/init.d/linkeasefull running >/dev/null 2>&1") == 0
+local function app_entry_running()
+	local fs = require "nixio.fs"
+	local state = fs.readfile("/var/run/linkease-app-entry/state.json") or ""
+	return state:match('"active"%s*:%s*"linkeasefull"') ~= nil
+		or state:match('"active"%s*:%s*"gateway"') ~= nil
 end
 
 local function normalized_base_path(path)
@@ -108,7 +110,7 @@ end
 
 local function kaiplus_entry_url()
 	local port, base_path, external_port_enabled = kaiplus_config()
-	if linkeasefull_running() and uhttpd_apps_proxy_available() then
+	if app_entry_running() and uhttpd_apps_proxy_available() then
 		return base_path
 	end
 	if not external_port_enabled then
@@ -171,7 +173,7 @@ function kaiplus_status()
 		lan_ip = uci:get("network", "lan", "ipaddr") or "",
 		proxy_prefix_supported = uhttpd_supports_proxy_prefix(),
 		proxy_prefix_enabled = uhttpd_apps_proxy_available(),
-		linkeasefull_running = linkeasefull_running()
+		app_entry_running = app_entry_running()
 	}
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(status)
