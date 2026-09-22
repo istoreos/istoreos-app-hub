@@ -27,6 +27,7 @@ define Package/$(PKG_NAME)
 	CATEGORY:=System
 	SUBMENU:=
 	TITLE:=KAI
+	DEPENDS:=+kai_session +kai-agent
 	URL:=https://github.com/Carseason/openwrt-packages
 endef
 
@@ -45,8 +46,9 @@ define Build/Compile
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/init.d $(1)/etc/config
+	$(INSTALL_DIR) $(1)/usr/sbin $(1)/usr/libexec $(1)/etc/init.d $(1)/etc/config
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kai.$(PKG_ARCH_kai) $(1)/usr/sbin/kai_bin
+	$(INSTALL_BIN) ./files/kai-session-launch $(1)/usr/libexec/kai-session-launch
 	$(INSTALL_BIN) ./files/kai.init $(1)/etc/init.d/kai
 	$(INSTALL_CONF) ./files/kai.config $(1)/etc/config/kai
 endef
