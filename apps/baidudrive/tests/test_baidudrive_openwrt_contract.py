@@ -27,6 +27,7 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         self.assertEqual(manifest["backend"]["upstreamBasePath"], "/apps/baidudrive/")
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
         self.assertEqual(manifest["backend"]["pathMode"], "preserve")
+        self.assertEqual(manifest["backend"]["externalBasePath"], "/")
         self.assertTrue(manifest["window"]["singleton"])
         self.assertNotIn("desktopPriority", manifest)
 
@@ -35,6 +36,8 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
 
         self.assertIn("$(1)/usr/share/baidudrive/www", makefile)
         self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
+        self.assertIn("+linkease-app-entry", makefile)
         self.assertIn("$(CP) $(PKG_BUILD_DIR)/web/dist/. $(1)/usr/share/baidudrive/www/", makefile)
         self.assertIn(
             "$(INSTALL_DATA) ./files/baidudrive-plugin.json $(1)/usr/share/baidudrive/baidudrive-plugin.json",
@@ -42,6 +45,10 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         )
         self.assertIn(
             "ln -sf /usr/share/baidudrive/baidudrive-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/10-baidudrive-plugin.json",
+            makefile,
+        )
+        self.assertIn(
+            "ln -sf /usr/share/baidudrive/baidudrive-plugin.json $(1)/usr/share/linkease/apps.d/10-baidudrive-plugin.json",
             makefile,
         )
 
@@ -52,6 +59,20 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         self.assertIn("readlink /usr/share/linkeasefull/desktop-apps.d/10-baidudrive-plugin.json", makefile)
         self.assertIn('= "/usr/share/baidudrive/baidudrive-plugin.json"', makefile)
         self.assertIn("rm -f /usr/share/linkeasefull/desktop-apps.d/10-baidudrive-plugin.json", makefile)
+        self.assertIn("rm -f /usr/share/linkease/apps.d/10-baidudrive-plugin.json", makefile)
+
+    def test_luci_uses_shared_apps_entry_and_preserves_legacy_status(self):
+        makefile = self.read("luci-app-baidudrive/Makefile")
+        controller = self.read("luci-app-baidudrive/luasrc/controller/baidudrive.lua")
+        meta = self.read("app-meta-baidudrive/Makefile")
+        entry = self.read("app-meta-baidudrive/entry.sh")
+
+        self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn('entry({"admin", "services", "baidudrive", "open"}', controller)
+        self.assertIn('compat():open("baidudrive")', controller)
+        self.assertIn('compat():legacy_status("baidudrive"', controller)
+        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive", meta)
+        self.assertIn('/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive', entry)
 
 
 if __name__ == "__main__":

@@ -177,30 +177,32 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('if sys.call("[ -x /etc/init.d/linkease ]") == 0 then', cbi)
         self.assertIn('sys.call("/etc/init.d/linkease restart >/dev/null 2>&1 &")', cbi)
 
-    def test_app_meta_entry_uses_luci_open_unless_external_port_enabled(self):
+    def test_app_meta_entry_uses_canonical_luci_open(self):
         text = self.read("app-meta-kaiplus/entry.sh")
 
         self.assertIn('base_path="$(uci get kaiplus.@kaiplus[0].base_path 2>/dev/null)"', text)
         self.assertIn('local basepath=${base_path:-/apps/kaiplus/}', text)
         self.assertIn('external_port_enabled="$(uci get kaiplus.@kaiplus[0].external_port_enabled 2>/dev/null)"', text)
         self.assertIn('if [ "$external_port_enabled" = "1" ]; then', text)
-        self.assertIn('json_add_string "href" "http://$host:${portsec}${basepath}"', text)
-        self.assertIn('json_add_string "href" "/cgi-bin/luci/admin/services/kaiplus/open"', text)
+        self.assertNotIn('json_add_string "href" "http://$host:${portsec}${basepath}"', text)
+        self.assertIn('json_add_string "href" "/cgi-bin/luci/admin/services/linkease_apps/open?id=kaiplus"', text)
         self.assertNotIn('http://$host:${portsec}/"', text)
 
     def test_luci_status_exposes_entry_state_and_open_button_uses_luci_open(self):
         controller = self.read("luci-app-kaiplus/luasrc/controller/kaiplus.lua")
         status_view = self.read("luci-app-kaiplus/luasrc/view/kaiplus/kaiplus_status.htm")
 
-        self.assertIn('local APPS_PROXY_PREFIX = "/apps=http://127.0.0.1:19290"', controller)
         self.assertIn('local open = entry({"admin", "services", "kaiplus", "open"}, call("kaiplus_open"))', controller)
         self.assertIn('function kaiplus_open()', controller)
-        self.assertIn('uci:set("kaiplus", section, "external_port_enabled", "1")', controller)
-        self.assertIn('uci:set("kaiplus", section, "listen_mode", "tcp")', controller)
-        self.assertRegex(controller, re.compile(r"base_path\s*=\s*base_path"))
+        self.assertIn('compat():open("kaiplus")', controller)
+        self.assertIn('compat():legacy_status("kaiplus"', controller)
+        self.assertNotIn("uhttpd_apps_proxy_available", controller)
+        self.assertNotIn("app_entry_running", controller)
+        self.assertNotIn("enable_port", controller)
+        self.assertNotIn("uci:set", controller)
+        self.assertNotIn("uci:commit", controller)
+        self.assertNotIn("restart", controller)
         self.assertIn('external_port_enabled = external_port_enabled', controller)
-        self.assertIn('proxy_prefix_enabled = uhttpd_apps_proxy_available()', controller)
-        self.assertIn('app_entry_running = app_entry_running()', controller)
         self.assertIn('st.proxy_prefix_enabled && st.app_entry_running', status_view)
         self.assertIn('st.external_port_enabled', status_view)
         self.assertIn('<%=url("admin/services/kaiplus/open")%>', status_view)

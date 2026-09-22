@@ -12,7 +12,7 @@ META_DESCRIPTION.en:=BaiduDrive for iStoreOS. BaiduDrive is a netdisk provided b
 META_AUTHOR:=linkease
 META_ARCH:=x86_64 aarch64
 META_TAGS:=nas service
-META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/baidudrive
+META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive
 META_WEBSITE:=https://pan.baidu.com
 META_AUTOCONF:=path enable
 META_UCI:=baidudrive
