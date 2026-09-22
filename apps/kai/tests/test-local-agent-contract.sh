@@ -4,6 +4,7 @@ set -eu
 root="$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)"
 init="$root/kai/files/kai.init"
 launcher="$root/kai/files/kai-session-launch"
+status_view="$root/luci-app-kai/luasrc/view/kai/kai_status.htm"
 
 fail() {
 	echo "failed: $*" >&2
@@ -24,5 +25,7 @@ grep -F 'DEPENDS:=+kai_session +kai-agent' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not depend on its runtime artifacts"
 grep -F '$(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session)' "$root/kai_session/Makefile" >/dev/null ||
 	fail "kai_session does not install its bundled ripgrep runtime"
+grep -F '/apps/kai/web/' "$status_view" >/dev/null ||
+	fail "LuCI does not open the mounted KAI web path"
 
 echo "KAI local Agent runtime contract: PASS"

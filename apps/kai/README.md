@@ -29,3 +29,10 @@ The legacy `0.0.6` prebuilt archive does not contain ripgrep. Its install step
 therefore keeps a temporary existence guard so current package rebuilds remain
 compatible. Remove that guard when `PKG_VERSION` and `PKG_HASH` move to the
 first archive that contains `rg`; the new release must not ship without it.
+
+## HTTP mount contract
+
+The LuCI entry opens `/apps/kai/web/`. Browser traffic stays below
+`/apps/kai/`, including `/apps/kai/event`, `/apps/kai/session/*` and product
+APIs. Keep the plugin entry path aligned with the server mount when either side
+changes.
