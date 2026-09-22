@@ -54,6 +54,9 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/kai_session.$(PKG_ARCH_kai_session) $(1)/usr/sbin/kai_session
+	if [ -f "$(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session)" ]; then \
+		$(INSTALL_BIN) $(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session) $(1)/usr/sbin/rg; \
+	fi
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

@@ -22,5 +22,7 @@ grep -F 'exec /usr/sbin/kai_session serve --port 8196 --hostname 127.0.0.1' "$la
 	fail "launcher command differs from the runtime contract"
 grep -F 'DEPENDS:=+kai_session +kai-agent' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not depend on its runtime artifacts"
+grep -F '$(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session)' "$root/kai_session/Makefile" >/dev/null ||
+	fail "kai_session does not install its bundled ripgrep runtime"
 
 echo "KAI local Agent runtime contract: PASS"
