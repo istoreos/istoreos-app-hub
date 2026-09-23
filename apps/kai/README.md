@@ -16,19 +16,18 @@ ripgrep execution failed
 - The prebuilt `kai_session-binary-<version>.tar.gz` contains both
   `kai_session.<arch>` and the static `rg.<arch>` binary.
 - `kai_session/Makefile` installs the matching binary as `/usr/sbin/rg`.
-- A package update must publish the new prebuilt archive first, then update
-  `PKG_VERSION` and `PKG_HASH` together.
+- Runtime archives are published under the matching
+  `kai-runtime-v<version>` release in `istoreos/istoreos-app-hub`.
+- A package update must publish the new prebuilt archives first, then update
+  `PKG_VERSION` and `PKG_HASH` together for `kai`, `kai_session`, and
+  `kai-agent`.
 - Run `./tests/test-local-agent-contract.sh` before committing the plugin.
 - On a target device, verify both `/usr/sbin/rg --version` and a real skill
   directory scan. Merely listing available skills does not exercise ripgrep.
 
-Keep this dependency in the release artifact and OpenWrt package. Do not add an
-OpenCode fork patch or depend on a first-run network download.
-
-The legacy `0.0.6` prebuilt archive does not contain ripgrep. Its install step
-therefore keeps a temporary existence guard so current package rebuilds remain
-compatible. Remove that guard when `PKG_VERSION` and `PKG_HASH` move to the
-first archive that contains `rg`; the new release must not ship without it.
+Keep this dependency in the release artifact and OpenWrt package. Installation
+is intentionally unconditional so a missing architecture-specific `rg` fails
+the package build instead of falling back to a first-run network download.
 
 ## HTTP mount contract
 
