@@ -38,6 +38,17 @@
       }
     }
   },
+  "backend": {
+    "type": "http",
+    "transport": "tcp",
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "portFromUci": "kai.@kai[0].port",
+    "defaultPort": 8197,
+    "upstreamBasePath": "/apps/kai/",
+    "pathMode": "preserve",
+    "proxyMode": "app-base"
+  },
   "window": {
     "width": 1180,
     "height": 760,

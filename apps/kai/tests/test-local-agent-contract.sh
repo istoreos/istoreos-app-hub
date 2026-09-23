@@ -9,6 +9,7 @@ status_view="$root/luci-app-kai/luasrc/view/kai/kai_status.htm"
 status_controller="$root/luci-app-kai/luasrc/controller/kai.lua"
 luci_makefile="$root/luci-app-kai/Makefile"
 meta_makefile="$root/app-meta-kai/Makefile"
+meta_entry="$root/app-meta-kai/entry.sh"
 
 fail() {
 	echo "failed: $*" >&2
@@ -37,6 +38,11 @@ test -f "$root/kai-agent/Makefile" ||
 	fail "kai-agent package directory does not match its package name"
 grep -F 'META_DEPENDS:=+luci-app-kai +kai +kai_session +kai-agent' "$meta_makefile" >/dev/null ||
 	fail "app-meta-kai does not expose the complete runtime dependency set"
+grep -F 'json_add_string "href" "/cgi-bin/luci/admin/services/kai"' "$meta_entry" >/dev/null ||
+	fail "app-meta-kai does not enter KAI through its LuCI page"
+if grep -F 'json_add_string "href" "http://$host:' "$meta_entry" >/dev/null; then
+	fail "app-meta-kai bypasses the LuCI authentication entry"
+fi
 grep -F 'local: apps/kai/kai-agent' "$hub_root/syncapps.yaml" >/dev/null ||
 	fail "syncapps does not publish kai-agent to the package feed"
 if grep -F '$(CP) $(PKG_BUILD_DIR)/*' "$root/kai-agent/Makefile" >/dev/null; then
@@ -58,14 +64,12 @@ for package in kai kai_session kai-agent; do
 	grep -F 'https://github.com/istoreos/istoreos-app-hub/releases/download/kai-runtime-v$(PKG_VERSION)/' "$makefile" >/dev/null ||
 		fail "$package does not use the iStoreOS KAI runtime release"
 done
-grep -F '/apps/kai/web/' "$status_view" >/dev/null ||
-	fail "LuCI does not open the mounted KAI web path"
-grep -F 'url("admin/services/linkease_auth/auth")' "$status_view" >/dev/null ||
-	fail "LuCI KAI launcher does not enter through the current-origin auth bridge"
-grep -F 'encodeURIComponent(target.href)' "$status_view" >/dev/null ||
-	fail "LuCI KAI launcher does not safely encode the direct KAI return URL"
-if grep -F "window.open('http://" "$status_view" >/dev/null; then
-	fail "LuCI KAI launcher bypasses the current-origin auth bridge"
+grep -F 'url("admin/services/linkease_apps/open")' "$status_view" >/dev/null ||
+	fail "LuCI KAI launcher does not use the shared apps entry"
+grep -F '?id=kai' "$status_view" >/dev/null ||
+	fail "LuCI KAI launcher does not select the KAI app"
+if grep -E 'linkease_auth/auth|openKai|/apps/kai/web/' "$status_view" >/dev/null; then
+	fail "LuCI KAI launcher bypasses shared route resolution"
 fi
 grep -F 'uci:get_first("kai", "kai", "port")' "$status_controller" >/dev/null ||
 	fail "LuCI KAI status does not report the configured KAI port"

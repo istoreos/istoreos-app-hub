@@ -61,6 +61,16 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/fastnet/")
         self.assertNotIn("defaultPort", manifest["standalone"]["externalOpen"])
 
+    def test_luci_open_routes_through_the_shared_auth_entry(self):
+        controller = (ROOT / "luci-app-fastnet/luasrc/controller/fastnet.lua").read_text(encoding="utf-8")
+        model = (ROOT / "luci-app-fastnet/luasrc/model/cbi/fastnet.lua").read_text(encoding="utf-8")
+
+        self.assertIn('compat():open("fastnet")', controller)
+        self.assertIn('http = require "luci.http"', controller)
+        self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
+        self.assertIn('auth_url = dispatcher.build_url("admin", "services", "linkease_auth", "auth")', controller)
+        self.assertIn('dispatcher.build_url("admin", "services", "linkease_apps", "open") .. "?id=fastnet"', model)
+
 
 if __name__ == "__main__":
     unittest.main()

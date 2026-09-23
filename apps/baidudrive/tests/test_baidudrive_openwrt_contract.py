@@ -64,6 +64,7 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
     def test_luci_uses_shared_apps_entry_and_preserves_legacy_status(self):
         makefile = self.read("luci-app-baidudrive/Makefile")
         controller = self.read("luci-app-baidudrive/luasrc/controller/baidudrive.lua")
+        status = self.read("luci-app-baidudrive/luasrc/view/baidudrive/baidudrive_status.htm")
         meta = self.read("app-meta-baidudrive/Makefile")
         entry = self.read("app-meta-baidudrive/entry.sh")
 
@@ -71,6 +72,8 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         self.assertIn('entry({"admin", "services", "baidudrive", "open"}', controller)
         self.assertIn('compat():open("baidudrive")', controller)
         self.assertIn('compat():legacy_status("baidudrive"', controller)
+        self.assertIn('url("admin/services/baidudrive/open")', status)
+        self.assertNotIn('window.location.hostname + ":" + st.port', status)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive", meta)
         self.assertIn('/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive', entry)
 

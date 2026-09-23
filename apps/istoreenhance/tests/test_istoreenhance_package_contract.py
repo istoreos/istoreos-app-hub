@@ -79,6 +79,22 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertNotIn("process.", entry)
         self.assertNotIn("require(", entry)
 
+    def test_luci_open_routes_through_the_shared_auth_entry(self):
+        makefile = self.read("luci-app-istoreenhance/Makefile")
+        controller = self.read("luci-app-istoreenhance/luasrc/controller/istoreenhance.lua")
+        status = self.read("luci-app-istoreenhance/luasrc/view/istoreenhance_status.htm")
+        meta_entry = self.read("app-meta-istoreenhance/entry.sh")
+
+        self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn('compat():open("kspeeder")', controller)
+        self.assertIn('http = require "luci.http"', controller)
+        self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
+        self.assertIn('auth_url = dispatcher.build_url("admin", "services", "linkease_auth", "auth")', controller)
+        self.assertIn('url("admin/services/istoreenhance/open")', status)
+        self.assertNotIn("st.entry_url", status)
+        self.assertIn('/cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder', meta_entry)
+        self.assertNotIn('json_add_string "href" "http://$host:', meta_entry)
+
 
 if __name__ == "__main__":
     unittest.main()

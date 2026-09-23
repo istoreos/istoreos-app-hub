@@ -9,7 +9,7 @@ LUCI_TITLE:=LuCI support for fastnet
 LUCI_DEPENDS:=+fastnet +luci-lib-linkeaseauth
 LUCI_PKGARCH:=all
 PKG_VERSION:=0.7.7
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 LUCI_MINIFY_CSS:=0
 LUCI_MINIFY_JS:=0
 

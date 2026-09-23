@@ -28,7 +28,20 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
         )
         self.assertEqual(manifest["desktop"]["target"]["path"], "/apps/kai/web/")
         self.assertEqual(manifest["desktop"]["access"]["scope"], "lan")
+        self.assertEqual(manifest["standalone"]["basePath"], "/apps/kai/")
+        self.assertNotIn("url", manifest["standalone"])
         self.assertTrue(manifest["standalone"]["externalOpen"]["enabled"])
+
+        backend = manifest["backend"]
+        self.assertEqual(backend["type"], "http")
+        self.assertEqual(backend["transport"], "tcp")
+        self.assertEqual(backend["scheme"], "http")
+        self.assertEqual(backend["host"], "127.0.0.1")
+        self.assertEqual(backend["portFromUci"], "kai.@kai[0].port")
+        self.assertEqual(backend["defaultPort"], 8197)
+        self.assertEqual(backend["upstreamBasePath"], "/apps/kai/")
+        self.assertEqual(backend["pathMode"], "preserve")
+        self.assertEqual(backend["proxyMode"], "app-base")
 
     def test_runtime_package_owns_desktop_registration(self):
         makefile = self.read("kai/Makefile")
