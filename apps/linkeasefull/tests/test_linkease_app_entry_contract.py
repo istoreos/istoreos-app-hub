@@ -9,7 +9,7 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
     def read(self, relative):
         return (ROOT / relative).read_text(encoding="utf-8")
 
-    def test_package_owns_both_workers_and_single_init(self):
+    def test_package_owns_one_binary_with_two_process_roles(self):
         makefile = self.read("linkease-app-entry/Makefile")
         full_makefile = self.read("linkeasefull/Makefile")
         entry_init = self.read("linkease-app-entry/files/linkease-app-entry.init")
@@ -17,8 +17,10 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
 
         self.assertIn("PKG_NAME:=linkease-app-entry", makefile)
         self.assertIn("define Package/$(PKG_NAME)", makefile)
-        self.assertIn("linkease-app-entryd", makefile)
-        self.assertIn("linkease-app-gateway", makefile)
+        self.assertIn("/bin/linkease-app-entry", makefile)
+        self.assertIn("/usr/sbin/linkease-app-entry", makefile)
+        self.assertNotIn("linkease-app-entryd", makefile)
+        self.assertNotIn("linkease-app-gateway", makefile)
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertNotIn("+linkeasefull", makefile)
         self.assertIn("+linkease-app-entry", full_makefile)
@@ -26,7 +28,7 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
         self.assertNotIn("linkease-app-entryd", full_makefile)
         self.assertNotIn("linkease-app-gateway", full_makefile)
         self.assertIn("PKG_VERSION:=3.0.20", makefile)
-        self.assertIn("PKG_RELEASE:=3", makefile)
+        self.assertIn("PKG_RELEASE:=4", makefile)
         self.assertIn(
             "PKG_SOURCE:=linkease-app-entry-runtime-$(PKG_VERSION)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz",
             makefile,
@@ -36,18 +38,23 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
             makefile,
         )
         self.assertIn(
-            "ecaee4b875f07c22622044cac7eb39ebf0738c910d21211ca63d36eeaa7cb6e6",
+            "644b5a94efc63a62367430ac6c86c6065677fc03e05ed8aa0188ffe955317d62",
             makefile,
         )
         self.assertIn(
-            "b04ac3b15bcd12bb99800ebb7d15e98d8f8c4ca73f2b422153acabd170c9fea4",
+            "23f14018513509dd8cdca3faaf53a1ee0371397a0028b09b4a2752d847481932",
             makefile,
         )
         self.assertNotIn(
             "PKG_BUILD_DIR:=$(BUILD_DIR)/linkease-app-entry-runtime-$(PKG_VERSION)-linux-$(LINKEASE_RUNTIME_ARCH)",
             full_makefile,
         )
-        self.assertIn('procd_set_param command "$ENTRYD"', entry_init)
+        self.assertIn('ENTRY=/usr/sbin/linkease-app-entry', entry_init)
+        self.assertIn('procd_set_param command "$ENTRY" supervisor', entry_init)
+        self.assertIn('--fallback "$ENTRY"', entry_init)
+        self.assertIn('--fallback-arg gateway', entry_init)
+        self.assertNotIn("linkease-app-entryd", entry_init)
+        self.assertNotIn("linkease-app-gateway", entry_init)
         self.assertIn('--primary-enabled="$primary"', entry_init)
         self.assertIn("LINKEASE_AUTH_PROVIDER=openwrt", entry_init)
         self.assertNotIn("procd_open_instance", compatibility_init)

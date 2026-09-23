@@ -153,11 +153,12 @@ small application launcher. Explicit JSON clients continue to receive the
 manifest index (`Accept: application/json`), so the existing API contract is
 unchanged.
 
-`linkease-app-entryd` owns the stable listener and passes its file descriptor
-to exactly one worker. It does not proxy HTTP, so the gateway fallback adds no
-extra entryd HTTP hop. The executable names remain stable for upgrade safety;
-“Apps Gateway” is the role, while `linkease-app-gateway` remains the installed
-binary name.
+`linkease-app-entry supervisor` owns the stable listener and passes its file
+descriptor to exactly one worker. It does not proxy HTTP, so the fallback adds
+no extra HTTP hop. When LinkEaseFull is unavailable, it starts the same binary
+as `linkease-app-entry gateway`. There is one installed executable but two
+separate process roles, preserving lifecycle and failure isolation while
+sharing one Go runtime on disk.
 
 ## Verification
 

@@ -9,17 +9,17 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=linkease-app-entry
 # This lightweight runtime is released independently from the full desktop.
 PKG_VERSION:=3.0.20
-PKG_RELEASE:=3
+PKG_RELEASE:=4
 
 ARCH_HEXCODE:=
 ifeq ($(ARCH),x86_64)
 ARCH_HEXCODE=8664
 LINKEASE_RUNTIME_ARCH:=amd64
-PKG_HASH:=ecaee4b875f07c22622044cac7eb39ebf0738c910d21211ca63d36eeaa7cb6e6
+PKG_HASH:=644b5a94efc63a62367430ac6c86c6065677fc03e05ed8aa0188ffe955317d62
 else ifeq ($(ARCH),aarch64)
 ARCH_HEXCODE=aa64
 LINKEASE_RUNTIME_ARCH:=arm64
-PKG_HASH:=b04ac3b15bcd12bb99800ebb7d15e98d8f8c4ca73f2b422153acabd170c9fea4
+PKG_HASH:=23f14018513509dd8cdca3faaf53a1ee0371397a0028b09b4a2752d847481932
 endif
 
 PKG_SOURCE_VERSION:=$(ARCH_HEXCODE)
@@ -67,8 +67,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-app-entryd $(1)/usr/sbin/linkease-app-entryd
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-app-gateway $(1)/usr/sbin/linkease-app-gateway
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-app-entry $(1)/usr/sbin/linkease-app-entry
 	$(INSTALL_CONF) ./files/linkease-app-entry.config $(1)/etc/config/linkease_app_entry
 	$(INSTALL_BIN) ./files/linkease-app-entry.init $(1)/etc/init.d/linkease-app-entry
 	$(INSTALL_BIN) ./files/linkease-app-entry.uci-default $(1)/etc/uci-defaults/linkease-app-entry
