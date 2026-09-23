@@ -307,9 +307,7 @@ apps:
         luci:
             - local: apps/kaiplus/luci-app-kaiplus
               remote: nas-packages-luci/luci/luci-app-kaiplus
-        meta:
-            - local: apps/kaiplus/app-meta-kaiplus
-              remote: openwrt-app-meta/applications/app-meta-kaiplus
+        meta: []
     kodexplorer:
         services: []
         luci:

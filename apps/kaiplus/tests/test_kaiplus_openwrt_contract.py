@@ -129,36 +129,24 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertNotIn("bubblewrap", package_block.lower())
         self.assertNotIn("bwrap", package_block.lower())
 
-    def test_app_meta_config_writes_listen_defaults_and_base_path(self):
-        text = self.read("app-meta-kaiplus/config.sh")
-
-        self.assertIn('set kaiplus.@kaiplus[0].listen_mode="auto"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].external_port_enabled="0"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].socket_path="/var/run/kaiplus.sock"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].port="8189"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].bind_addr="0.0.0.0"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].base_path="/apps/kaiplus/"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].auth_mode="openwrt_luci"', text)
-        self.assertIn('set kaiplus.@kaiplus[0].release_channel="stable"', text)
-        self.assertNotIn('port="{}"'.format(LEGACY_PORT), text)
+    def test_kaiplus_runtime_and_luci_remain_without_software_center_meta(self):
+        self.assertTrue((ROOT / "kaiplus/Makefile").is_file())
+        self.assertTrue((ROOT / "luci-app-kaiplus/Makefile").is_file())
+        self.assertFalse((ROOT / "app-meta-kaiplus").exists())
 
     def test_openwrt_auth_bridge_is_declared_as_package_dependency(self):
         runtime_makefile = self.read("kaiplus/Makefile")
         luci_makefile = self.read("luci-app-kaiplus/Makefile")
-        meta_makefile = self.read("app-meta-kaiplus/Makefile")
 
         self.assertIn("+luci-lib-linkeaseauth", luci_makefile)
-        self.assertIn("+luci-lib-linkeaseauth", meta_makefile)
         self.assertNotIn("luci-lib-openwrtauth", luci_makefile)
-        self.assertNotIn("luci-lib-openwrtauth", meta_makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", runtime_makefile)
 
     def test_runtime_and_plugin_versions_are_pinned_for_release_traceability(self):
         runtime_makefile = self.read("kaiplus/Makefile")
         luci_makefile = self.read("luci-app-kaiplus/Makefile")
-        meta_makefile = self.read("app-meta-kaiplus/Makefile")
 
-        for text in (runtime_makefile, luci_makefile, meta_makefile):
+        for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
             self.assertIn("PKG_RELEASE:=1", text)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
@@ -170,23 +158,10 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
                 self.assertNotIn(LEGACY_PORT.encode(), path.read_bytes(), str(path))
 
     def test_restart_paths_refresh_linkease_when_present(self):
-        app_meta = self.read("app-meta-kaiplus/config.sh")
         cbi = self.read("luci-app-kaiplus/luasrc/model/cbi/kaiplus.lua")
 
-        self.assertIn('[ -x /etc/init.d/linkease ] && /etc/init.d/linkease restart >/dev/null 2>&1 &', app_meta)
         self.assertIn('if sys.call("[ -x /etc/init.d/linkease ]") == 0 then', cbi)
         self.assertIn('sys.call("/etc/init.d/linkease restart >/dev/null 2>&1 &")', cbi)
-
-    def test_app_meta_entry_uses_canonical_luci_open(self):
-        text = self.read("app-meta-kaiplus/entry.sh")
-
-        self.assertIn('base_path="$(uci get kaiplus.@kaiplus[0].base_path 2>/dev/null)"', text)
-        self.assertIn('local basepath=${base_path:-/apps/kaiplus/}', text)
-        self.assertIn('external_port_enabled="$(uci get kaiplus.@kaiplus[0].external_port_enabled 2>/dev/null)"', text)
-        self.assertIn('if [ "$external_port_enabled" = "1" ]; then', text)
-        self.assertNotIn('json_add_string "href" "http://$host:${portsec}${basepath}"', text)
-        self.assertIn('json_add_string "href" "/cgi-bin/luci/admin/services/linkease_apps/open?id=kaiplus"', text)
-        self.assertNotIn('http://$host:${portsec}/"', text)
 
     def test_luci_status_exposes_entry_state_and_open_button_uses_luci_open(self):
         controller = self.read("luci-app-kaiplus/luasrc/controller/kaiplus.lua")

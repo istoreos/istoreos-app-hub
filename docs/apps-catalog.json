@@ -466,8 +466,8 @@
     "website": "https://github.com/linkease/nas-packages-luci",
     "author": "Xiaobao",
     "version": "1.0.0",
-    "release": "2",
-    "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kaiplus +app-meta-kai +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
+    "release": "3",
+    "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kai +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
     "luci_entry": "/apps/",
     "meta_dir": "apps/istorex/app-meta-istorex"
   },
@@ -522,21 +522,21 @@
     "meta_dir": "apps/jellyfin/app-meta-jellyfin"
   },
   {
-    "id": "kaiplus",
-    "title": "酷友社Kai",
-    "description": "KaiPlus AI 解决各种问题，加速软件安装",
-    "description_en": "KaiPlus AI solve various network issues and speed up software installation.",
+    "id": "kai",
+    "title": "酷友社KAI",
+    "description": "KAI安装软件助手(iStoreOS 24版本以上适用)",
+    "description_en": "AI software installation assistant",
     "tags": [
       "ai",
       "system"
     ],
-    "website": "https://ai.koolcenter.com",
+    "website": "https://www.koolcenter.com",
     "author": "koolcenter",
-    "version": "1.0.9",
-    "release": "1",
-    "depends": "+luci-app-kaiplus +kaiplus +luci-lib-linkeaseauth",
-    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=kaiplus",
-    "meta_dir": "apps/kaiplus/app-meta-kaiplus"
+    "version": "1.0.2",
+    "release": "2",
+    "depends": "+luci-app-kai +kai +kai_session",
+    "luci_entry": "/cgi-bin/luci/admin/services/kai",
+    "meta_dir": "apps/kai/app-meta-kai"
   },
   {
     "id": "kodexplorer",

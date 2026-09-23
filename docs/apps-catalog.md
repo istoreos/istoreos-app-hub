@@ -35,7 +35,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | ittools | 开发工具集 | net | /cgi-bin/luci/admin/services/ittools | https://it-tools.tech/ | 开发工具集是集成了很多有用的网页工具。 |
 | jackett | Jackett | download nas | /cgi-bin/luci/admin/services/jackett | https://github.com/Jackett/Jackett | Jackett 是维护索引器抓取和翻译逻辑的单一存储库 - 消除了其他应用程序的负担。 |
 | jellyfin | Jellyfin私有影院 | multimedia net | /cgi-bin/luci/admin/services/jellyfin | https://jellyfin.org | Jellyfin是一个免费自由的媒体系统软件，可以让您方便地管理和串流您的媒体。部分机型无需配置即可支持硬件转码：Easepi ARS2；RK35xx 系列。 |
-| kaiplus | 酷友社Kai | ai system | /cgi-bin/luci/admin/services/linkease_apps/open?id=kaiplus | https://ai.koolcenter.com | KaiPlus AI 解决各种问题，加速软件安装 |
+| kai | 酷友社KAI | ai system | /cgi-bin/luci/admin/services/kai | https://www.koolcenter.com | KAI安装软件助手(iStoreOS 24版本以上适用) |
 | kodexplorer | 可道云 | nas service | /cgi-bin/luci/admin/services/kodexplorer | https://kodcloud.com | 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。 |
 | lanraragi | LANraragi电子书 | multimedia net | /cgi-bin/luci/admin/services/lanraragi | https://lrr.tvc-16.science/ | LANraragi是一个开源的电子书、漫画管理平台。 |
 | linkease | 易有云 | nas service | /cgi-bin/luci/admin/services/linkease | https://www.linkease.com/ | 易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。 |

@@ -22,14 +22,24 @@ class IstorexNewUiContractTest(unittest.TestCase):
         for package in (
             "app-meta-linkeasefull",
             "app-meta-dockermanager",
-            "app-meta-kaiplus",
             "app-meta-kai",
             "app-meta-baidudrive",
             "app-meta-istoreenhance",
             "luci-theme-istorenas",
         ):
             self.assertIn(f"+{package}", makefile)
+        self.assertNotIn("+app-meta-kaiplus", makefile)
         self.assertNotIn("+luci-app-istorex", makefile)
+
+    def test_kai_is_the_only_kai_software_center_meta_package(self):
+        self.assertTrue((ROOT / "apps/kai/app-meta-kai/Makefile").is_file())
+        self.assertFalse((ROOT / "apps/kaiplus/app-meta-kaiplus").exists())
+        self.assertTrue((ROOT / "apps/kaiplus/kaiplus/Makefile").is_file())
+        self.assertTrue((ROOT / "apps/kaiplus/luci-app-kaiplus/Makefile").is_file())
+
+        syncapps = self.read("syncapps.yaml")
+        self.assertIn("local: apps/kai/app-meta-kai", syncapps)
+        self.assertNotIn("local: apps/kaiplus/app-meta-kaiplus", syncapps)
 
     def test_istorex_meta_configures_istorenas_login_landing_page(self):
         config = self.read("apps/istorex/app-meta-istorex/config.sh")

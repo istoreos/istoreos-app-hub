@@ -95,13 +95,14 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
         self.assertIn("+luci-app-linkeasefull-embed", core)
         for package in (
             "app-meta-dockermanager",
-            "app-meta-kaiplus",
             "app-meta-kai",
             "app-meta-baidudrive",
             "app-meta-istoreenhance",
         ):
             self.assertNotIn("+" + package, core, package)
             self.assertIn("+" + package, bundle, package)
+        self.assertNotIn("+app-meta-kaiplus", core)
+        self.assertNotIn("+app-meta-kaiplus", bundle)
         self.assertIn("+app-meta-linkeasefull", bundle)
 
 
