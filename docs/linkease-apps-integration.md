@@ -4,6 +4,42 @@ Routed applications use one LuCI launch contract and one runtime entry. An
 application does not depend on LinkEaseFull and does not implement uhttpd,
 worker, authentication, or fallback decisions in its own controller.
 
+## Product and package boundaries
+
+The source tree groups the shared Apps capability with the LinkEaseFull
+business family, but keeps every reusable capability as an independent IPK:
+
+```text
+apps/linkeasefull/
+  linkeasefull/                 # full desktop runtime
+  linkease-app-entry/           # entry arbiter and fallback gateway IPK
+  luci-lib-linkeaseauth/        # shared auth and launch integration IPK
+  luci-app-linkeasefull/
+  luci-app-linkeasefull-embed/
+  app-meta-linkeasefull/
+```
+
+Directory ownership does not imply a package dependency. The dependency flow
+is one-way: `linkeasefull` depends on `linkease-app-entry`, and
+`linkease-app-entry` depends on `luci-lib-linkeaseauth`. Neither shared package
+depends on `linkeasefull`, so a standalone app can install and run the fallback
+gateway without installing the full desktop.
+
+The entry package also has its own small
+`linkease-app-entry-runtime-<version>-<target>.tar.gz` artifact. It must not
+reuse the LinkEaseFull runtime archive: standalone apps should not download the
+full desktop payload, and entry releases must be independently buildable and
+upgradable. The source remains in `linkease-desktop`; its release and verify
+scripts produce exactly the two worker binaries consumed by this package.
+
+`app-meta-linkeasefull` is the desktop and storage core product. It includes
+the embedded OpenWrt desktop component, but deliberately does not pull in
+Docker Manager, KaiPlus, Kai, BaiduDrive, KSpeeder, or other business apps.
+`app-meta-istorex` is the complete iStoreNAS product bundle and is the layer
+that aggregates `app-meta-linkeasefull` with those app meta packages. New apps
+must not be added to the LinkEaseFull core merely to make them part of the
+iStoreNAS bundle.
+
 ## Package contract
 
 An application package:

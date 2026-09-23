@@ -10,16 +10,16 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
         return (ROOT / relative).read_text(encoding="utf-8")
 
     def test_shared_luci_package_is_versioned_as_apps_integration(self):
-        makefile = self.read("linkeaseauth/luci-lib-linkeaseauth/Makefile")
+        makefile = self.read("linkeasefull/luci-lib-linkeaseauth/Makefile")
         self.assertIn("LUCI_TITLE:=LuCI shared integration for LinkEase apps", makefile)
         self.assertIn("PKG_VERSION:=1.1.0", makefile)
         self.assertIn("PKG_RELEASE:=3", makefile)
 
     def test_shared_package_keeps_auth_and_adds_separate_apps_routes(self):
-        auth = self.read("linkeaseauth/luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
-        apps = self.read("linkeaseauth/luci-lib-linkeaseauth/luasrc/controller/linkease_apps.lua")
-        decision = self.read("linkeaseauth/luci-lib-linkeaseauth/luasrc/model/linkease/apps.lua")
-        defaults = self.read("linkeaseauth/luci-lib-linkeaseauth/root/etc/uci-defaults/50_luci-linkeaseauth")
+        auth = self.read("linkeasefull/luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
+        apps = self.read("linkeasefull/luci-lib-linkeaseauth/luasrc/controller/linkease_apps.lua")
+        decision = self.read("linkeasefull/luci-lib-linkeaseauth/luasrc/model/linkease/apps.lua")
+        defaults = self.read("linkeasefull/luci-lib-linkeaseauth/root/etc/uci-defaults/50_luci-linkeaseauth")
 
         self.assertIn('"linkease_auth", "auth"', auth)
         self.assertIn('"linkease_auth", "auth_finish"', auth)
@@ -47,6 +47,8 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             luci = self.read(f"{app}/luci-app-{app}/Makefile")
             self.assertIn("+linkease-app-entry", runtime, app)
             self.assertIn("+luci-lib-linkeaseauth", luci, app)
+            self.assertNotIn("+linkeasefull", runtime, app)
+            self.assertNotIn("+linkeasefull", luci, app)
 
     def test_migrated_apps_register_neutral_and_legacy_manifests_safely(self):
         cases = (
@@ -106,6 +108,8 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             self.assertIn("+linkease-app-entry", runtime, app)
             self.assertIn("/usr/share/linkease/apps.d", runtime, app)
             self.assertIn("+luci-lib-linkeaseauth", luci, app)
+            self.assertNotIn("+linkeasefull", runtime, app)
+            self.assertNotIn("+linkeasefull", luci, app)
             self.assertIn(
                 f"META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id={app}",
                 meta,

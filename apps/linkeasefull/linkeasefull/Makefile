@@ -34,33 +34,6 @@ PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/linkease-app-entry
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=Web Servers/Proxies
-	TITLE:=LinkEase application entry arbiter and fallback gateway
-	DEPENDS:=@(x86_64||aarch64) +ca-bundle +luci-lib-linkeaseauth
-	PKGARCH:=all
-	URL:=https://www.linkease.com/
-endef
-
-define Package/linkease-app-entry/description
-  Owns the shared /apps listener, launches LinkEaseFull directly when healthy,
-  and runs the manifest-driven fallback gateway only when LinkEaseFull is not available.
-endef
-
-define Package/linkease-app-entry/conffiles
-/etc/config/linkease_app_entry
-endef
-
-define Package/linkease-app-entry/postinst
-#!/bin/sh
-if [ -z "$${IPKG_INSTROOT}" ]; then
-	[ -f /etc/uci-defaults/linkease-app-entry ] && /etc/uci-defaults/linkease-app-entry && rm -f /etc/uci-defaults/linkease-app-entry
-fi
-exit 0
-endef
-
 define Package/$(PKG_NAME)
 	SECTION:=net
 	CATEGORY:=Network
@@ -106,14 +79,4 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/linkeasefull.uci-default $(1)/etc/uci-defaults/linkeasefull
 endef
 
-define Package/linkease-app-entry/install
-	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-app-entryd $(1)/usr/sbin/linkease-app-entryd
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-app-gateway $(1)/usr/sbin/linkease-app-gateway
-	$(INSTALL_CONF) ./files/linkease-app-entry.config $(1)/etc/config/linkease_app_entry
-	$(INSTALL_BIN) ./files/linkease-app-entry.init $(1)/etc/init.d/linkease-app-entry
-	$(INSTALL_BIN) ./files/linkease-app-entry.uci-default $(1)/etc/uci-defaults/linkease-app-entry
-endef
-
-$(eval $(call BuildPackage,linkease-app-entry))
 $(eval $(call BuildPackage,$(PKG_NAME)))

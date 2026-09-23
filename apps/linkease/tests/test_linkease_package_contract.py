@@ -169,7 +169,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
             "linkease", "luci-app-linkease/luasrc/view/linkease_status.htm"
         )
         entry_init = self.read_app(
-            "linkeasefull", "linkeasefull/files/linkease-app-entry.init"
+            "linkeasefull", "linkease-app-entry/files/linkease-app-entry.init"
         )
 
         self.assertIn('local LINKEASE_UNIX = "/var/run/linkease.sock"', backend)
@@ -197,7 +197,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         makefile = self.read_app("linkeasefull", "linkeasefull/Makefile")
         compat_init = self.read_app("linkeasefull", "linkeasefull/files/linkeasefull.init")
         entry_init = self.read_app(
-            "linkeasefull", "linkeasefull/files/linkease-app-entry.init"
+            "linkeasefull", "linkease-app-entry/files/linkease-app-entry.init"
         )
         config = self.read_app("linkeasefull", "linkeasefull/files/linkeasefull.config")
         cbi = self.read_app("linkeasefull", "luci-app-linkeasefull/luasrc/model/cbi/linkeasefull.lua")
@@ -293,10 +293,10 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn('mapping == "/apps=http://127.0.0.1:19290"', controller)
         luci_makefile = self.read_app("linkeasefull", "luci-app-linkeasefull/Makefile")
         auth_controller = self.read_app(
-            "linkeaseauth", "luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua"
+            "linkeasefull", "luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua"
         )
         auth_model = self.read_app(
-            "linkeaseauth", "luci-lib-linkeaseauth/luasrc/model/linkease/auth.lua"
+            "linkeasefull", "luci-lib-linkeaseauth/luasrc/model/linkease/auth.lua"
         )
 
         self.assertIn("LUCI_DEPENDS:=+linkeasefull +luci-lib-linkeaseauth +luci-lib-linkeasefile", luci_makefile)
@@ -390,7 +390,10 @@ class LinkEasePackageContractTest(unittest.TestCase):
                 "apps/linkeasefile/luci-lib-linkeasefile"
             ),
             "linkeaseauth": self.luci_installed_files(
-                "apps/linkeaseauth/luci-lib-linkeaseauth"
+                "apps/linkeasefull/luci-lib-linkeaseauth"
+            ),
+            "linkease-app-entry": self.makefile_installed_files(
+                "apps/linkeasefull/linkease-app-entry/Makefile"
             ),
             "linkeasefull": (
                 self.makefile_installed_files("apps/linkeasefull/linkeasefull/Makefile")
@@ -413,8 +416,12 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("    linkeasefull:", text)
         self.assertIn("local: apps/linkeasefull/linkeasefull", text)
         self.assertIn("remote: nas-packages/network/services/linkeasefull", text)
+        self.assertIn("local: apps/linkeasefull/linkease-app-entry", text)
+        self.assertIn("remote: nas-packages/network/services/linkease-app-entry", text)
         self.assertIn("local: apps/linkeasefull/luci-app-linkeasefull", text)
         self.assertIn("remote: nas-packages-luci/luci/luci-app-linkeasefull", text)
+        self.assertIn("local: apps/linkeasefull/luci-lib-linkeaseauth", text)
+        self.assertIn("remote: nas-packages-luci/luci/luci-lib-linkeaseauth", text)
         self.assertIn("local: apps/linkeasefull/app-meta-linkeasefull", text)
         self.assertIn("remote: openwrt-app-meta/applications/app-meta-linkeasefull", text)
         self.assertIn("    linkease-common-bin:", text)
@@ -423,9 +430,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("    linkeasefile:", text)
         self.assertIn("local: apps/linkeasefile/luci-lib-linkeasefile", text)
         self.assertIn("remote: nas-packages-luci/luci/luci-lib-linkeasefile", text)
-        self.assertIn("    linkeaseauth:", text)
-        self.assertIn("local: apps/linkeaseauth/luci-lib-linkeaseauth", text)
-        self.assertIn("remote: nas-packages-luci/luci/luci-lib-linkeaseauth", text)
+        self.assertNotIn("    linkeaseauth:", text)
 
     def test_apps_catalog_contains_linkeasefull(self):
         text = (REPO / "docs/apps-catalog.min.md").read_text(encoding="utf-8")

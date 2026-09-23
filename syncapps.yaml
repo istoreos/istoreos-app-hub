@@ -348,21 +348,19 @@ apps:
             - local: apps/linkeasefile/luci-lib-linkeasefile
               remote: nas-packages-luci/luci/luci-lib-linkeasefile
         meta: []
-    linkeaseauth:
-        services: []
-        luci:
-            - local: apps/linkeaseauth/luci-lib-linkeaseauth
-              remote: nas-packages-luci/luci/luci-lib-linkeaseauth
-        meta: []
     linkeasefull:
         services:
             - local: apps/linkeasefull/linkeasefull
               remote: nas-packages/network/services/linkeasefull
+            - local: apps/linkeasefull/linkease-app-entry
+              remote: nas-packages/network/services/linkease-app-entry
         luci:
             - local: apps/linkeasefull/luci-app-linkeasefull
               remote: nas-packages-luci/luci/luci-app-linkeasefull
             - local: apps/linkeasefull/luci-app-linkeasefull-embed
               remote: nas-packages-luci/luci/luci-app-linkeasefull-embed
+            - local: apps/linkeasefull/luci-lib-linkeaseauth
+              remote: nas-packages-luci/luci/luci-lib-linkeaseauth
         meta:
             - local: apps/linkeasefull/app-meta-linkeasefull
               remote: openwrt-app-meta/applications/app-meta-linkeasefull
