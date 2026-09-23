@@ -2,6 +2,7 @@
 set -eu
 
 root="$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)"
+hub_root="$(CDPATH= cd -- "$root/../.." && pwd -P)"
 init="$root/kai/files/kai.init"
 launcher="$root/kai/files/kai-session-launch"
 status_view="$root/luci-app-kai/luasrc/view/kai/kai_status.htm"
@@ -34,6 +35,8 @@ test -f "$root/kai-agent/Makefile" ||
 	fail "kai-agent package directory does not match its package name"
 grep -F 'META_DEPENDS:=+luci-app-kai +kai +kai_session +kai-agent' "$meta_makefile" >/dev/null ||
 	fail "app-meta-kai does not expose the complete runtime dependency set"
+grep -F 'local: apps/kai/kai-agent' "$hub_root/syncapps.yaml" >/dev/null ||
+	fail "syncapps does not publish kai-agent to the package feed"
 grep -F '$(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session)' "$root/kai_session/Makefile" >/dev/null ||
 	fail "kai_session does not install its bundled ripgrep runtime"
 if grep -F 'if [ -f "$(PKG_BUILD_DIR)/rg.' "$root/kai_session/Makefile" >/dev/null; then

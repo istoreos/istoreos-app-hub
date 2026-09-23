@@ -294,6 +294,8 @@ apps:
               remote: nas-packages/network/services/kai
             - local: apps/kai/kai_session
               remote: nas-packages/network/services/kai_session
+            - local: apps/kai/kai-agent
+              remote: nas-packages/network/services/kai-agent
         luci:
             - local: apps/kai/luci-app-kai
               remote: nas-packages-luci/luci/luci-app-kai
