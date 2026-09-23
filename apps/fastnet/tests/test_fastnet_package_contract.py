@@ -16,18 +16,18 @@ class FastNetPackageContractTest(unittest.TestCase):
         source_version = re.search(r"^PKG_VERSION:=(.+)$", runtime, re.MULTILINE)
         source_release = re.search(r"^PKG_RELEASE:=(.+)$", runtime, re.MULTILINE)
         luci_version = re.search(r"^PKG_VERSION:=(.+)$", luci, re.MULTILINE)
+        luci_release = re.search(r"^PKG_RELEASE:=(.+)$", luci, re.MULTILINE)
         meta_version = re.search(r"^PKG_VERSION:=(.+)$", meta, re.MULTILINE)
         source_hash = re.search(r"^PKG_HASH:=([0-9a-f]{64})$", runtime, re.MULTILINE)
 
         self.assertIsNotNone(source_version)
         self.assertIsNotNone(source_release)
         self.assertIsNotNone(luci_version)
+        self.assertIsNotNone(luci_release)
         self.assertIsNotNone(meta_version)
         self.assertIsNotNone(source_hash)
-        self.assertEqual(
-            luci_version.group(1),
-            f"{source_version.group(1)}-r{source_release.group(1)}",
-        )
+        self.assertEqual(luci_version.group(1), source_version.group(1))
+        self.assertEqual(luci_release.group(1), source_release.group(1))
         self.assertEqual(meta_version.group(1), source_version.group(1))
         self.assertIn(
             "istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/",

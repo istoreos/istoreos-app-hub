@@ -19,7 +19,8 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         runtime = self.read("linkeasefull/Makefile")
         embed = self.read("luci-app-linkeasefull-embed/Makefile")
 
-        self.assertIn("PKG_RELEASE:=2", meta)
+        self.assertIn("PKG_VERSION:=3.0.21", meta)
+        self.assertIn("PKG_RELEASE:=1", meta)
         self.assertIn("+luci-app-linkeasefull-embed", meta)
         self.assertIn("DEPENDS:=+linkeasefull", embed)
         self.assertNotIn("luci-app-linkeasefull-embed", runtime)
@@ -27,7 +28,8 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
     def test_embed_uses_private_fallbacks_without_unavailable_protocol_dependency(self):
         makefile = self.read("luci-app-linkeasefull-embed/Makefile")
 
-        self.assertIn("PKG_RELEASE:=3", makefile)
+        self.assertIn("PKG_VERSION:=1.1.0", makefile)
+        self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertNotIn("+luci-proto-bonding", makefile)
         self.assertIn("/usr/share/linkeasefull/openwrt-luci/protocol-fallbacks", makefile)
         self.assertIn(
