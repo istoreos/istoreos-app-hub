@@ -31,7 +31,8 @@ the package build instead of falling back to a first-run network download.
 
 ## HTTP mount contract
 
-The LuCI entry opens `/apps/kai/web/`. Browser traffic stays below
-`/apps/kai/`, including `/apps/kai/event`, `/apps/kai/session/*` and product
+The LuCI entry opens the stable `/apps/kai/` root, which KAI redirects to
+`/apps/kai/web/`. Browser traffic stays below `/apps/kai/`, including
+`/apps/kai/event`, `/apps/kai/session/*` and product
 APIs. Keep the plugin entry path aligned with the server mount when either side
 changes.

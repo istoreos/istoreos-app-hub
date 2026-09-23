@@ -26,7 +26,7 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
             manifest["desktop"]["target"]["port"]["keys"]["uci"],
             "kai.@kai[0].port",
         )
-        self.assertEqual(manifest["desktop"]["target"]["path"], "/apps/kai/web/")
+        self.assertEqual(manifest["desktop"]["target"]["path"], "/apps/kai/")
         self.assertEqual(manifest["desktop"]["access"]["scope"], "lan")
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/kai/")
         self.assertNotIn("url", manifest["standalone"])
