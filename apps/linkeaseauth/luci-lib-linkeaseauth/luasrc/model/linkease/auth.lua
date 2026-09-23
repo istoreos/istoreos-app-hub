@@ -46,6 +46,14 @@ local function authority_host(authority)
 	return authority:match("^([^:]+)") or authority
 end
 
+local function authority_port(authority)
+	if not authority then return nil end
+	local value = authority:match("^%[[^%]]+%]:(%d+)$") or authority:match("^[^:]+:(%d+)$")
+	value = tonumber(value)
+	if value and value >= 1 and value <= 65535 then return value end
+	return nil
+end
+
 local function valid_authority(authority)
 	return authority and authority ~= "" and authority:match("^[A-Za-z0-9%._%-%[%]:]+$") ~= nil
 end
@@ -101,13 +109,21 @@ function Bridge:valid_apps_return(value)
 	end
 	if value:sub(1, 1) == "/" then return valid_path(value) end
 
-	local _, authority, path = value:match("^(https?://)([^/]+)(/.*)$")
-	if not authority or not valid_authority(authority) or not valid_path(path) then return false end
+	local scheme, authority, path = value:match("^(https?://)([^/]+)(/.*)$")
+	if not authority or not valid_authority(authority) then return false end
 	local candidate = authority_host(authority)
-	return candidate ~= "" and (
+	local same_device = candidate ~= "" and (
 		candidate == authority_host(self:request_authority())
 		or candidate == authority_host(self.dependencies.lan_ip())
 	)
+	if not same_device then return false end
+	if valid_path(path) then return true end
+	if path:sub(1, 1) ~= "/" or path:sub(1, 2) == "//" then return false end
+	local target_port = authority_port(authority)
+	local request_port = authority_port(self:request_authority())
+		or (self:request_scheme() == "https" and 443 or 80)
+	local target_default = scheme == "https://" and 443 or 80
+	return target_port ~= nil and target_port ~= request_port and target_port ~= target_default
 end
 
 function Bridge:safe_return_target(value)

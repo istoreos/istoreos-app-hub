@@ -61,6 +61,18 @@ local full = engine({ entry = {
 equal(full.mode, "apps")
 equal(full.worker, "linkeasefull")
 
+local builtin = engine({
+	registrations = {
+		["openwrt-luci"] = {
+			id = "openwrt-luci", url = "/apps/openwrt-luci/", entry_supported = false
+		}
+	}
+}):status("openwrt-luci")
+equal(builtin.registered, true)
+equal(builtin.available, false)
+equal(builtin.mode, "unavailable")
+equal(builtin.reason, "entry_unsupported_and_external_unavailable")
+
 local external = engine({
 	entry = { available = false, worker = "stopped", proxy_supported = false, proxy_enabled = false },
 	external = { dockermanager = { available = true, url = "http://192.168.30.7:8192/apps/dockermanager/" } }

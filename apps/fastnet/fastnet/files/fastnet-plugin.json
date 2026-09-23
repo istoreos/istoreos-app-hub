@@ -22,19 +22,16 @@
     }
   },
   "standalone": {
+    "basePath": "/apps/fastnet/",
     "externalOpen": {
       "enabled": true,
       "label": "在浏览器中打开 FastNet"
     }
   },
   "config": {
-    "providerOrder": [
-      "uci"
-    ],
+    "providerOrder": ["uci"],
     "providers": {
-      "uci": {
-        "type": "uci"
-      }
+      "uci": {"type": "uci"}
     }
   },
   "window": {
@@ -42,13 +39,6 @@
     "height": 760,
     "singleton": true
   },
-  "capabilities": [
-    "speed-test",
-    "diagnostics",
-    "network"
-  ],
-  "categories": [
-    "network",
-    "service"
-  ]
+  "capabilities": ["speed-test", "diagnostics", "network"],
+  "categories": ["network", "service"]
 }

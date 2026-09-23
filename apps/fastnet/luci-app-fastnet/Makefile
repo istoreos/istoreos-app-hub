@@ -6,9 +6,9 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for fastnet
-LUCI_DEPENDS:=+fastnet
+LUCI_DEPENDS:=+fastnet +luci-lib-linkeaseauth
 LUCI_PKGARCH:=all
-PKG_VERSION:=0.7.7-r1
+PKG_VERSION:=0.7.7-r2
 # PKG_RELEASE MUST be empty for luci.mk
 PKG_RELEASE:=
 LUCI_MINIFY_CSS:=0

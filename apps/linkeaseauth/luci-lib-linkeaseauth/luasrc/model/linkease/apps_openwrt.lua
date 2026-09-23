@@ -77,9 +77,11 @@ function M.new(dependencies)
 						local manifest = raw and deps.json.parse(raw) or nil
 						if type(manifest) == "table" and manifest.id == id then
 							local standalone = type(manifest.standalone) == "table" and manifest.standalone or {}
+							local desktop = type(manifest.desktop) == "table" and manifest.desktop or {}
 							return {
 								id = id,
 								url = normalize_path(standalone.url or standalone.basePath, id),
+								entry_supported = desktop.mode ~= "builtin",
 								manifest = manifest
 							}
 						end
@@ -117,6 +119,27 @@ function M.new(dependencies)
 	end
 
 	local function external_status(app)
+		local desktop = app.manifest.desktop or {}
+		local target = type(desktop.target) == "table" and desktop.target or nil
+		if desktop.mode == "iframe" and target and target.hostMode == "request-host"
+			and (target.scheme == "http" or target.scheme == "https") then
+			local port = tonumber(configured_value(deps.uci, target.port, deps.read_uci))
+			if not port or port < 1 or port > 65535 or port % 1 ~= 0 then
+				return { available = false, reason = "external_invalid" }
+			end
+			local host = authority_host(deps.http.getenv("HTTP_HOST") or "")
+			if host == "" then host = deps.uci:get("network", "lan", "ipaddr") or "127.0.0.1" end
+			local external_path = type(target.path) == "string" and target.path or "/"
+			if external_path:sub(1, 1) ~= "/" or external_path:sub(1, 2) == "//"
+				or external_path:find("[%c]") then
+				external_path = "/"
+			end
+			return {
+				available = true,
+				url = target.scheme .. "://" .. url_host(host) .. ":" .. tostring(port) .. external_path
+			}
+		end
+
 		local backend = app.manifest.backend or {}
 		local values = type(backend.values) == "table" and backend.values or {}
 		local enabled

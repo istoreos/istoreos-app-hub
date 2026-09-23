@@ -77,6 +77,7 @@ function Engine:resolve(id)
 	local result = base_result(id, entry)
 	result.registered = true
 	if type(entry) == "table"
+		and app.entry_supported ~= false
 		and entry.available == true
 		and entry.proxy_supported == true
 		and entry.proxy_enabled == true
@@ -97,8 +98,9 @@ function Engine:resolve(id)
 		return result
 	end
 
+	local entry_reason = app.entry_supported == false and "entry_unsupported" or "entry_unavailable"
 	local external_reason = type(external) == "table" and external.reason or "external_unavailable"
-	result.reason = "entry_unavailable_and_" .. tostring(external_reason)
+	result.reason = entry_reason .. "_and_" .. tostring(external_reason)
 	return result
 end
 

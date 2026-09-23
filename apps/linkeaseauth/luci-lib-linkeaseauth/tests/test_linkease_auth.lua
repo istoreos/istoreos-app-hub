@@ -125,6 +125,22 @@ equal(result.redirect, "http://192.168.30.7:8192/apps/dockermanager/")
 bridge, result = scenario({
 	cookies = { sysauth = "valid-session" },
 	valid_sid = "valid-session",
+	forms = { ["return"] = "http://192.168.30.7:3200/" }
+})
+bridge:auth()
+equal(result.redirect, "http://192.168.30.7:3200/", "same-device external app port must be allowed")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session",
+	forms = { ["return"] = "http://192.168.30.7:10000/cgi-bin/luci/" }
+})
+bridge:auth()
+equal(result.redirect, "/apps/", "same-authority non-app path must remain rejected")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session",
 	forms = { ["return"] = "http://evil.example/apps/dockermanager/" }
 })
 bridge:auth()

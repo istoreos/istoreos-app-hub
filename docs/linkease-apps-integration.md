@@ -16,6 +16,13 @@ An application package:
 5. removes a symlink in `prerm` only when `readlink` still points to its own
    manifest.
 
+The OpenWrt LuCI embed is an intentional exception: its manifest declares
+`desktop.mode=builtin` and names the LinkEaseFull-only `LuciContainer`
+component. It remains owned by `luci-app-linkeasefull-embed`, depends on
+`linkeasefull`, and registers only in the LinkEaseFull desktop directory. The
+fallback gateway must ignore builtin manifests rather than pretending they are
+standalone `/apps` applications.
+
 Its LuCI package depends on `luci-lib-linkeaseauth`. App metadata launches:
 
 ```text
@@ -82,6 +89,13 @@ Legacy TCP applications may use `portFromUci` and `defaultPort`. If their
 direct listener serves a different path from the `/apps` route, they declare
 `externalBasePath` (for example `/`). External URLs always reuse the current
 request host and never accept a host from a manifest.
+
+Browser-direct `iframe` applications, such as FastNet, use a generic
+`desktop.target` with a UCI-backed port. `/apps/<id>/` authenticates through the
+shared entry and then redirects to that same-device port; if the shared entry
+is unavailable, the Apps LuCI Entry resolves the same target as the external
+fallback. LinkEaseFull and the gateway implement the same redirect-only
+behavior and never proxy the measurement traffic.
 
 ## Runtime and security behavior
 
