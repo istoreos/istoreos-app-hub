@@ -33,7 +33,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("PKG_VERSION:=0.1.1", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
-        self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth", luci_makefile)
+        self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth +linkease-app-entry", luci_makefile)
         self.assertIn("META_DEPENDS:=+dockermanager +luci-app-dockermanager", meta)
         self.assertNotIn("+luci-lib-linkeaseauth", meta)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id=dockermanager", meta)

@@ -42,7 +42,7 @@ iStoreNAS bundle.
 
 ## Package contract
 
-An application package:
+An application runtime package:
 
 1. depends on `linkease-app-entry`;
 2. installs its manifest at an application-owned stable path;
@@ -59,7 +59,78 @@ component. It remains owned by `luci-app-linkeasefull-embed`, depends on
 fallback gateway must ignore builtin manifests rather than pretending they are
 standalone `/apps` applications.
 
-Its LuCI package depends on `luci-lib-linkeaseauth`. App metadata launches:
+Its LuCI package directly depends on both `luci-lib-linkeaseauth` and
+`linkease-app-entry`. The former provides the Lua launch/auth interface; the
+latter provides the selectable gateway worker used when `/apps` proxying is
+available. Do not rely only on the runtime package to pull these dependencies
+transitively: the LuCI package directly exposes this capability and must retain
+a complete dependency closure if runtime packaging changes. App metadata may
+depend on the LuCI package rather than repeating both shared dependencies.
+
+### Dependency ownership for new applications
+
+Package dependencies are part of the shared launch interface, not an optional
+packaging detail. Use this ownership model:
+
+| Package role | Required dependency | Reason |
+| --- | --- | --- |
+| application runtime that owns the manifest | `+linkease-app-entry` | installs the small gateway/supervisor needed for `/apps` routing |
+| LuCI package that exposes an open button or compatibility route | `+luci-lib-linkeaseauth +linkease-app-entry` | directly consumes the Lua resolver/auth interface and the entry runtime |
+| app-meta package | runtime package and LuCI package | receives shared dependencies transitively through the packages whose capabilities it exposes |
+| LinkEaseFull-only builtin | `+linkeasefull` | has no independent application entry and is intentionally desktop-only |
+
+The explicit LuCI dependency on `linkease-app-entry` is intentional even when
+the application runtime already depends on it. The LuCI package directly owns
+the launch button. If the runtime package is later split, replaced, or changes
+its dependency list, installing the LuCI package must still produce a working
+launch flow. OpenWrt/opkg deduplicates the repeated dependency, so this adds no
+second copy of the runtime.
+
+Current applications follow the same interface while retaining different
+implementations:
+
+| Application ID | Runtime package | LuCI package | Notes |
+| --- | --- | --- | --- |
+| `kai` | `kai` | `luci-app-kai` | runtime also directly uses `luci-lib-linkeaseauth` for KAI's LuCI authentication middleware |
+| `dockermanager` | `dockermanager` | `luci-app-dockermanager` | Unix-first; direct TCP fallback is user-controlled |
+| `fastnet` | `fastnet` | `luci-app-fastnet` | browser-direct target still uses shared launch/auth resolution |
+| `kspeeder` | `istoreenhance` | `luci-app-istoreenhance` | package names are historical; manifest application ID remains `kspeeder` |
+| `agentflow` | `agentflow` | `luci-app-agentflow` | app-base service using the common launch route |
+| `baidudrive` | `baidudrive` | `luci-app-baidudrive` | direct listener root differs from the shared public path |
+| `kaiplus` | `kaiplus` | `luci-app-kaiplus` | runtime and LuCI remain, but there is no current `app-meta-kaiplus` |
+
+For example, a new application's packages normally contain:
+
+```makefile
+# Runtime package
+define Package/example
+  DEPENDS:=+linkease-app-entry
+endef
+
+# LuCI package
+LUCI_DEPENDS:=+example +luci-lib-linkeaseauth +linkease-app-entry
+
+# Software-center metadata
+META_DEPENDS:=+example +luci-app-example
+```
+
+Avoid these dependency mistakes:
+
+- depending only on `luci-lib-linkeaseauth`: the Lua route exists, but no small
+  entry worker is guaranteed to serve the uhttpd `/apps` mapping;
+- relying only on `runtime -> linkease-app-entry`: this makes the LuCI launch
+  capability depend on an unrelated future runtime packaging decision;
+- adding `linkeasefull` to make routing work: independent applications must
+  remain installable without the full desktop;
+- repeating shared dependencies in app-meta: app-meta should aggregate product
+  packages, not become a second owner of runtime capability;
+- implementing uhttpd/worker checks in each controller: delegate through
+  `luci.model.linkease.apps_compat` and the shared resolver instead.
+
+Any Makefile dependency change must increment that package's `PKG_RELEASE`.
+It does not require a runtime binary version change.
+
+App metadata launches:
 
 ```text
 /cgi-bin/luci/admin/services/linkease_apps/open?id=<app-id>
@@ -123,8 +194,10 @@ values:
 
 Legacy TCP applications may use `portFromUci` and `defaultPort`. If their
 direct listener serves a different path from the `/apps` route, they declare
-`externalBasePath` (for example `/`). External URLs always reuse the current
-request host and never accept a host from a manifest.
+`standalone.externalOpen.path` (preferred) or the legacy backend
+`externalBasePath` (for example `/`). The standalone declaration wins when
+both exist. External URLs always reuse the current request host and never
+accept a host from a manifest.
 
 Browser-direct `iframe` applications, such as FastNet, use a generic
 `desktop.target` with a UCI-backed port. `/apps/<id>/` authenticates through the
@@ -175,3 +248,6 @@ EXPECTED_WORKER=linkeasefull BASE_URL=http://192.168.30.7:10000 npm run linkease
 Reports must not contain authentication material. Production-like final state
 for gateway-only testing is `linkeasefull.enabled=0`, force marker present,
 `active=gateway`, and no `linkease-full` process.
+
+The application-specific no-proxy matrix and the KAI incident regression are
+documented in [the routing test runbook](../operations/linkease-app-routing-test.md).

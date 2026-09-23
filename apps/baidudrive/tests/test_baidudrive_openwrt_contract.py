@@ -69,6 +69,7 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         entry = self.read("app-meta-baidudrive/entry.sh")
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn("+linkease-app-entry", makefile)
         self.assertIn('entry({"admin", "services", "baidudrive", "open"}', controller)
         self.assertIn('compat():open("baidudrive")', controller)
         self.assertIn('compat():legacy_status("baidudrive"', controller)

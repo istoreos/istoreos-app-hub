@@ -27,7 +27,7 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertIsNotNone(meta_version)
         self.assertIsNotNone(source_hash)
         self.assertEqual(luci_version.group(1), source_version.group(1))
-        self.assertEqual(luci_release.group(1), source_release.group(1))
+        self.assertEqual(luci_release.group(1), "5")
         self.assertEqual(meta_version.group(1), source_version.group(1))
         self.assertIn(
             "istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/",
@@ -62,9 +62,12 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertNotIn("defaultPort", manifest["standalone"]["externalOpen"])
 
     def test_luci_open_routes_through_the_shared_auth_entry(self):
+        makefile = (ROOT / "luci-app-fastnet/Makefile").read_text(encoding="utf-8")
         controller = (ROOT / "luci-app-fastnet/luasrc/controller/fastnet.lua").read_text(encoding="utf-8")
         model = (ROOT / "luci-app-fastnet/luasrc/model/cbi/fastnet.lua").read_text(encoding="utf-8")
 
+        self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn("+linkease-app-entry", makefile)
         self.assertIn('compat():open("fastnet")', controller)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)

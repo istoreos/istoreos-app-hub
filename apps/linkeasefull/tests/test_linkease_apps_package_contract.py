@@ -12,7 +12,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
     def test_shared_luci_package_is_versioned_as_apps_integration(self):
         makefile = self.read("linkeasefull/luci-lib-linkeaseauth/Makefile")
         self.assertIn("LUCI_TITLE:=LuCI shared integration for LinkEase apps", makefile)
-        self.assertIn("PKG_VERSION:=1.2.0", makefile)
+        self.assertIn("PKG_VERSION:=1.2.1", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
 
     def test_shared_package_keeps_auth_and_adds_separate_apps_routes(self):
@@ -47,6 +47,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             luci = self.read(f"{app}/luci-app-{app}/Makefile")
             self.assertIn("+linkease-app-entry", runtime, app)
             self.assertIn("+luci-lib-linkeaseauth", luci, app)
+            self.assertIn("+linkease-app-entry", luci, app)
             self.assertNotIn("+linkeasefull", runtime, app)
             self.assertNotIn("+linkeasefull", luci, app)
 
@@ -108,6 +109,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             self.assertIn("+linkease-app-entry", runtime, app)
             self.assertIn("/usr/share/linkease/apps.d", runtime, app)
             self.assertIn("+luci-lib-linkeaseauth", luci, app)
+            self.assertIn("+linkease-app-entry", luci, app)
             self.assertNotIn("+linkeasefull", runtime, app)
             self.assertNotIn("+linkeasefull", luci, app)
             self.assertIn(

@@ -139,6 +139,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         luci_makefile = self.read("luci-app-kaiplus/Makefile")
 
         self.assertIn("+luci-lib-linkeaseauth", luci_makefile)
+        self.assertIn("+linkease-app-entry", luci_makefile)
         self.assertNotIn("luci-lib-openwrtauth", luci_makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", runtime_makefile)
 
@@ -148,7 +149,8 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
-            self.assertIn("PKG_RELEASE:=2", text)
+        self.assertIn("PKG_RELEASE:=2", runtime_makefile)
+        self.assertIn("PKG_RELEASE:=3", luci_makefile)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
         self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
 

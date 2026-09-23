@@ -75,6 +75,13 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
         self.assertIn("readlink /usr/share/linkeasefull/desktop-apps.d/05-kai-plugin.json", makefile)
         self.assertIn('= "/usr/share/kai/kai-plugin.json"', makefile)
 
+    def test_luci_declares_both_shared_launch_dependencies(self):
+        makefile = self.read("luci-app-kai/Makefile")
+
+        self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn("+linkease-app-entry", makefile)
+        self.assertIn("PKG_RELEASE:=5", makefile)
+
 
 if __name__ == "__main__":
     unittest.main()

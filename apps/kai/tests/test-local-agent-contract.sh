@@ -75,5 +75,7 @@ grep -F 'uci:get_first("kai", "kai", "port")' "$status_controller" >/dev/null ||
 	fail "LuCI KAI status does not report the configured KAI port"
 grep -F '+luci-lib-linkeaseauth' "$luci_makefile" >/dev/null ||
 	fail "luci-app-kai does not directly depend on its auth bridge"
+grep -F '+linkease-app-entry' "$luci_makefile" >/dev/null ||
+	fail "luci-app-kai does not directly depend on the shared app entry"
 
 echo "KAI local Agent runtime contract: PASS"

@@ -15,6 +15,7 @@ class AgentFlowLuciOpenContractTest(unittest.TestCase):
         status = self.read("luasrc/view/agentflow/status.htm")
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn("+linkease-app-entry", makefile)
         self.assertIn('entry({"admin", "services", "agentflow", "open"}', controller)
         self.assertIn("open.sysauth = false", controller)
         self.assertIn("function agentflow_open()", controller)

@@ -1,5 +1,8 @@
 # LinkEaseLite OpenWrt Design
 
+> Archived: this proposal was superseded by `linkease-app-entry`, the small
+> shared entry package used by standalone applications.
+
 Date: 2026-07-21
 Status: approved for planning
 App id: `linkeaselite`

@@ -1,5 +1,9 @@
 # KaiPlus OpenWrt Split Implementation Plan
 
+> Archived: `app-meta-kaiplus` was subsequently removed. The KaiPlus runtime
+> and LuCI packages may remain, but it is no longer an independent software
+> center item. Do not execute this plan as the current package contract.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make KaiPlus an independent OpenWrt/iStore plugin on `http://<router-ip>:8189/apps/kaiplus/` while LinkEase Desktop only reverse proxies the standalone service at `/apps/kaiplus/`.

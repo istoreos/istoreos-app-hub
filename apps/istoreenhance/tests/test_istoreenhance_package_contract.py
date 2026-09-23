@@ -62,6 +62,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/kspeeder/")
         self.assertTrue(manifest["standalone"]["externalOpen"]["enabled"])
         self.assertEqual(manifest["standalone"]["externalOpen"]["defaultPort"], 5003)
+        self.assertEqual(manifest["standalone"]["externalOpen"]["path"], "/")
         self.assertEqual(manifest["backend"]["portFromUci"], "istoreenhance.@istoreenhance[0].adminport")
         self.assertEqual(manifest["backend"]["defaultPort"], 5003)
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
@@ -86,6 +87,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         meta_entry = self.read("app-meta-istoreenhance/entry.sh")
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
+        self.assertIn("+linkease-app-entry", makefile)
         self.assertIn('compat():open("kspeeder")', controller)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)

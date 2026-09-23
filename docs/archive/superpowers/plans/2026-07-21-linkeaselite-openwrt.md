@@ -1,5 +1,9 @@
 # LinkEaseLite OpenWrt Implementation Plan
 
+> Archived and not implemented as the current product. The small common
+> runtime is now `linkease-app-entry`; use the current LinkEase Apps
+> architecture documents instead.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add `apps/linkeaselite` as a small-memory OpenWrt/iStore app that installs and runs `/usr/sbin/linkease-lite` from `linkease-lite.$(ARCH)` release artifacts.
@@ -56,7 +60,7 @@
 - Create: `apps/linkeaselite/tests/test_linkeaselite_contract.py`
 
 **Interfaces:**
-- Consumes: the approved design spec at `docs/superpowers/specs/2026-07-21-linkeaselite-openwrt-design.md`.
+- Historical input: `docs/archive/superpowers/specs/2026-07-21-linkeaselite-openwrt-design.md`.
 - Produces: executable contract tests that all later tasks must satisfy.
 
 - [ ] **Step 1: Create the failing contract test**

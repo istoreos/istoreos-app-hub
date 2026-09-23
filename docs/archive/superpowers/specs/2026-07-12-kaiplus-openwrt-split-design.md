@@ -1,5 +1,9 @@
 # KaiPlus OpenWrt Split Design
 
+> Archived: the design's `app-meta-kaiplus` requirement was superseded. The
+> runtime and LuCI package may remain without exposing KaiPlus as a separate
+> software-center item.
+
 ## Goal
 
 Split KaiPlus out of the OpenWrt `linkease` full package and make it an

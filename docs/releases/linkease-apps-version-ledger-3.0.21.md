@@ -1,5 +1,9 @@
 # LinkEase Apps 3.0.21 version ledger
 
+> Frozen release record. For the current integration contract, use
+> `docs/architecture/linkease-apps-integration.md`. Later package versions are
+> intentionally not backported into this ledger.
+
 This ledger is the release baseline for the shared LinkEase application-entry
 architecture. Runtime payload or public integration API changes receive a new
 version and reset release to `1`. Packaging, dependency, manifest, LuCI, and

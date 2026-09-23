@@ -8,6 +8,6 @@
 
 ## LinkEase Desktop Icons
 
-- When adding a LinkEase Desktop icon through an `app-meta-*` package, read `docs/linkease-desktop-app-meta-icons.md` first.
+- When adding a LinkEase Desktop icon through an `app-meta-*` package, read `docs/architecture/linkease-desktop-app-meta-icons.md` first.
 - Prefer the `app-meta-<id>/root/usr/share/linkeasefull/desktop-apps.d/*.json` pattern for simple LuCI-only apps such as DDNSTO.
 - Do not add a separate `luci-app-linkeasefull-<id>` companion package when the same desktop manifest is already owned by `app-meta-<id>`.

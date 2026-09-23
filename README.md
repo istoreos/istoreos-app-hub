@@ -32,6 +32,7 @@ istoreos-app-hub/
 - `apps/<app-name>/` 是插件聚合根目录。
 - 目录下放“包目录”，且目录名与 legacy 侧保持一致（同步时不会改名）。
 - 新插件初始化模板见：`docs/app-template.md`。
+- 文档导航与当前架构入口见：`docs/README.md`。
 
 ## Legacy 映射（推荐）
 
