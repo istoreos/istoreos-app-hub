@@ -37,6 +37,13 @@ grep -F 'META_DEPENDS:=+luci-app-kai +kai +kai_session +kai-agent' "$meta_makefi
 	fail "app-meta-kai does not expose the complete runtime dependency set"
 grep -F 'local: apps/kai/kai-agent' "$hub_root/syncapps.yaml" >/dev/null ||
 	fail "syncapps does not publish kai-agent to the package feed"
+if grep -F '$(CP) $(PKG_BUILD_DIR)/*' "$root/kai-agent/Makefile" >/dev/null; then
+	fail "kai-agent recursively copies OpenWrt package staging directories"
+fi
+grep -F '$(CP) $(PKG_BUILD_DIR)/agents' "$root/kai-agent/Makefile" >/dev/null ||
+	fail "kai-agent does not explicitly install its agents directory"
+grep -F '$(CP) $(PKG_BUILD_DIR)/skills' "$root/kai-agent/Makefile" >/dev/null ||
+	fail "kai-agent does not explicitly install its skills directory"
 grep -F '$(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session)' "$root/kai_session/Makefile" >/dev/null ||
 	fail "kai_session does not install its bundled ripgrep runtime"
 if grep -F 'if [ -f "$(PKG_BUILD_DIR)/rg.' "$root/kai_session/Makefile" >/dev/null; then
