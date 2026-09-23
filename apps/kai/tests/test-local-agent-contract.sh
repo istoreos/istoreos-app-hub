@@ -5,6 +5,7 @@ root="$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)"
 init="$root/kai/files/kai.init"
 launcher="$root/kai/files/kai-session-launch"
 status_view="$root/luci-app-kai/luasrc/view/kai/kai_status.htm"
+meta_makefile="$root/app-meta-kai/Makefile"
 
 fail() {
 	echo "failed: $*" >&2
@@ -29,12 +30,16 @@ grep -F 'exec /usr/sbin/kai_session serve --port 8196 --hostname 127.0.0.1' "$la
 	fail "launcher command differs from the runtime contract"
 grep -F 'DEPENDS:=+kai_session +kai-agent' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not depend on its runtime artifacts"
+test -f "$root/kai-agent/Makefile" ||
+	fail "kai-agent package directory does not match its package name"
+grep -F 'META_DEPENDS:=+luci-app-kai +kai +kai_session +kai-agent' "$meta_makefile" >/dev/null ||
+	fail "app-meta-kai does not expose the complete runtime dependency set"
 grep -F '$(PKG_BUILD_DIR)/rg.$(PKG_ARCH_kai_session)' "$root/kai_session/Makefile" >/dev/null ||
 	fail "kai_session does not install its bundled ripgrep runtime"
 if grep -F 'if [ -f "$(PKG_BUILD_DIR)/rg.' "$root/kai_session/Makefile" >/dev/null; then
 	fail "kai_session still treats ripgrep as optional"
 fi
-for package in kai kai_session kai_agent; do
+for package in kai kai_session kai-agent; do
 	makefile="$root/$package/Makefile"
 	grep -F 'PKG_VERSION:=0.0.23' "$makefile" >/dev/null ||
 		fail "$package does not use the unified KAI runtime version"
