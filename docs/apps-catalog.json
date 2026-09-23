@@ -12,7 +12,7 @@
     "website": "https://agentflow.geili.ai/",
     "author": "jjm2473",
     "version": "0.3.0",
-    "release": "1",
+    "release": "2",
     "depends": "+agentflow +luci-app-agentflow",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=agentflow",
     "meta_dir": "apps/agentflow/app-meta-agentflow"
@@ -53,16 +53,16 @@
   },
   {
     "id": "arcadia",
-    "title": "Arcadia一站式代码运维平台",
-    "description": "脚本语言编程与运维，支持定时任务调度。",
-    "description_en": "Script language programming and operation. Supporting scheduled task scheduling.",
+    "title": "Arcadia 一站式代码自动化运维平台",
+    "description": "写脚本、跑定时任务、服务托管、消息聚合、AI Agent 运行基座，一个面板搞定全流程",
+    "description_en": "Script writing, scheduled task execution, service hosting, message aggregation, and AI Agent runtime infrastructure—all managed through a single dashboard for the entire workflow",
     "tags": [
       "net",
       "tool"
     ],
     "website": "https://arcadia.cool",
     "author": "SuperManito",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "release": "1",
     "depends": "+luci-app-arcadia +luci-i18n-arcadia-zh-cn +docker-deps",
     "luci_entry": "/cgi-bin/luci/admin/services/arcadia",
@@ -80,7 +80,7 @@
     "website": "https://pan.baidu.com",
     "author": "linkease",
     "version": "1.0.6",
-    "release": "1",
+    "release": "2",
     "depends": "+luci-i18n-baidudrive-zh-cn +luci-app-baidudrive +baidudrive",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive",
     "meta_dir": "apps/baidudrive/app-meta-baidudrive"
@@ -180,7 +180,7 @@
     "website": "https://github.com/linkease/linkease-docker-manager",
     "author": "linkease",
     "version": "0.1.1",
-    "release": "2",
+    "release": "3",
     "depends": "+dockermanager +luci-app-dockermanager",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=dockermanager",
     "meta_dir": "apps/dockermanager/app-meta-dockermanager"
@@ -264,7 +264,7 @@
     "website": "https://www.koolcenter.com/t/topic/9148",
     "author": "xiaobao",
     "version": "0.7.7",
-    "release": "2",
+    "release": "3",
     "depends": "+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=fastnet",
     "meta_dir": "apps/fastnet/app-meta-fastnet"
@@ -416,7 +416,7 @@
     "website": "https://kspeeder.com/",
     "author": "xiaobao",
     "version": "0.8.0",
-    "release": "3",
+    "release": "4",
     "depends": "+istoreenhance +luci-app-istoreenhance +luci-i18n-istoreenhance-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder",
     "meta_dir": "apps/istoreenhance/app-meta-istoreenhance"
@@ -463,9 +463,9 @@
       "net",
       "system"
     ],
-    "website": "https://github.com/linkease/nas-packages-luci",
+    "website": "https://www.istoreos.com",
     "author": "Xiaobao",
-    "version": "1.0.0",
+    "version": "3.0.21",
     "release": "3",
     "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kai +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
     "luci_entry": "/apps/",
@@ -533,8 +533,8 @@
     "website": "https://www.koolcenter.com",
     "author": "koolcenter",
     "version": "1.0.2",
-    "release": "2",
-    "depends": "+luci-app-kai +kai +kai_session",
+    "release": "3",
+    "depends": "+luci-app-kai +kai +kai_session +kai-agent",
     "luci_entry": "/cgi-bin/luci/admin/services/kai",
     "meta_dir": "apps/kai/app-meta-kai"
   },
@@ -599,8 +599,8 @@
     ],
     "website": "https://www.linkease.com/",
     "author": "xiaobao",
-    "version": "3.0.20",
-    "release": "2",
+    "version": "3.0.21",
+    "release": "1",
     "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
     "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"
@@ -936,7 +936,7 @@
     ],
     "website": "https://github.com/istoreos",
     "author": "xiaobao",
-    "version": "1.0.18",
+    "version": "1.1.1",
     "release": "1",
     "depends": "+luci-app-systools +luci-i18n-systools-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/system/systools/pages",

@@ -7,7 +7,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | agentflow | AgentFlow | ai development service | /cgi-bin/luci/admin/services/linkease_apps/open?id=agentflow | https://agentflow.geili.ai/ | AgentFlow 提供编码代理与工作流编排 Web UI。 |
 | airconnect | AirConnect | multimedia net | /cgi-bin/luci/admin/services/airconnect | https://github.com/philippe44/AirConnect | 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流 |
 | ap-modem | 访问AP/光猫 | net tool | /cgi-bin/luci/admin/network/ap_modem | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-ap-modem | 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上） |
-| arcadia | Arcadia一站式代码运维平台 | net tool | /cgi-bin/luci/admin/services/arcadia | https://arcadia.cool | 脚本语言编程与运维，支持定时任务调度。 |
+| arcadia | Arcadia 一站式代码自动化运维平台 | net tool | /cgi-bin/luci/admin/services/arcadia | https://arcadia.cool | 写脚本、跑定时任务、服务托管、消息聚合、AI Agent 运行基座，一个面板搞定全流程 |
 | baidudrive | 百度网盘 | nas service | /cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive | https://pan.baidu.com | 百度网盘 iStoreOS 版 |
 | chinesesubfinder | ChineseSubFinder中文字幕 | multimedia net | /cgi-bin/luci/admin/services/chinesesubfinder | https://github.com/allanpk716/ChineseSubFinder | ChineseSubFinder是一个中文字幕平台。 |
 | clouddrive2 | CloudDrive2 | service tool | /cgi-bin/luci/admin/services/clouddrive2 | https://www.clouddrive2.com/ | CloudDrive 是一个强大的多云盘管理工具，为用户提供包含云盘本地挂载的一站式的多云盘解决方案。 |
@@ -31,7 +31,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | istoreenhance | KSpeeder(原iStore增强) | nas service | /cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder | https://kspeeder.com/ | KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。 |
 | istorepanel | 1Panel | net | /cgi-bin/luci/admin/services/istorepanel | https://1panel.cn/index.html | 1Panel 是新一代的 Linux 服务器运维管理面板 |
 | istorerouter | iStoreRouter | net system | /cgi-bin/luci/admin/istorerouter | https://github.com/linkease | 为 iStoreOS 提供路由状态、网络配置、无线设置、DDNS、存储管理和应用商店入口。 |
-| istorex | iStoreNAS(原iStoreX) | net system | /apps/ | https://github.com/linkease/nas-packages-luci | 把 iStoreOS 一键变成 NAS 系统，网盘，同步，组网，时光机，AI 等一网打尽。 |
+| istorex | iStoreNAS(原iStoreX) | net system | /apps/ | https://www.istoreos.com | 把 iStoreOS 一键变成 NAS 系统，网盘，同步，组网，时光机，AI 等一网打尽。 |
 | ittools | 开发工具集 | net | /cgi-bin/luci/admin/services/ittools | https://it-tools.tech/ | 开发工具集是集成了很多有用的网页工具。 |
 | jackett | Jackett | download nas | /cgi-bin/luci/admin/services/jackett | https://github.com/Jackett/Jackett | Jackett 是维护索引器抓取和翻译逻辑的单一存储库 - 消除了其他应用程序的负担。 |
 | jellyfin | Jellyfin私有影院 | multimedia net | /cgi-bin/luci/admin/services/jellyfin | https://jellyfin.org | Jellyfin是一个免费自由的媒体系统软件，可以让您方便地管理和串流您的媒体。部分机型无需配置即可支持硬件转码：Easepi ARS2；RK35xx 系列。 |

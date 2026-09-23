@@ -7,7 +7,7 @@ Format: `id — title — description`
 - agentflow — AgentFlow — AgentFlow 提供编码代理与工作流编排 Web UI。
 - airconnect — AirConnect — 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流
 - ap-modem — 访问AP/光猫 — 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上）
-- arcadia — Arcadia一站式代码运维平台 — 脚本语言编程与运维，支持定时任务调度。
+- arcadia — Arcadia 一站式代码自动化运维平台 — 写脚本、跑定时任务、服务托管、消息聚合、AI Agent 运行基座，一个面板搞定全流程
 - baidudrive — 百度网盘 — 百度网盘 iStoreOS 版
 - chinesesubfinder — ChineseSubFinder中文字幕 — ChineseSubFinder是一个中文字幕平台。
 - clouddrive2 — CloudDrive2 — CloudDrive 是一个强大的多云盘管理工具，为用户提供包含云盘本地挂载的一站式的多云盘解决方案。

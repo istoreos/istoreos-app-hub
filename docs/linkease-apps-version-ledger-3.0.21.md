@@ -27,7 +27,7 @@ compatibility. It must not introduce a second `PKG_VERSION` declaration.
 | `kai-agent` | `0.0.23-r1` | `0.0.23-r1` | already released runtime |
 | `kai_session` | `0.0.23-r1` | `0.0.23-r1` | already released runtime |
 | `luci-app-kai` | `1.0.2-r1` | `1.0.2-r2` | LuCI packaging |
-| `app-meta-kai` | `1.0.2-r2` | `1.0.2-r2` | restoration release already covers change |
+| `app-meta-kai` | `1.0.2-r2` | `1.0.2-r3` | expose the complete KAI runtime dependency set |
 
 ## Routed application packages
 

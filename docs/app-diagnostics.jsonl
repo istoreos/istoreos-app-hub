@@ -29,7 +29,7 @@
 {"id":"ittools","type":"docker","depends":["docker-deps","luci-app-ittools","luci-i18n-ittools-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"jackett","type":"docker","depends":["docker-deps","luci-app-jackett","luci-i18n-jackett-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"jellyfin","type":"docker","depends":["docker-deps","luci-app-jellyfin","luci-i18n-jellyfin-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
-{"id":"kai","type":"native","depends":["kai","kai_session","luci-app-kai"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
+{"id":"kai","type":"native","depends":["kai","kai-agent","kai_session","luci-app-kai"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"kodexplorer","type":"docker","depends":["docker-deps","luci-app-kodexplorer","luci-i18n-kodexplorer-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"lanraragi","type":"docker","depends":["docker-deps","luci-app-lanraragi","luci-i18n-lanraragi-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"linkease","type":"native","depends":["linkease","linkease-common-bin","luci-app-linkease","luci-i18n-linkease-zh-cn","luci-lib-linkeasefile"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
