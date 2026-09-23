@@ -4,6 +4,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 
 Format: `id — title — description`
 
+- agentflow — AgentFlow — AgentFlow 提供编码代理与工作流编排 Web UI。
 - airconnect — AirConnect — 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流
 - ap-modem — 访问AP/光猫 — 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上）
 - arcadia — Arcadia一站式代码运维平台 — 脚本语言编程与运维，支持定时任务调度。
@@ -38,7 +39,7 @@ Format: `id — title — description`
 - kodexplorer — 可道云 — 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。
 - lanraragi — LANraragi电子书 — LANraragi是一个开源的电子书、漫画管理平台。
 - linkease — 易有云 — 易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。
-- linkeasefull — 易有云完整版 — 易有云完整版提供本地 Web 桌面和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。
+- linkeasefull — 易有云完整版 — 易有云完整版提供本地 Web 桌面、内置 OpenWrt 管理和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。
 - memos — Memos知识管理 — 开源的极简的碎片化知识管理工具。
 - mtphotos — MTPhotos相册 — MTPhotos是一款简单、好用的照片管理系统。
 - multiaccountdial — 多账号多拨 — 支持多账号的多拨插件

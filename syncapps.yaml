@@ -361,6 +361,8 @@ apps:
         luci:
             - local: apps/linkeasefull/luci-app-linkeasefull
               remote: nas-packages-luci/luci/luci-app-linkeasefull
+            - local: apps/linkeasefull/luci-app-linkeasefull-embed
+              remote: nas-packages-luci/luci/luci-app-linkeasefull-embed
         meta:
             - local: apps/linkeasefull/app-meta-linkeasefull
               remote: openwrt-app-meta/applications/app-meta-linkeasefull

@@ -356,7 +356,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn('"/apps/"', status)
         self.assertNotIn("basePath", status)
         self.assertIn("PKG_VERSION:=3.0.20", meta)
-        self.assertIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
+        self.assertIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
         self.assertNotIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeaseauth", meta)
         self.assertNotIn("+linkease +luci-app-linkease", meta)
         self.assertIn("复用独立的易有云文件管理入口", meta)

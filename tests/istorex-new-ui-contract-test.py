@@ -16,7 +16,7 @@ class IstorexNewUiContractTest(unittest.TestCase):
 
         self.assertIn("PKG_VERSION:=1.0.0", makefile)
         self.assertIn(
-            "META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeasefull/open",
+            "META_LUCI_ENTRY:=/apps/",
             makefile,
         )
         for package in (

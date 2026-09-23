@@ -4,21 +4,22 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 
 | id | title | tags | luci | website | description |
 |---|---|---|---|---|---|
+| agentflow | AgentFlow | ai development service | /cgi-bin/luci/admin/services/linkease_apps/open?id=agentflow | https://agentflow.geili.ai/ | AgentFlow 提供编码代理与工作流编排 Web UI。 |
 | airconnect | AirConnect | multimedia net | /cgi-bin/luci/admin/services/airconnect | https://github.com/philippe44/AirConnect | 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流 |
 | ap-modem | 访问AP/光猫 | net tool | /cgi-bin/luci/admin/network/ap_modem | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-ap-modem | 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上） |
 | arcadia | Arcadia一站式代码运维平台 | net tool | /cgi-bin/luci/admin/services/arcadia | https://arcadia.cool | 脚本语言编程与运维，支持定时任务调度。 |
-| baidudrive | 百度网盘 | nas service | /cgi-bin/luci/admin/services/baidudrive | https://pan.baidu.com | 百度网盘 iStoreOS 版 |
+| baidudrive | 百度网盘 | nas service | /cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive | https://pan.baidu.com | 百度网盘 iStoreOS 版 |
 | chinesesubfinder | ChineseSubFinder中文字幕 | multimedia net | /cgi-bin/luci/admin/services/chinesesubfinder | https://github.com/allanpk716/ChineseSubFinder | ChineseSubFinder是一个中文字幕平台。 |
 | clouddrive2 | CloudDrive2 | service tool | /cgi-bin/luci/admin/services/clouddrive2 | https://www.clouddrive2.com/ | CloudDrive 是一个强大的多云盘管理工具，为用户提供包含云盘本地挂载的一站式的多云盘解决方案。 |
 | codeserver | CodeServer | net tool | /cgi-bin/luci/admin/services/codeserver | https://coder.com/ | 一个在线版本的VSCode，可以在线开发。 |
 | ddnsto | DDNSTO路由远程 | networking service | /cgi-bin/luci/admin/services/ddnsto | https://www.ddnsto.com/ | DDNSTO内网穿透，可以外网远程你的路由器 |
 | demon | 容器魔王 | net | /cgi-bin/luci/admin/services/demon | https://www.onethingcloud.com/ | 【魔王现世】为 iStoreOS 特制，收益更高。每月至高可赚「千元」，现在上线秒领「30天20%收益加成」，挂机托管自动赚米，拿到手软！替代网心云的「容器魔方」。 |
-| dockermanager | Docker管理 | docker system | /cgi-bin/luci/admin/services/dockermanager/open | https://github.com/linkease/linkease-docker-manager | 更简单专业的 Docker 管理器，加速更快更方便. |
+| dockermanager | Docker管理 | docker system | /cgi-bin/luci/admin/services/linkease_apps/open?id=dockermanager | https://github.com/linkease/linkease-docker-manager | 更简单专业的 Docker 管理器，加速更快更方便. |
 | dpanel | DPanel 可视化面板 | net | /cgi-bin/luci/admin/services/dpanel | https://github.com/donknap/dpanel | 轻量化 docker 可视化管理面板。 |
 | drawio | DrawIO绘图 | multimedia net | /cgi-bin/luci/admin/services/drawio | https://www.diagrams.net/ | DrawIO是运行在浏览器中的在线绘图工具。 |
 | emby | Emby影院 | multimedia net | /cgi-bin/luci/admin/services/emby | https://emby.media/ | Emby是一个多媒体串流平台，可以让您方便地管理和串流您的媒体。 |
 | excalidraw | Excalidraw画板 | multimedia net | /cgi-bin/luci/admin/services/excalidraw | https://excalidraw.com/ | Excalidraw是支持多人协同的私有化在线画板工具。 |
-| fastnet | FastNet 网络测速 | networking service | /cgi-bin/luci/admin/services/fastnet | https://www.koolcenter.com/t/topic/9148 | FastNet 提供网络测速与网络诊断 Web UI，默认端口 3200。 |
+| fastnet | FastNet 网络测速 | networking service | /cgi-bin/luci/admin/services/linkease_apps/open?id=fastnet | https://www.koolcenter.com/t/topic/9148 | FastNet 提供网络测速与网络诊断 Web UI，默认端口 3200。 |
 | floatip | 浮动网关 | net tool | /cgi-bin/luci/admin/services/floatip | https://github.com/linkease/nas-packages | 浮动网关可以让你在内网有两个相互备份的网关，出现问题会相互切换。 |
 | gogs | Gogs服务 | net tool | /cgi-bin/luci/admin/services/gogs | https://gogs.io/ | 一款极易搭建的自助Git服务。 |
 | heimdall | Heimdall | net service | /cgi-bin/luci/admin/services/heimdall | https://heimdall.site/ | Heimdall 应用程序仪表板是所有 Web 应用程序的仪表板。不过，它不需要仅限于应用程序，您可以添加任何您喜欢的链接 |
@@ -27,18 +28,18 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | htreader | HTReader在线读书 | net | /cgi-bin/luci/admin/services/htreader | https://github.com/hectorqin/reader | HTReader 是一个网页版本在线读书。 |
 | immich | immich相册 | ai multimedia | /cgi-bin/luci/admin/services/immich | https://www.immich.app | Immich 是一个自我托管的照片和视频管理解决方案。 |
 | istoredup | iStoreDup | system | /cgi-bin/luci/admin/services/istoredup | https://www.istoreos.com | iStoreOS 容器版。此插件已废弃，iStoreOS 请使用更方便的「ShadoWRT」，保留此插件仅为其他系统体验 iStoreOS 之用 |
-| istoreenhance | KSpeeder(原iStore增强) | nas service | /cgi-bin/luci/admin/services/istoreenhance | https://kspeeder.com/ | KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。 |
+| istoreenhance | KSpeeder(原iStore增强) | nas service | /cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder | https://kspeeder.com/ | KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。 |
 | istorepanel | 1Panel | net | /cgi-bin/luci/admin/services/istorepanel | https://1panel.cn/index.html | 1Panel 是新一代的 Linux 服务器运维管理面板 |
 | istorerouter | iStoreRouter | net system | /cgi-bin/luci/admin/istorerouter | https://github.com/linkease | 为 iStoreOS 提供路由状态、网络配置、无线设置、DDNS、存储管理和应用商店入口。 |
-| istorex | iStoreNAS(原iStoreX) | net system | /cgi-bin/luci/admin/services/linkeasefull/open | https://github.com/linkease/nas-packages-luci | 把 iStoreOS 一键变成 NAS 系统，网盘，同步，组网，时光机，AI 等一网打尽。 |
+| istorex | iStoreNAS(原iStoreX) | net system | /apps/ | https://github.com/linkease/nas-packages-luci | 把 iStoreOS 一键变成 NAS 系统，网盘，同步，组网，时光机，AI 等一网打尽。 |
 | ittools | 开发工具集 | net | /cgi-bin/luci/admin/services/ittools | https://it-tools.tech/ | 开发工具集是集成了很多有用的网页工具。 |
 | jackett | Jackett | download nas | /cgi-bin/luci/admin/services/jackett | https://github.com/Jackett/Jackett | Jackett 是维护索引器抓取和翻译逻辑的单一存储库 - 消除了其他应用程序的负担。 |
 | jellyfin | Jellyfin私有影院 | multimedia net | /cgi-bin/luci/admin/services/jellyfin | https://jellyfin.org | Jellyfin是一个免费自由的媒体系统软件，可以让您方便地管理和串流您的媒体。部分机型无需配置即可支持硬件转码：Easepi ARS2；RK35xx 系列。 |
-| kaiplus | 酷友社Kai | ai system | /cgi-bin/luci/admin/services/kaiplus/open | https://ai.koolcenter.com | KaiPlus AI 解决各种问题，加速软件安装 |
+| kaiplus | 酷友社Kai | ai system | /cgi-bin/luci/admin/services/linkease_apps/open?id=kaiplus | https://ai.koolcenter.com | KaiPlus AI 解决各种问题，加速软件安装 |
 | kodexplorer | 可道云 | nas service | /cgi-bin/luci/admin/services/kodexplorer | https://kodcloud.com | 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。 |
 | lanraragi | LANraragi电子书 | multimedia net | /cgi-bin/luci/admin/services/lanraragi | https://lrr.tvc-16.science/ | LANraragi是一个开源的电子书、漫画管理平台。 |
 | linkease | 易有云 | nas service | /cgi-bin/luci/admin/services/linkease | https://www.linkease.com/ | 易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。 |
-| linkeasefull | 易有云完整版 | nas service | /cgi-bin/luci/admin/services/linkeasefull | https://www.linkease.com/ | 易有云完整版提供本地 Web 桌面和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。 |
+| linkeasefull | 易有云完整版 | nas service | /cgi-bin/luci/admin/services/linkeasefull | https://www.linkease.com/ | 易有云完整版提供本地 Web 桌面、内置 OpenWrt 管理和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。 |
 | memos | Memos知识管理 | net tool | /cgi-bin/luci/admin/services/memos | https://usememos.com/ | 开源的极简的碎片化知识管理工具。 |
 | mtphotos | MTPhotos相册 | net tool | /cgi-bin/luci/admin/services/mtphotos | https://mtmt.tech/ | MTPhotos是一款简单、好用的照片管理系统。 |
 | multiaccountdial | 多账号多拨 | net tool | /cgi-bin/luci/admin/network/multiaccountdial | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-multiaccountdial | 支持多账号的多拨插件 |

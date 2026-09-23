@@ -1,3 +1,4 @@
+{"id":"agentflow","type":"native","depends":["agentflow","luci-app-agentflow"],"autoconf":false,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"airconnect","type":"native","depends":["airconnect","luci-app-airconnect","luci-i18n-airconnect-zh-cn"],"autoconf":false,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"ap-modem","type":"native","depends":["luci-app-ap-modem","luci-i18n-ap-modem-zh-cn","luci-js-deps"],"autoconf":false,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"arcadia","type":"docker","depends":["docker-deps","luci-app-arcadia","luci-i18n-arcadia-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
@@ -32,7 +33,7 @@
 {"id":"kodexplorer","type":"docker","depends":["docker-deps","luci-app-kodexplorer","luci-i18n-kodexplorer-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"lanraragi","type":"docker","depends":["docker-deps","luci-app-lanraragi","luci-i18n-lanraragi-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"linkease","type":"native","depends":["linkease","linkease-common-bin","luci-app-linkease","luci-i18n-linkease-zh-cn","luci-lib-linkeasefile"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
-{"id":"linkeasefull","type":"native","depends":["linkease-common-bin","linkeasefull","luci-app-linkeasefull","luci-i18n-linkeasefull-zh-cn","luci-lib-linkeasefile"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
+{"id":"linkeasefull","type":"native","depends":["linkease-common-bin","linkeasefull","luci-app-linkeasefull","luci-app-linkeasefull-embed","luci-i18n-linkeasefull-zh-cn","luci-lib-linkeasefile"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"memos","type":"docker","depends":["docker-deps","luci-app-memos","luci-i18n-memos-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"mtphotos","type":"docker","depends":["docker-deps","luci-app-mtphotos","luci-i18n-mtphotos-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"multiaccountdial","type":"native","depends":["luci-app-multiaccountdial","mwan3-deps"],"autoconf":false,"istorec":false,"init":false,"config":true,"luci":true}

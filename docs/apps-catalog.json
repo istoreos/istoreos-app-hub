@@ -1,5 +1,23 @@
 [
   {
+    "id": "agentflow",
+    "title": "AgentFlow",
+    "description": "AgentFlow 提供编码代理与工作流编排 Web UI。",
+    "description_en": "AgentFlow provides a Web UI for coding agents and workflow orchestration.",
+    "tags": [
+      "ai",
+      "development",
+      "service"
+    ],
+    "website": "https://agentflow.geili.ai/",
+    "author": "jjm2473",
+    "version": "0.3.0",
+    "release": "1",
+    "depends": "+agentflow +luci-app-agentflow",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=agentflow",
+    "meta_dir": "apps/agentflow/app-meta-agentflow"
+  },
+  {
     "id": "airconnect",
     "title": "AirConnect",
     "description": "让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流",
@@ -64,7 +82,7 @@
     "version": "1.0.6",
     "release": "1",
     "depends": "+luci-i18n-baidudrive-zh-cn +luci-app-baidudrive +baidudrive",
-    "luci_entry": "/cgi-bin/luci/admin/services/baidudrive",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive",
     "meta_dir": "apps/baidudrive/app-meta-baidudrive"
   },
   {
@@ -162,9 +180,9 @@
     "website": "https://github.com/linkease/linkease-docker-manager",
     "author": "linkease",
     "version": "0.1.1",
-    "release": "1",
+    "release": "2",
     "depends": "+dockermanager +luci-app-dockermanager",
-    "luci_entry": "/cgi-bin/luci/admin/services/dockermanager/open",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=dockermanager",
     "meta_dir": "apps/dockermanager/app-meta-dockermanager"
   },
   {
@@ -246,9 +264,9 @@
     "website": "https://www.koolcenter.com/t/topic/9148",
     "author": "xiaobao",
     "version": "0.7.7",
-    "release": "1",
+    "release": "2",
     "depends": "+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn",
-    "luci_entry": "/cgi-bin/luci/admin/services/fastnet",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=fastnet",
     "meta_dir": "apps/fastnet/app-meta-fastnet"
   },
   {
@@ -398,9 +416,9 @@
     "website": "https://kspeeder.com/",
     "author": "xiaobao",
     "version": "0.8.0",
-    "release": "1",
+    "release": "3",
     "depends": "+istoreenhance +luci-app-istoreenhance +luci-i18n-istoreenhance-zh-cn",
-    "luci_entry": "/cgi-bin/luci/admin/services/istoreenhance",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder",
     "meta_dir": "apps/istoreenhance/app-meta-istoreenhance"
   },
   {
@@ -448,9 +466,9 @@
     "website": "https://github.com/linkease/nas-packages-luci",
     "author": "Xiaobao",
     "version": "1.0.0",
-    "release": "1",
+    "release": "2",
     "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kaiplus +app-meta-kai +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
-    "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull/open",
+    "luci_entry": "/apps/",
     "meta_dir": "apps/istorex/app-meta-istorex"
   },
   {
@@ -517,7 +535,7 @@
     "version": "1.0.9",
     "release": "1",
     "depends": "+luci-app-kaiplus +kaiplus +luci-lib-linkeaseauth",
-    "luci_entry": "/cgi-bin/luci/admin/services/kaiplus/open",
+    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=kaiplus",
     "meta_dir": "apps/kaiplus/app-meta-kaiplus"
   },
   {
@@ -573,8 +591,8 @@
   {
     "id": "linkeasefull",
     "title": "易有云完整版",
-    "description": "易有云完整版提供本地 Web 桌面和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。",
-    "description_en": "LinkEase Full provides the local web desktop and legacy 8897 entry, reuses the shared LinkEase file entry, and disables the standard LinkEase runtime while it runs.",
+    "description": "易有云完整版提供本地 Web 桌面、内置 OpenWrt 管理和 8897 兼容入口，复用独立的易有云文件管理入口，运行时会停用标准版易有云。",
+    "description_en": "LinkEase Full provides the local web desktop, embedded OpenWrt administration, and the legacy 8897 entry; it reuses the shared LinkEase file entry and disables the standard LinkEase runtime while running.",
     "tags": [
       "nas",
       "service"
@@ -582,8 +600,8 @@
     "website": "https://www.linkease.com/",
     "author": "xiaobao",
     "version": "3.0.20",
-    "release": "1",
-    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
+    "release": "2",
+    "depends": "+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
     "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"
   },

@@ -1,6 +1,8 @@
 # luci-app-linkeasefull-embed
 
 Registers OpenWrt LuCI as a LinkEaseFull desktop module without using an iframe.
+It is installed by the `app-meta-linkeasefull` product bundle while remaining
+separate from the independently installable `linkeasefull` runtime package.
 
 This package installs:
 
@@ -8,7 +10,14 @@ This package installs:
 - `/usr/share/linkeasefull/desktop-apps.d/15-openwrt-luci.json`
 - `/www/luci-static/linkeasefull-embed/embed-prelude.js`
 - `/www/luci-static/linkeasefull-embed/embed.css`
-- protocol fallback shims under `/www/luci-static/resources/protocol/`
+- privately owned protocol fallback shims under
+  `/usr/share/linkeasefull/openwrt-luci/protocol-fallbacks/`
+
+The package post-install maintainer exposes a fallback at the corresponding
+`/www/luci-static/resources/protocol/` path only when no real LuCI protocol
+module exists. Existing modules are never replaced, and package removal only
+removes symlinks that still point to this package's private fallback directory.
+This avoids file ownership conflicts with protocol packages installed later.
 
 The desktop manifest uses the builtin `LuciContainer` component with
 `isolation=scoped-dom-css`. That default scopes common Vue/React mount points,
