@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_VERSION:=1.0.0
+PKG_VERSION:=3.0.21
 PKG_RELEASE:=3
 META_TITLE:=iStoreNAS(原iStoreX)
 META_TITLE.en:=iStoreNAS(iStoreX)
@@ -15,7 +15,7 @@ META_AUTHOR:=Xiaobao
 META_ARCH:=x86_64 aarch64
 META_TAGS:=net system
 META_LUCI_ENTRY:=/apps/
-META_WEBSITE:=https://github.com/linkease/nas-packages-luci
+META_WEBSITE:=https://www.istoreos.com
 META_TUTORIAL:=https://doc.linkease.com/zh/guide/istore/software/istorex.html
 
 include ../../meta.mk
