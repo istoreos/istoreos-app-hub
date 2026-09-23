@@ -6,6 +6,25 @@ local pending_return_cookie = "linkease_openwrt_pending_return"
 local bridge_return_cookie = "linkease_openwrt_return"
 local pending_return_cookie_path = "/cgi-bin/luci/admin/services/linkease_auth"
 local bridge_return_cookie_path = "/cgi-bin/luci/admin/services/linkease_auth/auth"
+local max_return_length = 2048
+
+local function encode_state(value)
+	if type(value) ~= "string" or #value > max_return_length then return nil end
+	local encoded = require("nixio").bin.b64encode(value)
+	return (encoded:gsub("%+", "-"):gsub("/", "_"):gsub("=+$", ""))
+end
+
+local function decode_state(value)
+	if type(value) ~= "string" or #value == 0 or #value > 4096
+		or value:match("^[A-Za-z0-9_-]+$") == nil then
+		return nil
+	end
+	local encoded = value:gsub("-", "+"):gsub("_", "/")
+	encoded = encoded .. string.rep("=", (4 - #encoded % 4) % 4)
+	local ok, decoded = pcall(require("nixio").bin.b64decode, encoded)
+	if not ok or type(decoded) ~= "string" or #decoded > max_return_length then return nil end
+	return decoded
+end
 
 local function default_dependencies()
 	local http = require "luci.http"
@@ -74,6 +93,7 @@ end
 
 function Bridge:valid_apps_return(value)
 	if not value or value == "" then return false end
+	if #value > max_return_length or value:find("[%z\1-\31\127]") then return false end
 	local function valid_path(path)
 		if path == "/apps" then return true end
 		local prefix = path:sub(1, 6)
@@ -128,18 +148,25 @@ function Bridge:auth()
 	end
 
 	http.header("Set-Cookie", pending_return_cookie .. "=" .. cookie_encode(target) .. "; Path=" .. pending_return_cookie_path .. "; Max-Age=300; HttpOnly; SameSite=Lax")
-	local finish = self.dependencies.build_url("admin", "services", "linkease_auth", "auth_finish")
+	local state = encode_state(target)
+	local finish = self.dependencies.build_url("admin", "services", "linkease_auth", "auth_finish", state)
 	http.redirect(self:absolute_luci_url(finish))
 end
 
-function Bridge:auth_finish()
+function Bridge:auth_finish(state)
 	local http = self.dependencies.http
 	local sid = self:retrieve_luci_session()
 	if not valid_cookie_value(sid) then
 		http.status(403, "Forbidden")
 		return
 	end
-	local target = self:pending_return_target()
+	local decoded = decode_state(state)
+	local target
+	if state and state ~= "" then
+		target = self:safe_return_target(decoded)
+	else
+		target = self:pending_return_target()
+	end
 	http.header("Set-Cookie", pending_return_cookie .. "=; Path=" .. pending_return_cookie_path .. "; Max-Age=0; HttpOnly; SameSite=Lax")
 	http.header("Set-Cookie", "linkease_openwrt_sid=" .. sid .. "; Path=/apps; HttpOnly; SameSite=Lax")
 	http.redirect(target)

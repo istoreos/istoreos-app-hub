@@ -4,8 +4,7 @@ function index()
 	local open = entry({"admin", "services", "linkease_apps", "open"}, call("open"))
 	open.leaf = true
 	open.dependent = false
-	open.sysauth = "root"
-	open.sysauth_authenticator = "htmlauth"
+	open.sysauth = false
 
 	local status = entry({"admin", "services", "linkease_apps", "status"}, call("status"))
 	status.leaf = true

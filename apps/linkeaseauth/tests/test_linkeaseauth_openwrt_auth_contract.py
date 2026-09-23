@@ -13,80 +13,70 @@ class LinkEaseAuthOpenWrtContractTest(unittest.TestCase):
         makefile = self.read("luci-lib-linkeaseauth/Makefile")
         controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
 
-        self.assertIn("LUCI_TITLE:=LuCI shared OpenWrt auth bridge for LinkEase apps", makefile)
+        self.assertIn("LUCI_TITLE:=LuCI shared integration for LinkEase apps", makefile)
         self.assertNotIn("luci-lib-openwrtauth", makefile)
         self.assertNotIn("+linkeasefull", makefile)
         self.assertNotIn("+luci-app-linkeasefull", makefile)
         self.assertIn('entry({"admin", "services", "linkease_auth", "auth"}, call("linkease_auth"))', controller)
         self.assertIn('entry({"admin", "services", "linkease_auth", "auth_finish"}, call("linkease_auth_finish"))', controller)
 
-    def test_auth_bridge_defers_missing_luci_session_to_finish_route(self):
+    def test_auth_begin_is_public_and_finish_is_protected(self):
         controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
 
         auth_start = controller.index('local auth = entry({"admin", "services", "linkease_auth", "auth"}')
         auth_finish = controller.index('local auth_finish = entry({"admin", "services", "linkease_auth", "auth_finish"}')
-        self.assertIn('auth.sysauth = "root"', controller[auth_start:auth_finish])
-        self.assertIn('auth.sysauth_authenticator = "htmlauth"', controller[auth_start:auth_finish])
+        self.assertIn("auth.sysauth = false", controller[auth_start:auth_finish])
+        self.assertNotIn("sysauth_authenticator", controller[auth_start:auth_finish])
         self.assertIn('auth_finish.sysauth = "root"', controller)
         self.assertIn('auth_finish.sysauth_authenticator = "htmlauth"', controller)
-        self.assertIn('set_pending_return_cookie(target)', controller)
-        self.assertIn('http.redirect(auth_finish_url())', controller)
-        self.assertIn('absolute_luci_url(dispatcher.build_url("admin", "services", "linkease_auth", "auth_finish"))', controller)
+        self.assertIn("function linkease_auth_finish(state)", controller)
+        self.assertIn("bridge():auth_finish(state)", controller)
 
-        auth_function = controller.index("function linkease_auth()")
-        finish_function = controller.index("function linkease_auth_finish()")
-        self.assertNotIn('http.status(403, "Forbidden")', controller[auth_function:finish_function])
+    def test_path_state_preserves_return_and_cookie_remains_compatibility_fallback(self):
+        model = self.read("luci-lib-linkeaseauth/luasrc/model/linkease/auth.lua")
 
-    def test_pending_return_cookie_preserves_hash_route_across_luci_login(self):
-        controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
-
-        self.assertIn('local pending_return_cookie = "linkease_openwrt_pending_return"', controller)
-        self.assertIn('local bridge_return_cookie = "linkease_openwrt_return"', controller)
-        self.assertIn('local pending_return_cookie_path = "/cgi-bin/luci/admin/services/linkease_auth"', controller)
-        self.assertIn('local bridge_return_cookie_path = "/cgi-bin/luci/admin/services/linkease_auth/auth"', controller)
-        self.assertIn('Max-Age=300; HttpOnly; SameSite=Lax', controller)
-        self.assertIn('function cookie_encode(value)', controller)
-        self.assertIn('function cookie_decode(value)', controller)
-        self.assertIn('function requested_return_target()', controller)
-        self.assertIn('http.formvalue("return") or cookie_decode(http.getcookie(bridge_return_cookie)) or "/apps/"', controller)
-        self.assertIn('clear_bridge_return_cookie()', controller)
-        self.assertIn('return safe_return_target(cookie_decode(http.getcookie(pending_return_cookie)))', controller)
+        self.assertIn('local pending_return_cookie = "linkease_openwrt_pending_return"', model)
+        self.assertIn('local bridge_return_cookie = "linkease_openwrt_return"', model)
+        self.assertIn('Max-Age=300; HttpOnly; SameSite=Lax', model)
+        self.assertIn("local function encode_state(value)", model)
+        self.assertIn("local function decode_state(value)", model)
+        self.assertIn('build_url("admin", "services", "linkease_auth", "auth_finish", state)', model)
+        self.assertIn("function Bridge:auth_finish(state)", model)
+        self.assertIn("target = self:safe_return_target(decoded)", model)
+        self.assertIn("target = self:pending_return_target()", model)
 
     def test_finish_route_sets_apps_cookie_and_redirects_sanitized_return(self):
-        controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
+        model = self.read("luci-lib-linkeaseauth/luasrc/model/linkease/auth.lua")
 
-        finish = controller[controller.index("function linkease_auth_finish()") :]
-        self.assertIn('local sid = retrieve_luci_session()', finish)
+        finish = model[model.index("function Bridge:auth_finish(state)") :]
+        self.assertIn('local sid = self:retrieve_luci_session()', finish)
         self.assertIn('if not valid_cookie_value(sid) then', finish)
-        self.assertIn('local target = pending_return_target()', finish)
-        self.assertIn('clear_pending_return_cookie()', finish)
+        self.assertIn('target = self:pending_return_target()', finish)
+        self.assertIn('Max-Age=0; HttpOnly; SameSite=Lax', finish)
         self.assertIn('"linkease_openwrt_sid=" .. sid .. "; Path=/apps; HttpOnly; SameSite=Lax"', finish)
         self.assertIn('http.redirect(target)', finish)
 
     def test_return_validation_stays_limited_to_apps_paths_and_same_host(self):
-        controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
+        model = self.read("luci-lib-linkeaseauth/luasrc/model/linkease/auth.lua")
 
-        self.assertIn("valid_apps_return(value)", controller)
-        self.assertIn('path == "/apps"', controller)
-        self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', controller)
-        self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', controller)
-        self.assertIn("request_host", controller)
-        self.assertIn('http.getenv("HTTP_X_FORWARDED_HOST")', controller)
-        self.assertIn('http.getenv("HTTP_X_FORWARDED_PROTO")', controller)
-        self.assertIn("lan_host", controller)
-        self.assertIn("authority_host(authority)", controller)
-        self.assertIn("authority_host(request_host)", controller)
-        self.assertIn("authority_host(lan_host)", controller)
-        self.assertNotIn('request_host .. ":19290"', controller)
-        self.assertNotIn('lan_host .. ":19290"', controller)
+        self.assertIn("function Bridge:valid_apps_return(value)", model)
+        self.assertIn('path == "/apps"', model)
+        self.assertIn('prefix == "/apps/" or prefix == "/apps?" or prefix == "/apps#"', model)
+        self.assertIn('value:match("^(https?://)([^/]+)(/.*)$")', model)
+        self.assertIn('http.getenv("HTTP_X_FORWARDED_HOST")', model)
+        self.assertIn('http.getenv("HTTP_X_FORWARDED_PROTO")', model)
+        self.assertIn("authority_host(self:request_authority())", model)
+        self.assertIn("authority_host(self.dependencies.lan_ip())", model)
+        self.assertIn('value:find("[%z\\1-\\31\\127]")', model)
+        self.assertNotIn('request_host .. ":19290"', model)
 
     def test_absolute_apps_return_allows_same_device_dynamic_port(self):
-        controller = self.read("luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
+        model = self.read("luci-lib-linkeaseauth/luasrc/model/linkease/auth.lua")
 
-        self.assertIn('local authority_host_value = authority_host(authority)', controller)
-        self.assertIn('authority_host_value == authority_host(request_host)', controller)
-        self.assertIn('authority_host_value == authority_host(lan_host)', controller)
-        self.assertIn('http://192.168.30.93:8192/apps/dockermanager/', controller)
+        self.assertIn('local candidate = authority_host(authority)', model)
+        self.assertIn('candidate == authority_host(self:request_authority())', model)
+        self.assertIn('candidate == authority_host(self.dependencies.lan_ip())', model)
+        self.assertNotIn('authority == self:request_authority()', model)
 
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
         makefile = self.read("linkeaseauth/luci-lib-linkeaseauth/Makefile")
         self.assertIn("LUCI_TITLE:=LuCI shared integration for LinkEase apps", makefile)
         self.assertIn("PKG_VERSION:=1.1.0", makefile)
-        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_RELEASE:=2", makefile)
 
     def test_shared_package_keeps_auth_and_adds_separate_apps_routes(self):
         auth = self.read("linkeaseauth/luci-lib-linkeaseauth/luasrc/controller/linkease_auth.lua")
@@ -25,6 +25,16 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
         self.assertIn('"linkease_auth", "auth_finish"', auth)
         self.assertIn('"linkease_apps", "open"', apps)
         self.assertIn('"linkease_apps", "status"', apps)
+        auth_begin = auth.split('local auth_finish =', 1)[0]
+        apps_open = apps.split('local status =', 1)[0]
+        self.assertIn("auth.sysauth = false", auth_begin)
+        self.assertNotIn("sysauth_authenticator", auth_begin)
+        self.assertIn("open.sysauth = false", apps_open)
+        self.assertNotIn("sysauth_authenticator", apps_open)
+        self.assertIn("function linkease_auth_finish(state)", auth)
+        self.assertIn("bridge():auth_finish(state)", auth)
+        self.assertIn('auth_finish.sysauth = "root"', auth)
+        self.assertIn('status.sysauth = "root"', apps)
         self.assertNotIn("luci.http", decision)
         self.assertNotIn("uci:set", decision)
         self.assertNotIn("os.execute", decision)

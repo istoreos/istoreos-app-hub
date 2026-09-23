@@ -40,8 +40,11 @@ local function scenario(options)
 			return nil
 		end,
 		lan_ip = function() return "192.168.30.7" end,
-		build_url = function()
-			return "/cgi-bin/luci/admin/services/linkease_auth/auth_finish"
+		build_url = function(...)
+			local arguments = {...}
+			local url = "/cgi-bin/luci/admin/services/linkease_auth/auth_finish"
+			if arguments[5] then url = url .. "/" .. arguments[5] end
+			return url
 		end
 	})
 	return bridge, result, headers
@@ -59,8 +62,57 @@ equal(has_header(headers, "linkease_openwrt_sid=.*Path=/apps"), true)
 
 bridge, result, headers = scenario({ forms = { ["return"] = "/apps/kaiplus/" } })
 bridge:auth()
-equal(result.redirect, "http://192.168.30.7:10000/cgi-bin/luci/admin/services/linkease_auth/auth_finish")
-equal(headers[1][2]:match("linkease_openwrt_pending_return=") ~= nil, true)
+local state = result.redirect:match("/auth_finish/([A-Za-z0-9_-]+)$")
+equal(type(state), "string", "auth begin must encode return intent into the protected path")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session"
+})
+bridge:auth_finish(state)
+equal(result.redirect, "/apps/kaiplus/")
+
+local first_bridge, first_result = scenario({
+	forms = { ["return"] = "/apps/dockermanager/containers/abc?tab=logs&follow=1" }
+})
+first_bridge:auth()
+local first_state = first_result.redirect:match("/auth_finish/([A-Za-z0-9_-]+)$")
+equal(type(first_state), "string", "deep link state must be encoded")
+
+local second_bridge, second_result = scenario({
+	forms = { ["return"] = "/apps/kaiplus/?conversation=second" }
+})
+second_bridge:auth()
+local second_state = second_result.redirect:match("/auth_finish/([A-Za-z0-9_-]+)$")
+equal(type(second_state), "string", "second tab state must be encoded")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session", linkease_openwrt_pending_return = "%2Fapps%2Fwrong%2F" },
+	valid_sid = "valid-session"
+})
+bridge:auth_finish(first_state)
+equal(result.redirect, "/apps/dockermanager/containers/abc?tab=logs&follow=1", "first tab must use its own path state")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session", linkease_openwrt_pending_return = "%2Fapps%2Fwrong%2F" },
+	valid_sid = "valid-session"
+})
+bridge:auth_finish(second_state)
+equal(result.redirect, "/apps/kaiplus/?conversation=second", "second tab must use its own path state")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session"
+})
+bridge:auth_finish("not_base64url_@@")
+equal(result.redirect, "/apps/", "malformed state must fail closed")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session"
+})
+bridge:auth_finish(string.rep("A", 4097))
+equal(result.redirect, "/apps/", "oversized state must fail closed")
 
 bridge, result = scenario({
 	cookies = { sysauth = "valid-session" },
@@ -77,6 +129,22 @@ bridge, result = scenario({
 })
 bridge:auth()
 equal(result.redirect, "/apps/")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session",
+	forms = { ["return"] = "/apps/dockermanager/%0d%0aLocation:%20http://evil.example/" }
+})
+bridge:auth()
+equal(result.redirect, "/apps/dockermanager/%0d%0aLocation:%20http://evil.example/")
+
+bridge, result = scenario({
+	cookies = { sysauth = "valid-session" },
+	valid_sid = "valid-session",
+	forms = { ["return"] = "/apps/dockermanager/\r\nLocation: http://evil.example/" }
+})
+bridge:auth()
+equal(result.redirect, "/apps/", "raw control characters must be rejected")
 
 bridge, result = scenario({
 	cookies = { sysauth = "valid-session" },

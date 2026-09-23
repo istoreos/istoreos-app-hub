@@ -28,6 +28,23 @@ The shared status endpoint is:
 /cgi-bin/luci/admin/services/linkease_apps/status?id=<app-id>
 ```
 
+`open` is a public, read-only intent-capture endpoint so LuCI cannot discard
+its `id` query before authentication. `status` remains protected by LuCI.
+Authentication is split into two routes:
+
+```text
+/cgi-bin/luci/admin/services/linkease_auth/auth?return=<apps-url>
+/cgi-bin/luci/admin/services/linkease_auth/auth_finish/<base64url-state>
+```
+
+Auth Begin is public and only validates and encodes an `/apps` return target.
+Auth Finish is protected by LuCI and performs the session handoff. Putting the
+validated return intent in the path lets LuCI preserve it through its login
+redirect, supports independent browser tabs, and avoids relying on one shared
+pending-return cookie. The cookie flow remains as a compatibility fallback for
+old callers. The state is routing data, not a credential, and Finish validates
+it again before redirecting.
+
 Existing application-specific routes may delegate through
 `luci.model.linkease.apps_compat` while old UI clients are supported.
 
@@ -81,6 +98,11 @@ existing Auth Bridge. API requests without an application session receive 401,
 invalid IDs receive 400, unknown IDs receive 404, and registered unavailable
 applications receive 503.
 
+An authenticated browser request for `/apps/` (`Accept: text/html`) receives a
+small application launcher. Explicit JSON clients continue to receive the
+manifest index (`Accept: application/json`), so the existing API contract is
+unchanged.
+
 `linkease-app-entryd` owns the stable listener and passes its file descriptor
 to exactly one worker. It does not proxy HTTP, so the gateway fallback adds no
 extra entryd HTTP hop. The executable names remain stable for upgrade safety;
@@ -95,6 +117,8 @@ The router acceptance base URL is intentionally non-default:
 cd /config/playwright-runner
 BASE_URL=http://192.168.30.7:10000 npm run linkease-apps:preflight
 BASE_URL=http://192.168.30.7:10000 npm run linkease-apps:gate
+EXPECTED_WORKER=gateway BASE_URL=http://192.168.30.7:10000 npm run linkease-apps:worker-smoke
+EXPECTED_WORKER=linkeasefull BASE_URL=http://192.168.30.7:10000 npm run linkease-apps:worker-smoke
 ```
 
 Reports must not contain authentication material. Production-like final state

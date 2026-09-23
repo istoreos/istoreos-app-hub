@@ -4,8 +4,7 @@ function index()
 	local auth = entry({"admin", "services", "linkease_auth", "auth"}, call("linkease_auth"))
 	auth.leaf = true
 	auth.dependent = false
-	auth.sysauth = "root"
-	auth.sysauth_authenticator = "htmlauth"
+	auth.sysauth = false
 
 	local auth_finish = entry({"admin", "services", "linkease_auth", "auth_finish"}, call("linkease_auth_finish"))
 	auth_finish.leaf = true
@@ -22,6 +21,6 @@ function linkease_auth()
 	bridge():auth()
 end
 
-function linkease_auth_finish()
-	bridge():auth_finish()
+function linkease_auth_finish(state)
+	bridge():auth_finish(state)
 end
