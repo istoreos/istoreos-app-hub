@@ -96,13 +96,6 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
                 "fastnet/luci-app-fastnet/luasrc/controller/fastnet.lua",
                 "/cgi-bin/luci/admin/services/fastnet",
             ),
-            "kspeeder": (
-                "istoreenhance/istoreenhance/Makefile",
-                "istoreenhance/luci-app-istoreenhance/Makefile",
-                "istoreenhance/app-meta-istoreenhance/Makefile",
-                "istoreenhance/luci-app-istoreenhance/luasrc/controller/istoreenhance.lua",
-                "/cgi-bin/luci/admin/services/istoreenhance",
-            ),
         }
         for app, (runtime_path, luci_path, meta_path, controller_path, meta_entry) in cases.items():
             runtime = self.read(runtime_path)
@@ -128,6 +121,38 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
                 "uci:commit",
             ):
                 self.assertNotIn(forbidden, controller, f"{app}: {forbidden}")
+
+    def test_kspeeder_keeps_luci_entry_and_uses_a_public_open_action(self):
+        runtime = self.read("istoreenhance/istoreenhance/Makefile")
+        luci = self.read("istoreenhance/luci-app-istoreenhance/Makefile")
+        meta = self.read("istoreenhance/app-meta-istoreenhance/Makefile")
+        entry = self.read("istoreenhance/app-meta-istoreenhance/entry.sh")
+        controller = self.read(
+            "istoreenhance/luci-app-istoreenhance/luasrc/controller/istoreenhance.lua"
+        )
+
+        self.assertIn("+linkease-app-entry", runtime)
+        self.assertIn("/usr/share/linkease/apps.d", runtime)
+        self.assertIn("+luci-lib-linkeaseauth", luci)
+        self.assertIn("+linkease-app-entry", luci)
+        self.assertNotIn("+linkeasefull", runtime)
+        self.assertNotIn("+linkeasefull", luci)
+        self.assertIn(
+            "META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/istoreenhance",
+            meta,
+        )
+        self.assertNotIn(
+            "META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/istoreenhance/open",
+            meta,
+        )
+        self.assertIn(
+            'json_add_string "href" "/cgi-bin/luci/admin/services/istoreenhance"',
+            entry,
+        )
+        self.assertNotIn('json_add_string "href" "http://$host:', entry)
+        self.assertIn("open.sysauth = false", controller)
+        self.assertIn("http.redirect(direct_url())", controller)
+        self.assertNotIn('compat():open("kspeeder")', controller)
 
     def test_openwrt_embed_remains_a_linkeasefull_only_builtin(self):
         makefile = self.read("linkeasefull/luci-app-linkeasefull-embed/Makefile")

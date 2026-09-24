@@ -6,7 +6,8 @@ This runbook records the KAI routing incident as a reusable contract for every
 LinkEase application. A plugin's LuCI button must express an application ID;
 the shared resolver decides whether to use the uhttpd `/apps` route or a direct
 listener. Individual controllers must not duplicate proxy detection, host, or
-authentication URL construction.
+authentication URL construction unless the product explicitly exposes a
+public direct listener, as KSpeeder does for its information UI.
 
 Every LuCI package that exposes this launch flow directly depends on both
 `luci-lib-linkeaseauth` and `linkease-app-entry`. Its runtime package also
@@ -14,7 +15,7 @@ depends on `linkease-app-entry` when it owns the application manifest. This
 intentional overlap prevents a future runtime-package refactor from silently
 breaking the LuCI launch button.
 
-The stable launch API is:
+The stable shared-auth launch API is:
 
 ```text
 /cgi-bin/luci/admin/services/linkease_apps/open?id=<app-id>
@@ -63,8 +64,12 @@ Current management-first mappings are:
 | FastNet | `/cgi-bin/luci/admin/services/fastnet` | `linkease_apps/open?id=fastnet` |
 | Docker Manager | `/cgi-bin/luci/admin/services/dockermanager` | `linkease_apps/open?id=dockermanager` |
 | BaiduDrive | `/cgi-bin/luci/admin/services/baidudrive` | `linkease_apps/open?id=baidudrive` |
-| KSpeeder | `/cgi-bin/luci/admin/services/istoreenhance` | `linkease_apps/open?id=kspeeder` |
+| KSpeeder | `/cgi-bin/luci/admin/services/istoreenhance` | `istoreenhance/open` (public direct redirect) |
 | AgentFlow | `/cgi-bin/luci/admin/services/agentflow` | `linkease_apps/open?id=agentflow` |
+
+KSpeeder remains management-first. Only its explicit Open action is public and
+redirects to the configured information listener without using the shared Auth
+Bridge; its software-center entry remains the normal LuCI management page.
 
 A genuinely headless plugin with no management page may use the shared open
 action directly from app-meta, but that is the exception and must be covered by
