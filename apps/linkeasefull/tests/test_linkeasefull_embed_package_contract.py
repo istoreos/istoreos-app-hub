@@ -19,8 +19,17 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         runtime = self.read("linkeasefull/Makefile")
         embed = self.read("luci-app-linkeasefull-embed/Makefile")
 
-        self.assertIn("PKG_VERSION:=3.0.21", meta)
+        self.assertIn("PKG_VERSION:=3.0.22", meta)
         self.assertIn("PKG_RELEASE:=1", meta)
+        self.assertIn("PKG_SOURCE_DATE:=3.0.22", runtime)
+        self.assertIn(
+            "462f7d4b9500725094d2cacc388a109201f4b6b8eec5f90de68f756447644c70",
+            runtime,
+        )
+        self.assertIn(
+            "4dc7c1b4861115042141b02a5822994ede6fb6e2686f1e1dd6f1c213ec44c00c",
+            runtime,
+        )
         self.assertIn("+luci-app-linkeasefull-embed", meta)
         self.assertIn("DEPENDS:=+linkeasefull", embed)
         self.assertNotIn("luci-app-linkeasefull-embed", runtime)
