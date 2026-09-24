@@ -87,21 +87,24 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
                 "agentflow/luci-app-agentflow/Makefile",
                 "agentflow/app-meta-agentflow/Makefile",
                 "agentflow/luci-app-agentflow/luasrc/controller/agentflow.lua",
+                "/cgi-bin/luci/admin/services/agentflow",
             ),
             "fastnet": (
                 "fastnet/fastnet/Makefile",
                 "fastnet/luci-app-fastnet/Makefile",
                 "fastnet/app-meta-fastnet/Makefile",
                 "fastnet/luci-app-fastnet/luasrc/controller/fastnet.lua",
+                "/cgi-bin/luci/admin/services/fastnet",
             ),
             "kspeeder": (
                 "istoreenhance/istoreenhance/Makefile",
                 "istoreenhance/luci-app-istoreenhance/Makefile",
                 "istoreenhance/app-meta-istoreenhance/Makefile",
                 "istoreenhance/luci-app-istoreenhance/luasrc/controller/istoreenhance.lua",
+                "/cgi-bin/luci/admin/services/istoreenhance",
             ),
         }
-        for app, (runtime_path, luci_path, meta_path, controller_path) in cases.items():
+        for app, (runtime_path, luci_path, meta_path, controller_path, meta_entry) in cases.items():
             runtime = self.read(runtime_path)
             luci = self.read(luci_path)
             meta = self.read(meta_path)
@@ -113,7 +116,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             self.assertNotIn("+linkeasefull", runtime, app)
             self.assertNotIn("+linkeasefull", luci, app)
             self.assertIn(
-                f"META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id={app}",
+                f"META_LUCI_ENTRY:={meta_entry}",
                 meta,
                 app,
             )

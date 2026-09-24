@@ -75,8 +75,10 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         self.assertIn('compat():legacy_status("baidudrive"', controller)
         self.assertIn('url("admin/services/baidudrive/open")', status)
         self.assertNotIn('window.location.hostname + ":" + st.port', status)
-        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive", meta)
-        self.assertIn('/cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive', entry)
+        self.assertIn("PKG_RELEASE:=3", meta)
+        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/baidudrive", meta)
+        self.assertIn('/cgi-bin/luci/admin/services/baidudrive', entry)
+        self.assertNotIn('linkease_apps/open?id=baidudrive', entry)
 
 
 if __name__ == "__main__":

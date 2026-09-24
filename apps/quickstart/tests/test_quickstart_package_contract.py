@@ -35,6 +35,21 @@ class QuickstartPackageContractTest(unittest.TestCase):
         self.assertIn(f'local asset_version = "{luci_version}"', template)
         self.assertEqual(template.count("?v=<%=asset_version%>"), 3)
 
+        self.assertIn(
+            "/etc/quickstart/device-classifications.json",
+            backend_makefile.read_text(),
+        )
+
+        icon_dir = APP_ROOT / "luci-app-quickstart" / "htdocs" / "luci-static" / "quickstart" / "device-icons"
+        self.assertEqual(
+            sorted(path.name for path in icon_dir.glob("*.webp")),
+            sorted([
+                "camera.webp", "computer.webp", "gaming.webp", "network.webp",
+                "phone.webp", "printer.webp", "smart-home.webp", "storage.webp",
+                "tablet.webp", "tv.webp", "unknown.webp", "wearable.webp",
+            ]),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

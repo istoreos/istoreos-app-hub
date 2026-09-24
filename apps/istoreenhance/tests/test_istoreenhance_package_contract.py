@@ -29,6 +29,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.8.0", makefile)
+        self.assertIn("PKG_RELEASE:=6", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
             "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
@@ -85,6 +86,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         controller = self.read("luci-app-istoreenhance/luasrc/controller/istoreenhance.lua")
         status = self.read("luci-app-istoreenhance/luasrc/view/istoreenhance_status.htm")
         meta_entry = self.read("app-meta-istoreenhance/entry.sh")
+        meta_makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
@@ -94,7 +96,9 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertIn('auth_url = dispatcher.build_url("admin", "services", "linkease_auth", "auth")', controller)
         self.assertIn('url("admin/services/istoreenhance/open")', status)
         self.assertNotIn("st.entry_url", status)
-        self.assertIn('/cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder', meta_entry)
+        self.assertIn('META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/istoreenhance', meta_makefile)
+        self.assertIn('/cgi-bin/luci/admin/services/istoreenhance', meta_entry)
+        self.assertNotIn('linkease_apps/open?id=kspeeder', meta_entry)
         self.assertNotIn('json_add_string "href" "http://$host:', meta_entry)
 
 

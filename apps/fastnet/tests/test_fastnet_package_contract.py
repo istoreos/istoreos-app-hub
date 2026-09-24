@@ -18,6 +18,7 @@ class FastNetPackageContractTest(unittest.TestCase):
         luci_version = re.search(r"^PKG_VERSION:=(.+)$", luci, re.MULTILINE)
         luci_release = re.search(r"^PKG_RELEASE:=(.+)$", luci, re.MULTILINE)
         meta_version = re.search(r"^PKG_VERSION:=(.+)$", meta, re.MULTILINE)
+        meta_release = re.search(r"^PKG_RELEASE:=(.+)$", meta, re.MULTILINE)
         source_hash = re.search(r"^PKG_HASH:=([0-9a-f]{64})$", runtime, re.MULTILINE)
 
         self.assertIsNotNone(source_version)
@@ -25,10 +26,12 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertIsNotNone(luci_version)
         self.assertIsNotNone(luci_release)
         self.assertIsNotNone(meta_version)
+        self.assertIsNotNone(meta_release)
         self.assertIsNotNone(source_hash)
         self.assertEqual(luci_version.group(1), source_version.group(1))
         self.assertEqual(luci_release.group(1), "5")
         self.assertEqual(meta_version.group(1), source_version.group(1))
+        self.assertEqual(meta_release.group(1), "5")
         self.assertIn(
             "istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/",
             runtime,
@@ -63,11 +66,14 @@ class FastNetPackageContractTest(unittest.TestCase):
 
     def test_luci_open_routes_through_the_shared_auth_entry(self):
         makefile = (ROOT / "luci-app-fastnet/Makefile").read_text(encoding="utf-8")
+        meta = (ROOT / "app-meta-fastnet/Makefile").read_text(encoding="utf-8")
         controller = (ROOT / "luci-app-fastnet/luasrc/controller/fastnet.lua").read_text(encoding="utf-8")
         model = (ROOT / "luci-app-fastnet/luasrc/model/cbi/fastnet.lua").read_text(encoding="utf-8")
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
+        self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/fastnet", meta)
+        self.assertNotIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open", meta)
         self.assertIn('compat():open("fastnet")', controller)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)

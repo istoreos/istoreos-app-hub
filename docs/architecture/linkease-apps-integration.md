@@ -130,7 +130,19 @@ Avoid these dependency mistakes:
 Any Makefile dependency change must increment that package's `PKG_RELEASE`.
 It does not require a runtime binary version change.
 
-App metadata launches:
+App metadata may use either of two product entry patterns:
+
+- direct-open applications without a management page may launch the shared
+  resolver immediately;
+- management-first applications such as KAI, FastNet, Docker Manager,
+  BaiduDrive, KSpeeder, and AgentFlow enter their own LuCI
+  configuration/status page, whose explicit open button launches the shared
+  resolver. This preserves access to enable, port, token, and diagnostics
+controls instead of unexpectedly leaving the software center for the app UI.
+For management-first applications, `META_LUCI_ENTRY` and every app-meta
+`entry.sh` `href` must use the same LuCI management URL.
+
+The actual application-open action always uses:
 
 ```text
 /cgi-bin/luci/admin/services/linkease_apps/open?id=<app-id>

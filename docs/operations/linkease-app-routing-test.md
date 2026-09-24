@@ -39,6 +39,37 @@ and lost uhttpd's `:10000`. A later implementation always selected
 The correct public contract is `/apps/kai/`. KAI itself redirects that root to
 `/apps/kai/web/`; callers must not encode that implementation detail.
 
+## Software-center entry is not the application-open action
+
+KAI establishes two different user intents that future plugins must preserve:
+
+1. `META_LUCI_ENTRY` and app-meta `entry.sh` describe where the software
+   center enters the installed plugin. If the plugin has a LuCI management
+   page, these values must point to that page.
+2. The management page's explicit **Open** button describes the user's intent
+   to enter the application UI. Only that action calls
+   `/cgi-bin/luci/admin/services/linkease_apps/open?id=<app-id>`.
+
+Do not put the shared open action directly in app-meta for a plugin with
+configuration, enable/disable, port, token, storage, diagnostics, or external
+access controls. Doing so skips the page the user needs to manage the service.
+The static `META_LUCI_ENTRY` and every dynamic `entry.sh` `href` must agree.
+
+Current management-first mappings are:
+
+| Application | Software-center/LuCI entry | Open button target |
+| --- | --- | --- |
+| KAI | `/cgi-bin/luci/admin/services/kai` | `linkease_apps/open?id=kai` |
+| FastNet | `/cgi-bin/luci/admin/services/fastnet` | `linkease_apps/open?id=fastnet` |
+| Docker Manager | `/cgi-bin/luci/admin/services/dockermanager` | `linkease_apps/open?id=dockermanager` |
+| BaiduDrive | `/cgi-bin/luci/admin/services/baidudrive` | `linkease_apps/open?id=baidudrive` |
+| KSpeeder | `/cgi-bin/luci/admin/services/istoreenhance` | `linkease_apps/open?id=kspeeder` |
+| AgentFlow | `/cgi-bin/luci/admin/services/agentflow` | `linkease_apps/open?id=agentflow` |
+
+A genuinely headless plugin with no management page may use the shared open
+action directly from app-meta, but that is the exception and must be covered by
+a product contract test.
+
 KAI's manifest therefore declares:
 
 ```json
@@ -143,6 +174,18 @@ fi
 
 The OpenWrt embed is deliberately excluded because it is a LinkEaseFull-only
 builtin rather than an independent application.
+
+Also verify that management-first app-meta packages do not bypass their LuCI
+pages:
+
+```sh
+if rg 'linkease_apps/open' \
+  apps/{kai,fastnet,dockermanager,baidudrive,istoreenhance,agentflow}/app-meta-* \
+  --glob Makefile --glob entry.sh
+then
+  exit 1
+fi
+```
 
 Run the package contracts from the repository root:
 
