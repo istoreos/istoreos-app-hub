@@ -415,10 +415,10 @@
     ],
     "website": "https://kspeeder.com/",
     "author": "xiaobao",
-    "version": "0.8.0",
-    "release": "4",
+    "version": "0.8.1",
+    "release": "1",
     "depends": "+istoreenhance +luci-app-istoreenhance +luci-i18n-istoreenhance-zh-cn",
-    "luci_entry": "/cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder",
+    "luci_entry": "/cgi-bin/luci/admin/services/istoreenhance",
     "meta_dir": "apps/istoreenhance/app-meta-istoreenhance"
   },
   {

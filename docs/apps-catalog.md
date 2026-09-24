@@ -28,7 +28,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | htreader | HTReader在线读书 | net | /cgi-bin/luci/admin/services/htreader | https://github.com/hectorqin/reader | HTReader 是一个网页版本在线读书。 |
 | immich | immich相册 | ai multimedia | /cgi-bin/luci/admin/services/immich | https://www.immich.app | Immich 是一个自我托管的照片和视频管理解决方案。 |
 | istoredup | iStoreDup | system | /cgi-bin/luci/admin/services/istoredup | https://www.istoreos.com | iStoreOS 容器版。此插件已废弃，iStoreOS 请使用更方便的「ShadoWRT」，保留此插件仅为其他系统体验 iStoreOS 之用 |
-| istoreenhance | KSpeeder(原iStore增强) | nas service | /cgi-bin/luci/admin/services/linkease_apps/open?id=kspeeder | https://kspeeder.com/ | KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。 |
+| istoreenhance | KSpeeder(原iStore增强) | nas service | /cgi-bin/luci/admin/services/istoreenhance | https://kspeeder.com/ | KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。 |
 | istorepanel | 1Panel | net | /cgi-bin/luci/admin/services/istorepanel | https://1panel.cn/index.html | 1Panel 是新一代的 Linux 服务器运维管理面板 |
 | istorerouter | iStoreRouter | net system | /cgi-bin/luci/admin/istorerouter | https://github.com/linkease | 为 iStoreOS 提供路由状态、网络配置、无线设置、DDNS、存储管理和应用商店入口。 |
 | istorex | iStoreNAS(原iStoreX) | net system | /apps/ | https://www.istoreos.com | 把 iStoreOS 一键变成 NAS 系统，网盘，同步，组网，时光机，AI 等一网打尽。 |
