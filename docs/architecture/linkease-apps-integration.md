@@ -142,11 +142,9 @@ controls instead of unexpectedly leaving the software center for the app UI.
 For management-first applications, `META_LUCI_ENTRY` and every app-meta
 `entry.sh` `href` must use the same LuCI management URL.
 
-KSpeeder keeps this management-first entry, but its explicit **Open** button is
-an exception to the shared Auth Bridge: `istoreenhance/open` is public and
-redirects directly to the configured information listener. The management
-page remains protected while opening the read-only KSpeeder UI does not require
-an OpenWrt/LuCI cookie.
+KSpeeder keeps this management-first entry, and its explicit **Open** button
+uses the same shared Auth Bridge as the other applications. It does not define
+an application-specific `istoreenhance/open` route.
 
 Applications using the shared Auth Bridge use this application-open action:
 

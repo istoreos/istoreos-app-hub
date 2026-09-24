@@ -122,13 +122,16 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             ):
                 self.assertNotIn(forbidden, controller, f"{app}: {forbidden}")
 
-    def test_kspeeder_keeps_luci_entry_and_uses_a_public_open_action(self):
+    def test_kspeeder_keeps_luci_entry_and_uses_the_shared_open_action(self):
         runtime = self.read("istoreenhance/istoreenhance/Makefile")
         luci = self.read("istoreenhance/luci-app-istoreenhance/Makefile")
         meta = self.read("istoreenhance/app-meta-istoreenhance/Makefile")
         entry = self.read("istoreenhance/app-meta-istoreenhance/entry.sh")
         controller = self.read(
             "istoreenhance/luci-app-istoreenhance/luasrc/controller/istoreenhance.lua"
+        )
+        status = self.read(
+            "istoreenhance/luci-app-istoreenhance/luasrc/view/istoreenhance_status.htm"
         )
 
         self.assertIn("+linkease-app-entry", runtime)
@@ -150,9 +153,11 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             entry,
         )
         self.assertNotIn('json_add_string "href" "http://$host:', entry)
-        self.assertIn("open.sysauth = false", controller)
-        self.assertIn("http.redirect(direct_url())", controller)
-        self.assertNotIn('compat():open("kspeeder")', controller)
+        self.assertIn('url("admin/services/linkease_apps/open")', status)
+        self.assertIn("?id=kspeeder", status)
+        self.assertNotIn('url("admin/services/istoreenhance/open")', status)
+        self.assertNotIn('"istoreenhance", "open"', controller)
+        self.assertNotIn("direct_url", controller)
 
     def test_openwrt_embed_remains_a_linkeasefull_only_builtin(self):
         makefile = self.read("linkeasefull/luci-app-linkeasefull-embed/Makefile")

@@ -81,7 +81,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertNotIn("process.", entry)
         self.assertNotIn("require(", entry)
 
-    def test_default_entry_stays_on_luci_while_open_action_is_public(self):
+    def test_default_entry_stays_on_luci_while_open_uses_shared_route(self):
         makefile = self.read("luci-app-istoreenhance/Makefile")
         controller = self.read("luci-app-istoreenhance/luasrc/controller/istoreenhance.lua")
         status = self.read("luci-app-istoreenhance/luasrc/view/istoreenhance_status.htm")
@@ -90,15 +90,18 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_RELEASE:=5", makefile)
+        self.assertIn("PKG_RELEASE:=6", makefile)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
         self.assertIn('auth_url = dispatcher.build_url("admin", "services", "linkease_auth", "auth")', controller)
-        self.assertIn('url("admin/services/istoreenhance/open")', status)
+        self.assertIn('url("admin/services/linkease_apps/open")', status)
+        self.assertIn('?id=kspeeder', status)
+        self.assertNotIn('url("admin/services/istoreenhance/open")', status)
         self.assertNotIn("st.entry_url", status)
-        self.assertIn('open.sysauth = false', controller)
-        self.assertIn('http.redirect(direct_url())', controller)
-        self.assertNotIn('compat():open("kspeeder")', controller)
+        self.assertIn('compat():legacy_status("kspeeder"', controller)
+        self.assertNotIn('"istoreenhance", "open"', controller)
+        self.assertNotIn('function istoreenhance_open()', controller)
+        self.assertNotIn('direct_url', controller)
         self.assertIn('META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/istoreenhance', meta_makefile)
         self.assertNotIn('META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/istoreenhance/open', meta_makefile)
         self.assertIn('json_add_string "href" "/cgi-bin/luci/admin/services/istoreenhance"', meta_entry)
