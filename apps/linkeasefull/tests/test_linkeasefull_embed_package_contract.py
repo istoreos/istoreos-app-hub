@@ -1,7 +1,4 @@
 from pathlib import Path
-import os
-import subprocess
-import tempfile
 import unittest
 
 
@@ -34,67 +31,19 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         self.assertIn("DEPENDS:=+linkeasefull", embed)
         self.assertNotIn("luci-app-linkeasefull-embed", runtime)
 
-    def test_embed_uses_private_fallbacks_without_unavailable_protocol_dependency(self):
+    def test_embed_does_not_own_firmware_protocol_compatibility(self):
         makefile = self.read("luci-app-linkeasefull-embed/Makefile")
+        readme = self.read("luci-app-linkeasefull-embed/README.md")
 
-        self.assertIn("PKG_VERSION:=1.1.0", makefile)
+        self.assertIn("PKG_VERSION:=1.2.0", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertNotIn("+luci-proto-bonding", makefile)
-        self.assertIn("/usr/share/linkeasefull/openwrt-luci/protocol-fallbacks", makefile)
-        self.assertIn(
-            "./files/openwrt-luci-maintain.sh $(1)/usr/libexec/linkeasefull/openwrt-luci-maintain",
-            makefile,
-        )
-        self.assertIn('"$${maintainer}" install "$${root}"', makefile)
-        self.assertIn('"$${maintainer}" remove "$${root}"', makefile)
-        self.assertNotIn(
-            "$(INSTALL_DATA) ./files/protocol/bonding.js $(1)/www/luci-static/resources/protocol/bonding.js",
-            makefile,
-        )
-        self.assertNotIn(
-            "$(INSTALL_DATA) ./files/protocol/directip.js $(1)/www/luci-static/resources/protocol/directip.js",
-            makefile,
-        )
-        self.assertNotIn(
-            "$(INSTALL_DATA) ./files/protocol/wwan.js $(1)/www/luci-static/resources/protocol/wwan.js",
-            makefile,
-        )
-
-    def test_fallback_maintainer_preserves_real_protocol_modules(self):
-        maintainer = EMBED / "files/openwrt-luci-maintain.sh"
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            private = root / "usr/share/linkeasefull/openwrt-luci/protocol-fallbacks"
-            public = root / "www/luci-static/resources/protocol"
-            private.mkdir(parents=True)
-            public.mkdir(parents=True)
-            for source in sorted((EMBED / "files/protocol").glob("*.js")):
-                (private / source.name).write_bytes(source.read_bytes())
-
-            real_bonding = public / "bonding.js"
-            real_bonding.write_text("real bonding module\n", encoding="utf-8")
-            subprocess.run(["sh", str(maintainer), "install", str(root)], check=True)
-
-            self.assertFalse(real_bonding.is_symlink())
-            self.assertEqual(real_bonding.read_text(encoding="utf-8"), "real bonding module\n")
-            for name in ("directip.js", "wwan.js"):
-                link = public / name
-                self.assertTrue(link.is_symlink())
-                self.assertEqual(
-                    os.readlink(link),
-                    f"/usr/share/linkeasefull/openwrt-luci/protocol-fallbacks/{name}",
-                )
-
-            (public / "wwan.js").unlink()
-            (public / "wwan.js").write_text("real wwan module\n", encoding="utf-8")
-            subprocess.run(["sh", str(maintainer), "remove", str(root)], check=True)
-
-            self.assertEqual(real_bonding.read_text(encoding="utf-8"), "real bonding module\n")
-            self.assertFalse((public / "directip.js").exists())
-            self.assertEqual(
-                (public / "wwan.js").read_text(encoding="utf-8"),
-                "real wwan module\n",
-            )
+        self.assertNotIn("protocol-fallbacks", makefile)
+        self.assertNotIn("openwrt-luci-maintain", makefile)
+        self.assertNotIn("files/protocol", makefile)
+        self.assertEqual(list((EMBED / "files/protocol").glob("*.js")), [])
+        self.assertFalse((EMBED / "files/openwrt-luci-maintain.sh").exists())
+        self.assertIn("does not install LuCI network protocol handlers", readme)
 
     def test_embed_is_in_the_downstream_sync_map(self):
         syncapps = (REPO / "syncapps.yaml").read_text(encoding="utf-8")
