@@ -29,6 +29,19 @@ grep -F '+luci-lib-linkeaseauth' "$root/kai/Makefile" >/dev/null ||
 if grep -E 'OPENCODE_CWD|/agentconf/(opencode|skills)' "$init" >/dev/null; then
 	fail "init still depends on the legacy HTTP/cwd contract"
 fi
+if grep -E '^[[:space:]]*sleep[[:space:]]' "$init" >/dev/null; then
+	fail "init uses a fixed sleep instead of runtime readiness"
+fi
+respawn_policy_count="$(grep -F -c 'procd_set_param respawn 3600 5 5' "$init" || true)"
+[ "$respawn_policy_count" -eq 2 ] ||
+	fail "init does not explicitly apply the bounded 3600/5/5 respawn policy to both processes"
+session_start_line="$(grep -n '^[[:space:]]*start_kai_session || return 1' "$init" | cut -d: -f1)"
+gateway_start_line="$(grep -n '^[[:space:]]*start_kai_bin$' "$init" | cut -d: -f1)"
+cwd_create_line="$(grep -n '^[[:space:]]*mkdir_cwd "${data_dir}/cwd"' "$init" | cut -d: -f1)"
+[ -n "$session_start_line" ] && [ -n "$gateway_start_line" ] && [ "$session_start_line" -lt "$gateway_start_line" ] ||
+	fail "init does not start kai_session before kai_bin"
+[ -n "$cwd_create_line" ] && [ "$cwd_create_line" -lt "$session_start_line" ] ||
+	fail "init does not create runtime directories before starting processes"
 grep -F 'cd "$1"' "$launcher" >/dev/null || fail "launcher does not set the process cwd"
 grep -F 'exec /usr/sbin/kai_session serve --port 8196 --hostname 127.0.0.1' "$launcher" >/dev/null ||
 	fail "launcher command differs from the runtime contract"
