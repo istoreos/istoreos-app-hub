@@ -1,11 +1,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=kai-agent
-PKG_VERSION:=0.0.23
-PKG_RELEASE:=2
+PKG_VERSION:=0.0.24
+PKG_RELEASE:=1
 PKG_SOURCE:=kai-agent-bundle-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/kai-runtime-v$(PKG_VERSION)/
-PKG_HASH:=8c1af22149f9b3d1fa2c38bab016d2b046319ece8b1c84b8b5f5a0190aeacf52
+PKG_HASH:=680bd9308dc1ae3bcbfdc8e8bd42b63e452440c8b9441865f9f512dae863c6fd
 PKG_BUILD_DIR:=$(BUILD_DIR)/kai-agent-bundle-$(PKG_VERSION)
 
 PKG_BUILD_PARALLEL:=1

@@ -72,7 +72,7 @@ if grep -F 'if [ -f "$(PKG_BUILD_DIR)/rg.' "$root/kai_session/Makefile" >/dev/nu
 fi
 for package in kai kai_session kai-agent; do
 	makefile="$root/$package/Makefile"
-	grep -F 'PKG_VERSION:=0.0.23' "$makefile" >/dev/null ||
+	grep -F 'PKG_VERSION:=0.0.24' "$makefile" >/dev/null ||
 		fail "$package does not use the unified KAI runtime version"
 	grep -F 'https://github.com/istoreos/istoreos-app-hub/releases/download/kai-runtime-v$(PKG_VERSION)/' "$makefile" >/dev/null ||
 		fail "$package does not use the iStoreOS KAI runtime release"
