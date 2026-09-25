@@ -294,7 +294,6 @@ extract_archive() {
     mkdir -p "${target}"
     if [ "${dry_run}" -eq 1 ]; then
         echo "extract ${archive} -> ${target}"
-        return
     fi
     unzip -q "${archive}" -d "${target}"
 }
@@ -347,6 +346,123 @@ merge_luci_dir() {
         mkdir -p "$(dirname "${target}")"
         cp -p "${file}" "${target}"
     done < <(find "${src}" -type f -print0)
+}
+
+copy_package_file() {
+    local file="$1"
+    local dest="$2"
+    local target="${dest}/$(basename "${file}")"
+
+    mkdir -p "${dest}"
+    if [ -e "${target}" ]; then
+        if ! cmp -s "${file}" "${target}"; then
+            echo "conflicting package content: $(basename "${file}")" >&2
+            echo "  existing: ${target}" >&2
+            echo "  incoming: ${file}" >&2
+            exit 1
+        fi
+        return
+    fi
+
+    cp -p "${file}" "${target}"
+}
+
+route_ipk_apps() {
+    local src="$1"
+    local all_dest="$2"
+    local arch_dest="$3"
+    local label="$4"
+    local arch_label="$5"
+    local file
+    local basename
+
+    [ -d "${src}" ] || return 0
+
+    while IFS= read -r -d '' file; do
+        basename="$(basename "${file}")"
+        case "${basename}" in
+            *_all.ipk)
+                echo "route ${label}: ${basename} -> all/nas_luci"
+                copy_package_file "${file}" "${all_dest}"
+                ;;
+            *)
+                echo "route ${label}: ${basename} -> ${arch_label}/nas"
+                copy_package_file "${file}" "${arch_dest}"
+                ;;
+        esac
+    done < <(find "${src}" -maxdepth 1 -type f -name '*.ipk' -print0)
+}
+
+apk_class_from_ipks() {
+    local apk_basename="$1"
+    local ipk_src="$2"
+    local file
+    local ipk_basename
+    local package_name
+    local best_length=0
+    local best_class=""
+
+    [ -d "${ipk_src}" ] || return 0
+
+    while IFS= read -r -d '' file; do
+        ipk_basename="$(basename "${file}")"
+        package_name="${ipk_basename%%_*}"
+        case "${apk_basename}" in
+            "${package_name}"-*.apk)
+                if [ "${#package_name}" -gt "${best_length}" ]; then
+                    best_length="${#package_name}"
+                    case "${ipk_basename}" in
+                        *_all.ipk) best_class="all" ;;
+                        *) best_class="arch" ;;
+                    esac
+                fi
+                ;;
+        esac
+    done < <(find "${ipk_src}" -maxdepth 1 -type f -name '*.ipk' -print0)
+
+    if [ -n "${best_class}" ]; then
+        printf '%s\n' "${best_class}"
+    fi
+    return 0
+}
+
+route_apk_apps() {
+    local src="$1"
+    local other_src="$2"
+    local ipk_src="$3"
+    local all_dest="$4"
+    local arch_dest="$5"
+    local label="$6"
+    local arch_label="$7"
+    local file
+    local basename
+    local package_class
+    local counterpart
+
+    [ -d "${src}" ] || return 0
+
+    while IFS= read -r -d '' file; do
+        basename="$(basename "${file}")"
+        package_class="$(apk_class_from_ipks "${basename}" "${ipk_src}")"
+
+        if [ -z "${package_class}" ] && [ -n "${other_src}" ]; then
+            counterpart="${other_src}/${basename}"
+            if [ -f "${counterpart}" ] && cmp -s "${file}" "${counterpart}"; then
+                package_class="all"
+            fi
+        fi
+
+        if [ "${package_class}" = "all" ]; then
+            echo "route ${label}: ${basename} -> all/nas_luci"
+            copy_package_file "${file}" "${all_dest}"
+        else
+            if [ -z "${package_class}" ]; then
+                echo "warning: cannot determine architecture for ${label}: ${basename}; keep in ${arch_label}/nas" >&2
+            fi
+            echo "route ${label}: ${basename} -> ${arch_label}/nas"
+            copy_package_file "${file}" "${arch_dest}"
+        fi
+    done < <(find "${src}" -maxdepth 1 -type f -name '*.apk' -print0)
 }
 
 prepare_branch() {
@@ -410,15 +526,33 @@ all_luci_dir="${tmpdir}/all_nas_luci"
 merge_luci_dir "${arm_dir}/ipk/nas_luci" "${all_luci_dir}" "arm64 luci all"
 merge_luci_dir "${x64_dir}/ipk/nas_luci" "${all_luci_dir}" "x64 luci all"
 
+arm_apps_ipk_dir="${tmpdir}/arm_apps_ipk_nas"
+x64_apps_ipk_dir="${tmpdir}/x64_apps_ipk_nas"
+route_ipk_apps "${arm_dir}/ipk/apps" "${all_luci_dir}" "${arm_apps_ipk_dir}" \
+    "arm64 ipk apps" "aarch64_cortex-a53"
+route_ipk_apps "${x64_dir}/ipk/apps" "${all_luci_dir}" "${x64_apps_ipk_dir}" \
+    "x64 ipk apps" "x86_64"
+
 all_apk_luci_dir="${tmpdir}/all_apk_nas_luci"
 merge_luci_dir "${arm_dir}/apk/nas_luci" "${all_apk_luci_dir}" "arm64 apk luci all"
 merge_luci_dir "${x64_dir}/apk/nas_luci" "${all_apk_luci_dir}" "x64 apk luci all"
 
+arm_apps_apk_dir="${tmpdir}/arm_apps_apk_nas"
+x64_apps_apk_dir="${tmpdir}/x64_apps_apk_nas"
+route_apk_apps "${arm_dir}/apk/apps" "${x64_dir}/apk/apps" "${arm_dir}/ipk/apps" \
+    "${all_apk_luci_dir}" "${arm_apps_apk_dir}" "arm64 apk apps" "aarch64_generic"
+route_apk_apps "${x64_dir}/apk/apps" "${arm_dir}/apk/apps" "${x64_dir}/ipk/apps" \
+    "${all_apk_luci_dir}" "${x64_apps_apk_dir}" "x64 apk apps" "x86_64"
+
 sync_dir "${all_luci_dir}" "${repo_root}/bin/packages/all/nas_luci" "luci all"
+sync_dir "${arm_apps_ipk_dir}" "${repo_root}/bin/packages/aarch64_cortex-a53/nas" "arm64 apps nas"
+sync_dir "${x64_apps_ipk_dir}" "${repo_root}/bin/packages/x86_64/nas" "x64 apps nas"
 sync_dir "${arm_dir}/ipk/nas" "${repo_root}/bin/packages/aarch64_cortex-a53/nas" "arm64 nas"
 sync_dir "${x64_dir}/ipk/nas" "${repo_root}/bin/packages/x86_64/nas" "x64 nas"
 
 sync_dir "${all_apk_luci_dir}" "${repo_root}/bin/apks/all/nas_luci" "apk luci all"
+sync_dir "${arm_apps_apk_dir}" "${repo_root}/bin/apks/aarch64_generic/nas" "arm64 apk apps nas"
+sync_dir "${x64_apps_apk_dir}" "${repo_root}/bin/apks/x86_64/nas" "x64 apk apps nas"
 sync_dir "${arm_dir}/apk/nas" "${repo_root}/bin/apks/aarch64_generic/nas" "arm64 apk nas"
 sync_dir "${x64_dir}/apk/nas" "${repo_root}/bin/apks/x86_64/nas" "x64 apk nas"
 
