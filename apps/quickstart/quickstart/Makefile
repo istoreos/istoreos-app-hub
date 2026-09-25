@@ -11,7 +11,7 @@ PKG_ARCH_quickstart:=$(ARCH)
 
 PKG_NAME:=quickstart
 PKG_VERSION:=0.14.0
-PKG_RELEASE:=2
+PKG_RELEASE:=11
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/linkease/istore-packages/releases/download/prebuilt/
 PKG_HASH:=86ac0564958d12d59d2583c59975a52a116ce41380e50cc214ba1b1e251f3116
@@ -40,6 +40,14 @@ endef
 define Package/$(PKG_NAME)/conffiles
 /etc/config/quickstart
 /etc/quickstart/device-classifications.json
+/etc/quickstart/device-profiles.json
+/etc/quickstart/manual-devices.json
+/etc/quickstart/device-groups.json
+/etc/quickstart/traffic-insights.json
+/etc/quickstart/device-policy-effects-v1.json
+/etc/quickstart/task-transactions-v1.json
+/etc/quickstart/lan-device-model-v1.json
+/etc/quickstart/network-audit.json
 endef
 
 define Package/$(PKG_NAME)/postinst

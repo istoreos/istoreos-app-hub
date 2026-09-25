@@ -39,16 +39,44 @@ class QuickstartPackageContractTest(unittest.TestCase):
             "/etc/quickstart/device-classifications.json",
             backend_makefile.read_text(),
         )
+        for state_file in (
+            "device-profiles.json", "manual-devices.json", "device-groups.json",
+            "traffic-insights.json", "device-policy-effects-v1.json",
+            "task-transactions-v1.json", "lan-device-model-v1.json", "network-audit.json",
+        ):
+            self.assertIn(f"/etc/quickstart/{state_file}", backend_makefile.read_text())
 
         icon_dir = APP_ROOT / "luci-app-quickstart" / "htdocs" / "luci-static" / "quickstart" / "device-icons"
         self.assertEqual(
             sorted(path.name for path in icon_dir.glob("*.webp")),
             sorted([
-                "camera.webp", "computer.webp", "gaming.webp", "network.webp",
-                "phone.webp", "printer.webp", "smart-home.webp", "storage.webp",
-                "tablet.webp", "tv.webp", "unknown.webp", "wearable.webp",
+                "access-point.webp", "air-conditioner.webp", "camera.webp",
+                "computer.webp", "desktop.webp", "door-lock.webp", "e-reader.webp",
+                "game-console.webp", "gaming.webp", "handheld-game.webp",
+                "home-server.webp", "laptop.webp", "network-bridge.webp",
+                "network-switch.webp", "network.webp", "phone.webp", "printer.webp",
+                "projector.webp", "robot-vacuum.webp", "sensor.webp", "set-top-box.webp",
+                "smart-bulb.webp", "smart-home.webp", "smart-speaker.webp", "storage.webp",
+                "tablet.webp", "thermostat.webp", "tv.webp", "unknown.webp", "wearable.webp",
             ]),
         )
+
+        manifest = (icon_dir / "manifest.json").read_text()
+        self.assertIn('"license": "project-original-ai-assisted"', manifest)
+        self.assertIn('"reviewRequiredBeforePublicRelease": true', manifest)
+
+        notice = (
+            APP_ROOT
+            / "luci-app-quickstart"
+            / "root"
+            / "usr"
+            / "share"
+            / "doc"
+            / "quickstart"
+            / "NOTICE"
+        ).read_text()
+        self.assertIn("30 WebP device scene icons", notice)
+        self.assertIn("product/legal review as required", notice)
 
 
 if __name__ == "__main__":
