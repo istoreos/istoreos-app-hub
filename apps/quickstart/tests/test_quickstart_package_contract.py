@@ -1,5 +1,6 @@
 import re
 import unittest
+import json
 from pathlib import Path
 
 
@@ -34,6 +35,7 @@ class QuickstartPackageContractTest(unittest.TestCase):
         self.assertEqual(luci_version, effective_backend_version)
         self.assertIn(f'local asset_version = "{luci_version}"', template)
         self.assertEqual(template.count("?v=<%=asset_version%>"), 3)
+        self.assertRegex(make_value(backend_makefile, "PKG_HASH"), r"^[0-9a-f]{64}$")
 
         self.assertIn(
             "/etc/quickstart/device-classifications.json",
@@ -77,6 +79,13 @@ class QuickstartPackageContractTest(unittest.TestCase):
         ).read_text()
         self.assertIn("30 WebP device scene icons", notice)
         self.assertIn("product/legal review as required", notice)
+
+        english_catalog = json.loads((
+            APP_ROOT / "luci-app-quickstart" / "htdocs" / "luci-static" /
+            "quickstart" / "i18n" / "en.json"
+        ).read_text())["en"]
+        self.assertEqual(english_catalog["上网路线"], "Internet path")
+        self.assertEqual(english_catalog["使用管理"], "Usage controls")
 
 
 if __name__ == "__main__":
