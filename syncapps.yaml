@@ -494,6 +494,8 @@ apps:
         services:
             - local: apps/quickstart/quickstart
               remote: nas-packages/network/services/quickstart
+            - local: apps/quickstart/quickstart-netpolicy
+              remote: nas-packages/network/services/quickstart-netpolicy
         luci:
             - local: apps/quickstart/luci-app-quickstart
               remote: nas-packages-luci/luci/luci-app-quickstart

@@ -17,6 +17,7 @@ def make_value(path: Path, key: str) -> str:
 class QuickstartPackageContractTest(unittest.TestCase):
     def test_backend_luci_and_asset_versions_match(self) -> None:
         backend_makefile = APP_ROOT / "quickstart" / "Makefile"
+        netpolicy_makefile = APP_ROOT / "quickstart-netpolicy" / "Makefile"
         luci_makefile = APP_ROOT / "luci-app-quickstart" / "Makefile"
         template = (
             APP_ROOT
@@ -36,6 +37,14 @@ class QuickstartPackageContractTest(unittest.TestCase):
         self.assertIn(f'local asset_version = "{luci_version}"', template)
         self.assertEqual(template.count("?v=<%=asset_version%>"), 3)
         self.assertRegex(make_value(backend_makefile, "PKG_HASH"), r"^[0-9a-f]{64}$")
+        self.assertEqual(
+            make_value(backend_makefile, "PKG_SOURCE_URL"),
+            "https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/",
+        )
+        self.assertEqual(make_value(netpolicy_makefile, "PKG_VERSION"), "0.2.0-test20260928")
+        self.assertRegex(make_value(netpolicy_makefile, "PKG_HASH"), r"^[0-9a-f]{64}$")
+        self.assertIn("@(x86_64)", netpolicy_makefile.read_text())
+        self.assertIn("/usr/bin/quickstart-netpolicy", netpolicy_makefile.read_text())
 
         self.assertIn(
             "/etc/quickstart/device-classifications.json",
@@ -86,6 +95,11 @@ class QuickstartPackageContractTest(unittest.TestCase):
         ).read_text())["en"]
         self.assertEqual(english_catalog["上网路线"], "Internet path")
         self.assertEqual(english_catalog["使用管理"], "Usage controls")
+
+    def test_sync_map_publishes_native_policy_package(self) -> None:
+        sync_map = (APP_ROOT.parents[1] / "syncapps.yaml").read_text()
+        self.assertIn("apps/quickstart/quickstart-netpolicy", sync_map)
+        self.assertIn("nas-packages/network/services/quickstart-netpolicy", sync_map)
 
 
 if __name__ == "__main__":
