@@ -31,7 +31,9 @@ apps:
         luci:
             - local: apps/agentflow/luci-app-agentflow
               remote: openwrt-app-actions/applications/luci-app-agentflow
-        meta: []
+        meta:
+            - local: apps/agentflow/app-meta-agentflow
+              remote: openwrt-app-meta/applications/app-meta-agentflow
     ap-modem:
         services: []
         luci:

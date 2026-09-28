@@ -82,6 +82,5 @@ class AgentFlowLuciOpenContractTest(unittest.TestCase):
             "agentflow runtime already owns the desktop manifest",
         )
 
-
 if __name__ == "__main__":
     unittest.main()
