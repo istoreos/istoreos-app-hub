@@ -4,7 +4,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 
 Format: `id — title — description`
 
-- agentflow — AgentFlow — AgentFlow 提供编码代理与工作流编排 Web UI。
+- agentflow — AgentFlow — AgentFlow 提供 OpenCode、Codex、Claude 编码代理与工作流编排 Web UI。
 - airconnect — AirConnect — 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流
 - ap-modem — 访问AP/光猫 — 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上）
 - arcadia — Arcadia 一站式代码自动化运维平台 — 写脚本、跑定时任务、服务托管、消息聚合、AI Agent 运行基座，一个面板搞定全流程
@@ -35,7 +35,7 @@ Format: `id — title — description`
 - ittools — 开发工具集 — 开发工具集是集成了很多有用的网页工具。
 - jackett — Jackett — Jackett 是维护索引器抓取和翻译逻辑的单一存储库 - 消除了其他应用程序的负担。
 - jellyfin — Jellyfin私有影院 — Jellyfin是一个免费自由的媒体系统软件，可以让您方便地管理和串流您的媒体。部分机型无需配置即可支持硬件转码：Easepi ARS2；RK35xx 系列。
-- kai — 酷友社KAI — KAI安装软件助手(iStoreOS 24版本以上适用)
+- kai — 酷友社KAI — =酷友社KAI 解决各种问题，加速软件安装
 - kodexplorer — 可道云 — 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。
 - lanraragi — LANraragi电子书 — LANraragi是一个开源的电子书、漫画管理平台。
 - linkease — 易有云 — 易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。

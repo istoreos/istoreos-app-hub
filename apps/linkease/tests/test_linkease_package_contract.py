@@ -54,8 +54,25 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIsNotNone(match, "missing procd instance block")
         return match.group(0)
 
+    def test_source_date_packages_do_not_override_pkg_version(self):
+        compatibility_comment = (
+            "# use PKG_SOURCE_DATE instead of PKG_VERSION for compitable"
+        )
+        for app, relative in (
+            ("linkease-common-bin", "linkease-common-bin/Makefile"),
+            ("linkease", "linkease/Makefile"),
+            ("linkeasefull", "linkeasefull/Makefile"),
+        ):
+            with self.subTest(package=app):
+                makefile = self.read_app(app, relative)
+                self.assertIn(compatibility_comment, makefile)
+                self.assertNotRegex(makefile, r"(?m)^PKG_VERSION\s*:=")
+
     def test_standard_linkease_uses_legacy_runtime_only(self):
         makefile = self.read_app("linkease", "linkease/Makefile")
+        transition = self.read_app(
+            "linkease", "linkease-runtime-transition/Makefile"
+        )
         common_makefile = self.read_app("linkease-common-bin", "linkease-common-bin/Makefile")
         init = self.read_app("linkease", "linkease/files/linkease.init")
         config = self.read_app("linkease", "linkease/files/linkease.config")
@@ -68,6 +85,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         controller = self.read_app(
             "linkease", "luci-app-linkease/luasrc/controller/linkease.lua"
         )
+        meta = self.read_app("linkease", "app-meta-linkease/Makefile")
 
         self.assertIn("PKG_NAME:=linkease", makefile)
         self.assertIn("PKG_ARCH_LINKEASE:=$(ARCH)", makefile)
@@ -83,8 +101,10 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("92d0c6f9d05a0ba283d03fef2b7f4675eee032c303e959b1e4198e12806510f9", makefile)
         self.assertIn("2a91f404c3eb190a8a828b5e41913595901de54664de518f0430c5544d71a914", makefile)
         self.assertNotIn("PKG_VERSION:=1.7.5", makefile)
-        self.assertIn("PKG_SOURCE_DATE:=1.7.5", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=1.7.6", makefile)
+        self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("DEPENDS:=@(arm||x86_64||aarch64) +linkease-common-bin", makefile)
+        self.assertIn("EXTRA_DEPENDS:=linkease-common-bin (>= 1.7.6~)", makefile)
         self.assertIn("PKGARCH:=all", makefile)
         self.assertNotIn("dl.istoreos.com/binary/LinkEase/LinuxStorage", makefile)
         self.assertNotIn("+linkmount", makefile)
@@ -101,7 +121,10 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("1646db48f5a512b96a34971e5af82eacd5a51f32abab2c5e84f277c408a72eb8", common_makefile)
         self.assertIn("61f970245e1ae9783bc58280929e134fb0c94f5fc4e0e9a3deea117846b81e40", common_makefile)
         self.assertNotIn("PKG_VERSION:=1.7.5", common_makefile)
-        self.assertIn("PKG_SOURCE_DATE:=1.7.5", common_makefile)
+        self.assertIn("PKG_SOURCE_DATE:=1.7.6", common_makefile)
+        self.assertIn("PKG_RELEASE:=1", common_makefile)
+        self.assertIn("Replaces: linkease (<< 1.7.6~)", common_makefile)
+        self.assertNotIn("Conflicts: linkease", common_makefile)
         self.assertIn("PKGARCH:=all", common_makefile)
         self.assertNotIn("linkease-binary-$(PKG_SOURCE_DATE).tar.gz", common_makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/heif-converter $(1)/usr/sbin/heif-converter", common_makefile)
@@ -115,6 +138,24 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("linkease-desktop", makefile)
         self.assertNotIn("apptunnel-client", makefile)
         self.assertNotIn("linkease-full", makefile)
+        self.assertIn("PKG_VERSION:=3.0.0", meta)
+        self.assertIn("PKG_RELEASE:=3", meta)
+        self.assertIn(
+            "META_DEPENDS:=+linkease-runtime-transition +linkease +luci-app-linkease +luci-lib-linkeasefile +luci-i18n-linkease-zh-cn",
+            meta,
+        )
+        self.assertNotIn("META_EXTRA_DEPENDS", meta)
+        self.assertNotIn("+linkease-common-bin", meta)
+        self.assertIn("PKG_NAME:=linkease-runtime-transition", transition)
+        self.assertIn("PKG_VERSION:=1.7.6", transition)
+        self.assertIn(
+            "EXTRA_DEPENDS:=linkease (>= 1.7.6~), luci-lib-linkeasefile (>= 2.1.70-r4)",
+            transition,
+        )
+        self.assertIn(
+            "$(INSTALL_DATA) ./files/runtime-generation $(1)/usr/share/linkease/runtime-generation",
+            transition,
+        )
 
         self.assertIn("PROG=/usr/sbin/linkease", init)
         self.assertIn("LOCAL_API=/var/run/linkease.sock", init)
@@ -144,6 +185,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn('pidof linkease-full >/dev/null', controller)
         self.assertNotIn("desktop_running", controller)
         self.assertNotIn("apptunnel_running", controller)
+
         self.assertNotIn("desktop_port", helper)
         self.assertNotIn("desktop_base_path", helper)
         self.assertNotIn("desktop_url", helper)
@@ -157,6 +199,22 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("uci -q set quickstart.main=main", helper)
         self.assertIn('uci set "quickstart.main.main_dir=$ROOT_DIR"', helper)
         self.assertIn("uci commit linkease", helper)
+
+    def test_luci_split_has_a_versioned_legacy_ownership_handoff(self):
+        app = self.read_app("linkease", "luci-app-linkease/Makefile")
+        library = self.read_app(
+            "linkeasefile", "luci-lib-linkeasefile/Makefile"
+        )
+
+        self.assertIn("PKG_VERSION:=2.1.70-r4", app)
+        self.assertIn(
+            "LUCI_EXTRA_DEPENDS:=luci-lib-linkeasefile (>= 2.1.70-r4)", app
+        )
+        self.assertIn("PKG_VERSION:=2.1.70-r4", library)
+        self.assertIn(
+            "Replaces: luci-app-linkease (<< 2.1.70-r4)", library
+        )
+        self.assertNotIn("Conflicts: luci-app-linkease", library)
 
     def test_legacy_luci_file_proxy_uses_shared_unix_socket_only(self):
         backend = self.read_app(
@@ -214,7 +272,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_NAME:=linkeasefull", makefile)
         self.assertIn("PKG_ARCH_LINKEASE:=$(ARCH)", makefile)
         self.assertNotIn("PKG_VERSION:=3.0.9", makefile)
-        self.assertIn("PKG_SOURCE_DATE:=3.0.21", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=3.0.22", makefile)
+        self.assertIn("PKG_RELEASE:=2", makefile)
         self.assertIn("ARCH_HEXCODE=8664", makefile)
         self.assertIn("ARCH_HEXCODE=aa64", makefile)
         self.assertIn("PKG_SOURCE_VERSION:=$(ARCH_HEXCODE)", makefile)
@@ -224,8 +283,8 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/linkeasefull-runtime-v$(PKG_SOURCE_DATE)/", makefile)
         self.assertIn("PKG_BUILD_DIR:=$(BUILD_DIR)/linkease-runtime-$(PKG_SOURCE_DATE)-linux-$(LINKEASE_RUNTIME_ARCH)", makefile)
         self.assertNotIn("linkease-desktop", makefile)
-        self.assertIn("845f47fd7919dfeff2a8625c2e14abe04862d6a49e544277a07009bbdd23c97d", makefile)
-        self.assertIn("f8942fbc541dcce6ceee783cd135e6714ebb54f7421526f11670956117943d4b", makefile)
+        self.assertIn("462f7d4b9500725094d2cacc388a109201f4b6b8eec5f90de68f756447644c70", makefile)
+        self.assertIn("4dc7c1b4861115042141b02a5822994ede6fb6e2686f1e1dd6f1c213ec44c00c", makefile)
         self.assertNotIn("TAR_CMD=", makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkease-full $(1)/usr/bin/linkease-full", makefile)
         self.assertIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/linkremote-agent $(1)/usr/bin/linkremote-agent", makefile)
@@ -235,6 +294,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("$(PKG_BUILD_DIR)/scripts", makefile)
         self.assertNotIn("/usr/libexec/linkeasefull/scripts", makefile)
         self.assertIn("DEPENDS:=@(x86_64||aarch64) +linkease-app-entry +linkease-common-bin +ca-bundle +cifsmount +kmod-fs-cifs", makefile)
+        self.assertIn("EXTRA_DEPENDS:=linkease-common-bin (>= 1.7.6~)", makefile)
         self.assertNotIn("+linkease +luci-app-linkease", makefile)
         self.assertNotIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/heif-converter $(1)/usr/bin/heif-converter", makefile)
         self.assertNotIn("/etc/config/linkease\n", makefile)
@@ -358,10 +418,12 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("st.legacy_port || 8897", status)
         self.assertIn('"/apps/"', status)
         self.assertNotIn("basePath", status)
-        self.assertIn("PKG_VERSION:=3.0.21", meta)
-        self.assertIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
-        self.assertNotIn("META_DEPENDS:=+linkease-common-bin +linkeasefull +luci-app-linkeasefull +luci-lib-linkeaseauth", meta)
-        self.assertNotIn("+linkease +luci-app-linkease", meta)
+        self.assertIn("PKG_VERSION:=3.0.22", meta)
+        self.assertIn("PKG_RELEASE:=3", meta)
+        self.assertIn("META_DEPENDS:=+linkease-runtime-transition +linkease +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn", meta)
+        self.assertNotIn("META_EXTRA_DEPENDS", meta)
+        self.assertNotIn("META_DEPENDS:=+linkease-common-bin", meta)
+        self.assertNotIn("+luci-app-linkease +luci-app-linkeasefull", meta)
         self.assertIn("复用独立的易有云文件管理入口", meta)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeasefull", meta)
         self.assertFalse((REPO / "apps/linkeasefull/luci-app-linkeasefull/htdocs/luci-static/linkeasefile").exists())

@@ -332,6 +332,8 @@ apps:
         services:
             - local: apps/linkease/linkease
               remote: nas-packages/network/services/linkease
+            - local: apps/linkease/linkease-runtime-transition
+              remote: nas-packages/network/services/linkease-runtime-transition
         luci:
             - local: apps/linkease/luci-app-linkease
               remote: nas-packages-luci/luci/luci-app-linkease

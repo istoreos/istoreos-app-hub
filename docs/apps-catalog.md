@@ -4,22 +4,22 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 
 | id | title | tags | luci | website | description |
 |---|---|---|---|---|---|
-| agentflow | AgentFlow | ai development service | /cgi-bin/luci/admin/services/linkease_apps/open?id=agentflow | https://agentflow.geili.ai/ | AgentFlow 提供编码代理与工作流编排 Web UI。 |
+| agentflow | AgentFlow | ai development service | /cgi-bin/luci/admin/services/agentflow | https://agentflow.geili.ai/ | AgentFlow 提供 OpenCode、Codex、Claude 编码代理与工作流编排 Web UI。 |
 | airconnect | AirConnect | multimedia net | /cgi-bin/luci/admin/services/airconnect | https://github.com/philippe44/AirConnect | 让 UPnP/Sonos 和 Chromecast 设备支持 AirPlay 音频串流 |
 | ap-modem | 访问AP/光猫 | net tool | /cgi-bin/luci/admin/network/ap_modem | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-ap-modem | 让局域网客户端访问不同子网的AP或光猫（只支持 OpenWRT 21 以上） |
 | arcadia | Arcadia 一站式代码自动化运维平台 | net tool | /cgi-bin/luci/admin/services/arcadia | https://arcadia.cool | 写脚本、跑定时任务、服务托管、消息聚合、AI Agent 运行基座，一个面板搞定全流程 |
-| baidudrive | 百度网盘 | nas service | /cgi-bin/luci/admin/services/linkease_apps/open?id=baidudrive | https://pan.baidu.com | 百度网盘 iStoreOS 版 |
+| baidudrive | 百度网盘 | nas service | /cgi-bin/luci/admin/services/baidudrive | https://pan.baidu.com | 百度网盘 iStoreOS 版 |
 | chinesesubfinder | ChineseSubFinder中文字幕 | multimedia net | /cgi-bin/luci/admin/services/chinesesubfinder | https://github.com/allanpk716/ChineseSubFinder | ChineseSubFinder是一个中文字幕平台。 |
 | clouddrive2 | CloudDrive2 | service tool | /cgi-bin/luci/admin/services/clouddrive2 | https://www.clouddrive2.com/ | CloudDrive 是一个强大的多云盘管理工具，为用户提供包含云盘本地挂载的一站式的多云盘解决方案。 |
 | codeserver | CodeServer | net tool | /cgi-bin/luci/admin/services/codeserver | https://coder.com/ | 一个在线版本的VSCode，可以在线开发。 |
 | ddnsto | DDNSTO路由远程 | networking service | /cgi-bin/luci/admin/services/ddnsto | https://www.ddnsto.com/ | DDNSTO内网穿透，可以外网远程你的路由器 |
 | demon | 容器魔王 | net | /cgi-bin/luci/admin/services/demon | https://www.onethingcloud.com/ | 【魔王现世】为 iStoreOS 特制，收益更高。每月至高可赚「千元」，现在上线秒领「30天20%收益加成」，挂机托管自动赚米，拿到手软！替代网心云的「容器魔方」。 |
-| dockermanager | Docker管理 | docker system | /cgi-bin/luci/admin/services/linkease_apps/open?id=dockermanager | https://github.com/linkease/linkease-docker-manager | 更简单专业的 Docker 管理器，加速更快更方便. |
+| dockermanager | Docker管理 | docker system | /cgi-bin/luci/admin/services/dockermanager | https://github.com/linkease/linkease-docker-manager | 更简单专业的 Docker 管理器，加速更快更方便. |
 | dpanel | DPanel 可视化面板 | net | /cgi-bin/luci/admin/services/dpanel | https://github.com/donknap/dpanel | 轻量化 docker 可视化管理面板。 |
 | drawio | DrawIO绘图 | multimedia net | /cgi-bin/luci/admin/services/drawio | https://www.diagrams.net/ | DrawIO是运行在浏览器中的在线绘图工具。 |
 | emby | Emby影院 | multimedia net | /cgi-bin/luci/admin/services/emby | https://emby.media/ | Emby是一个多媒体串流平台，可以让您方便地管理和串流您的媒体。 |
 | excalidraw | Excalidraw画板 | multimedia net | /cgi-bin/luci/admin/services/excalidraw | https://excalidraw.com/ | Excalidraw是支持多人协同的私有化在线画板工具。 |
-| fastnet | FastNet 网络测速 | networking service | /cgi-bin/luci/admin/services/linkease_apps/open?id=fastnet | https://www.koolcenter.com/t/topic/9148 | FastNet 提供网络测速与网络诊断 Web UI，默认端口 3200。 |
+| fastnet | FastNet 网络测速 | networking service | /cgi-bin/luci/admin/services/fastnet | https://www.koolcenter.com/t/topic/9148 | FastNet 提供网络测速与网络诊断 Web UI，默认端口 3200。 |
 | floatip | 浮动网关 | net tool | /cgi-bin/luci/admin/services/floatip | https://github.com/linkease/nas-packages | 浮动网关可以让你在内网有两个相互备份的网关，出现问题会相互切换。 |
 | gogs | Gogs服务 | net tool | /cgi-bin/luci/admin/services/gogs | https://gogs.io/ | 一款极易搭建的自助Git服务。 |
 | heimdall | Heimdall | net service | /cgi-bin/luci/admin/services/heimdall | https://heimdall.site/ | Heimdall 应用程序仪表板是所有 Web 应用程序的仪表板。不过，它不需要仅限于应用程序，您可以添加任何您喜欢的链接 |
@@ -35,7 +35,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | ittools | 开发工具集 | net | /cgi-bin/luci/admin/services/ittools | https://it-tools.tech/ | 开发工具集是集成了很多有用的网页工具。 |
 | jackett | Jackett | download nas | /cgi-bin/luci/admin/services/jackett | https://github.com/Jackett/Jackett | Jackett 是维护索引器抓取和翻译逻辑的单一存储库 - 消除了其他应用程序的负担。 |
 | jellyfin | Jellyfin私有影院 | multimedia net | /cgi-bin/luci/admin/services/jellyfin | https://jellyfin.org | Jellyfin是一个免费自由的媒体系统软件，可以让您方便地管理和串流您的媒体。部分机型无需配置即可支持硬件转码：Easepi ARS2；RK35xx 系列。 |
-| kai | 酷友社KAI | ai system | /cgi-bin/luci/admin/services/kai | https://www.koolcenter.com | KAI安装软件助手(iStoreOS 24版本以上适用) |
+| kai | 酷友社KAI | ai system | /cgi-bin/luci/admin/services/kai | https://ai.koolcenter.com | =酷友社KAI 解决各种问题，加速软件安装 |
 | kodexplorer | 可道云 | nas service | /cgi-bin/luci/admin/services/kodexplorer | https://kodcloud.com | 一款快捷高效的私有云和在线文档管理系统，为个人网站、企业私有云部署、网络存储、在线文档管理、在线办公等提供安全可控，简便易用、可高度定制的私有云产品。采用windows风格界面、操作习惯，无需适应即可快速上手，支持几百种常用文件格式的在线预览，可扩展易定制。 |
 | lanraragi | LANraragi电子书 | multimedia net | /cgi-bin/luci/admin/services/lanraragi | https://lrr.tvc-16.science/ | LANraragi是一个开源的电子书、漫画管理平台。 |
 | linkease | 易有云 | nas service | /cgi-bin/luci/admin/services/linkease | https://www.linkease.com/ | 易有云提供远程访问、文件管理、相册备份、文件同步和备份仓库能力。 |
