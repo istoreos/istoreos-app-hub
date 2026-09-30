@@ -42,9 +42,17 @@ class QuickstartPackageContractTest(unittest.TestCase):
             "https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/",
         )
         self.assertEqual(make_value(netpolicy_makefile, "PKG_VERSION"), "0.2.0-test20260928")
-        self.assertRegex(make_value(netpolicy_makefile, "PKG_HASH"), r"^[0-9a-f]{64}$")
-        self.assertIn("@(x86_64)", netpolicy_makefile.read_text())
-        self.assertIn("/usr/bin/quickstart-netpolicy", netpolicy_makefile.read_text())
+        netpolicy_recipe = netpolicy_makefile.read_text()
+        self.assertRegex(make_value(netpolicy_makefile, "PKG_HASH_x86_64"), r"^[0-9a-f]{64}$")
+        self.assertRegex(make_value(netpolicy_makefile, "PKG_HASH_aarch64"), r"^[0-9a-f]{64}$")
+        self.assertEqual(
+            make_value(netpolicy_makefile, "PKG_HASH"),
+            "$(PKG_HASH_$(ARCH))",
+        )
+        self.assertIn("NETPOLICY_TARGET_x86_64:=x86_64-unknown-linux-musl", netpolicy_recipe)
+        self.assertIn("NETPOLICY_TARGET_aarch64:=aarch64-unknown-linux-musl", netpolicy_recipe)
+        self.assertIn("@(x86_64||aarch64)", netpolicy_recipe)
+        self.assertIn("/usr/bin/quickstart-netpolicy", netpolicy_recipe)
 
         self.assertIn(
             "/etc/quickstart/device-classifications.json",

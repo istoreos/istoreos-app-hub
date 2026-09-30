@@ -61,6 +61,9 @@ make syncapps-all
 make syncapps-app APP=istorepanel
 ```
 
+如需在全量同步时排除本地应用，可在 `.syncapps-ignore` 中每行写一个 app ID；
+详见 `docs/syncapps.md`。
+
 ## 远程快速部署（联调）
 
 用于把 `apps/<id>/` 下“依赖少、路径规律明显”的代码快速覆盖到目标测试路由器，方便调试（不负责部署/解压预编译二进制）。

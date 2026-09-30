@@ -30,6 +30,7 @@ Options:
   --all                  Sync all apps in config
   --app <name>           Sync one app (repeatable)
   --slot <services|luci|meta>  Sync only a slot (repeatable)
+  --ignore-apps-from <path>    Ignore app IDs listed in a file (requires --all)
   --direction <both|push|pull> Default: both
   --dry-run              Pass --dry-run to rsync
   --delete               Pass --delete to rsync (dangerous)
@@ -44,6 +45,7 @@ func main() {
 		apps       multiFlag
 		slots      multiFlag
 		direction  string
+		ignoreFile string
 		dryRun     bool
 		deleteFlag bool
 		listOnly   bool
@@ -53,6 +55,7 @@ func main() {
 	flag.BoolVar(&all, "all", false, "sync all apps")
 	flag.Var(&apps, "app", "sync one app (repeatable)")
 	flag.Var(&slots, "slot", "sync only a slot (repeatable)")
+	flag.StringVar(&ignoreFile, "ignore-apps-from", "", "file containing app IDs to ignore")
 	flag.StringVar(&direction, "direction", "both", "both|push|pull")
 	flag.BoolVar(&dryRun, "dry-run", false, "dry-run")
 	flag.BoolVar(&deleteFlag, "delete", false, "rsync --delete")
@@ -78,11 +81,25 @@ func main() {
 		fmt.Fprintln(os.Stderr, "error: must pass --all or at least one --app")
 		os.Exit(2)
 	}
+	if ignoreFile != "" && !all {
+		fmt.Fprintln(os.Stderr, "error: --ignore-apps-from requires --all")
+		os.Exit(2)
+	}
+
+	var ignoredApps []string
+	if ignoreFile != "" {
+		ignoredApps, err = syncapps.LoadAppIgnoreList(ignoreFile)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "error: load app ignore list:", err)
+			os.Exit(2)
+		}
+	}
 
 	opts := syncapps.Options{
-		Direction: direction,
-		DryRun:    dryRun,
-		Delete:    deleteFlag,
+		Direction:   direction,
+		IgnoredApps: ignoredApps,
+		DryRun:      dryRun,
+		Delete:      deleteFlag,
 	}
 
 	if len(slots) > 0 {

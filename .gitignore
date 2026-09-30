@@ -1,5 +1,6 @@
 bin/
 .sync-state/
+.syncapps-ignore
 .it-runner/logs/
 .it-runner/cache/
 .it-runner/states/
@@ -8,4 +9,3 @@ bin/
 .it-runner/tasks/**/task.local.yaml
 tmp
 __pycache__
-

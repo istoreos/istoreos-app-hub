@@ -13,10 +13,11 @@ import (
 var ErrRsyncNotFound = errors.New("rsync not found")
 
 type Options struct {
-	Slots     []string // services|luci|meta
-	Direction string   // both|push|pull
-	DryRun    bool
-	Delete    bool
+	Slots       []string // services|luci|meta
+	Direction   string   // both|push|pull
+	IgnoredApps []string
+	DryRun      bool
+	Delete      bool
 }
 
 type slotName string
@@ -28,10 +29,6 @@ const (
 )
 
 func Sync(cfg *Config, appsFilter []string, opts Options) error {
-	if _, err := exec.LookPath(cfg.Rsync.Bin); err != nil {
-		return fmt.Errorf("%w: %s", ErrRsyncNotFound, cfg.Rsync.Bin)
-	}
-
 	direction, err := parseDirection(opts.Direction)
 	if err != nil {
 		return err
@@ -42,9 +39,16 @@ func Sync(cfg *Config, appsFilter []string, opts Options) error {
 		return err
 	}
 
-	apps, err := selectApps(cfg, appsFilter)
+	apps, ignoredApps, err := selectApps(cfg, appsFilter, opts.IgnoredApps)
 	if err != nil {
 		return err
+	}
+	if len(ignoredApps) > 0 {
+		fmt.Printf("ignored apps: %s\n", strings.Join(ignoredApps, ", "))
+	}
+
+	if _, err := exec.LookPath(cfg.Rsync.Bin); err != nil {
+		return fmt.Errorf("%w: %s", ErrRsyncNotFound, cfg.Rsync.Bin)
 	}
 
 	baseArgs := []string{"-a", "--update", "--itemize-changes"}
@@ -155,14 +159,32 @@ func parseSlots(slots []string) (map[slotName]bool, error) {
 	return want, nil
 }
 
-func selectApps(cfg *Config, filter []string) ([]string, error) {
+func selectApps(cfg *Config, filter []string, ignored []string) ([]string, []string, error) {
+	ignoredSet := make(map[string]bool)
+	var ignoredNames []string
+	for _, name := range ignored {
+		name = strings.TrimSpace(name)
+		if name == "" || ignoredSet[name] {
+			continue
+		}
+		if _, ok := cfg.Apps[name]; !ok {
+			return nil, nil, fmt.Errorf("ignored app not found in config: %s", name)
+		}
+		ignoredSet[name] = true
+		ignoredNames = append(ignoredNames, name)
+	}
+	sort.Strings(ignoredNames)
+
 	if len(filter) == 0 {
 		var names []string
 		for name := range cfg.Apps {
+			if ignoredSet[name] {
+				continue
+			}
 			names = append(names, name)
 		}
 		sort.Strings(names)
-		return names, nil
+		return names, ignoredNames, nil
 	}
 
 	seen := map[string]bool{}
@@ -173,13 +195,16 @@ func selectApps(cfg *Config, filter []string) ([]string, error) {
 			continue
 		}
 		if _, ok := cfg.Apps[name]; !ok {
-			return nil, fmt.Errorf("app not found in config: %s", name)
+			return nil, nil, fmt.Errorf("app not found in config: %s", name)
+		}
+		if ignoredSet[name] {
+			continue
 		}
 		seen[name] = true
 		out = append(out, name)
 	}
 	sort.Strings(out)
-	return out, nil
+	return out, ignoredNames, nil
 }
 
 func syncSlot(cfg *Config, rsyncBin string, baseArgs []string, appName string, slot slotName, pairs []Pair, dir directionMode) (syncCount int, warnCount int, err error) {

@@ -6,6 +6,7 @@ GO ?= go
 BIN_DIR ?= bin
 SYNCAPPS_BIN := $(BIN_DIR)/syncapps
 SYNCAPPS_CONFIG ?= syncapps.yaml
+SYNCAPPS_IGNORE_FILE ?= $(wildcard .syncapps-ignore)
 APPCATALOG_BIN := $(BIN_DIR)/appcatalog
 
 TOOLS_GO_SRCS := $(shell find tools -type f -name '*.go' -print 2>/dev/null) tools/go.mod tools/go.sum
@@ -39,6 +40,7 @@ help:
   "  DRY=1                       Enable --dry-run" \
   "  DELETE=1                    Enable --delete (dangerous)" \
   "  SYNCAPPS_CONFIG=<path>      Default: syncapps.yaml" \
+  "  SYNCAPPS_IGNORE_FILE=<path> Ignore app IDs during full sync (default: .syncapps-ignore when present)" \
   "" \
   "Remote deploy env (optional):" \
   "  DEPLOY_HOST, DEPLOY_USER, DEPLOY_PORT, DEPLOY_SINGLE_APP"'
@@ -114,11 +116,15 @@ syncapps-list: build-syncapps
 
 .PHONY: syncapps-dry-all
 syncapps-dry-all: build-syncapps
->@"./$(SYNCAPPS_BIN)" --config "$(SYNCAPPS_CONFIG)" --dry-run --all
+>@bash -ceu 'args=(--config "$(SYNCAPPS_CONFIG)" --dry-run --all); \
+	if [[ -n "$(SYNCAPPS_IGNORE_FILE)" ]]; then args+=(--ignore-apps-from "$(SYNCAPPS_IGNORE_FILE)"); fi; \
+	"./$(SYNCAPPS_BIN)" "$${args[@]}"'
 
 .PHONY: syncapps-all
 syncapps-all: build-syncapps
->@"./$(SYNCAPPS_BIN)" --config "$(SYNCAPPS_CONFIG)" --all
+>@bash -ceu 'args=(--config "$(SYNCAPPS_CONFIG)" --all); \
+	if [[ -n "$(SYNCAPPS_IGNORE_FILE)" ]]; then args+=(--ignore-apps-from "$(SYNCAPPS_IGNORE_FILE)"); fi; \
+	"./$(SYNCAPPS_BIN)" "$${args[@]}"'
 
 .PHONY: syncapps-app
 syncapps-app: build-syncapps

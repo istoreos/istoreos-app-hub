@@ -82,3 +82,26 @@ LEGACY_ROOT=/path/to/openwrt-apps make syncapps-dry-all
 # 同步单个 app（只同步 meta slot）
 LEGACY_ROOT=/path/to/openwrt-apps make syncapps-app APP=istorepanel SLOT=meta
 ```
+
+### 全量同步时忽略本地应用
+
+在仓库根目录创建不会纳入 Git 的 `.syncapps-ignore`，每行填写一个
+`syncapps.yaml` 中的应用 ID：
+
+```text
+# 暂时不与 legacy 仓库同步
+kai
+istorepanel
+```
+
+之后照常运行全量同步即可，`syncapps-all` 和 `syncapps-dry-all` 会自动读取该文件：
+
+```bash
+LEGACY_ROOT=.. make syncapps-dry-all
+LEGACY_ROOT=.. make syncapps-all
+```
+
+空行、整行注释和行尾 `#` 注释会被忽略。列表只影响全量同步，不影响
+`make syncapps-app APP=...`。如果需要使用其他文件，可设置
+`SYNCAPPS_IGNORE_FILE=/path/to/file`；设置为空字符串可禁用忽略列表。若列表中
+存在 `syncapps.yaml` 未定义的应用 ID，同步会直接报错，以免拼写错误导致漏排除。
