@@ -20,9 +20,17 @@ linkease-common-bin-1.7.6-linux-aarch64.tar.gz
 linkease-common-bin-1.7.6-linux-arm.tar.gz
 ```
 
-Each file must be a byte-for-byte renamed copy of its 1.7.5 counterpart. Verify
-its size and SHA256 against `linkease-runtime-1.7.6-migration-baseline.md`
-before continuing. Do not rebuild or recompress these archives.
+Each archive must contain the unchanged business binaries from its 1.7.5
+counterpart under a sole top-level directory that exactly matches the 1.7.6
+archive basename. Verify its size, SHA256, layout, and required files with:
+
+```sh
+apps/linkease/tests/check_linkease_runtime_archives.sh \
+  tmp/linkease-runtime-v1.7.6/upload 1.7.6
+```
+
+Do not rebuild the business binaries. Repacking the archives to update the
+top-level directory is required.
 
 ## 2. Verify the Release Before Building IPKs
 

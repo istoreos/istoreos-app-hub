@@ -28,8 +28,22 @@ Release: `linkease-runtime-v1.7.5`
 | `linkease-common-bin-1.7.5-linux-aarch64.tar.gz` | 2811998 | `1646db48f5a512b96a34971e5af82eacd5a51f32abab2c5e84f277c408a72eb8` |
 | `linkease-common-bin-1.7.5-linux-arm.tar.gz` | 2808134 | `61f970245e1ae9783bc58280929e134fb0c94f5fc4e0e9a3deea117846b81e40` |
 
-The 1.7.6 assets must be byte-for-byte copies of these files. Renaming the
-assets must not change their sizes or SHA256 values.
+The business binaries in the 1.7.6 assets must be byte-for-byte copies of the
+files in these archives. The archives themselves are repacked so their sole
+top-level directories match the 1.7.6 source names expected by OpenWrt.
+
+## Repacked 1.7.6 Runtime Assets
+
+Release: `linkease-runtime-v1.7.6`
+
+| Asset | Size | SHA256 |
+| --- | ---: | --- |
+| `linkease-bin-1.7.6-linux-x86_64.tar.gz` | 14386683 | `2beab45ffd519f19e7dce62bbb06a4ddf63919e2ed69b1f8b4333134efbab03c` |
+| `linkease-bin-1.7.6-linux-aarch64.tar.gz` | 13350771 | `129bd623e2eac350365d3687011221bef0d3d6ab0471f9355b050edd07f4eee8` |
+| `linkease-bin-1.7.6-linux-arm.tar.gz` | 12466766 | `28016a6d7d600dd98f6ca784591f1acf4cbac015bcbc8038cd75c4195f70c30a` |
+| `linkease-common-bin-1.7.6-linux-x86_64.tar.gz` | 2901906 | `608806ab0b2983c3abb9c55783673d74533fd56783327354faa246192909a78c` |
+| `linkease-common-bin-1.7.6-linux-aarch64.tar.gz` | 2812006 | `90cc7b43ca881dd6938892b1bb95f8ea55f2b221a44693cdf5875075c0e540c5` |
+| `linkease-common-bin-1.7.6-linux-arm.tar.gz` | 2808133 | `58ef68817e34365f749b8e0a684baaffdab80fc8e7ae7293a052a0f0c0715903` |
 
 ## LinkEase Full Runtime Baseline
 
