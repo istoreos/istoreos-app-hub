@@ -81,13 +81,13 @@ for root in "$@"; do
 	common_control=$(control_of "$common")
 	linkease_control=$(control_of "$linkease")
 	check_control_field "$common_control" '^Package: linkease-common-bin$' "$common: wrong Package"
-	check_control_field "$common_control" '^Version: 1\.7\.6~[^-[:space:]]+-r1$' "$common: wrong Version"
+	check_control_field "$common_control" '^Version: 1\.7\.6(~[^-[:space:]]+-r1|-[^-[:space:]]+-1)$' "$common: wrong Version"
 	check_control_field "$common_control" '^Replaces: linkease \(<< 1\.7\.6~\)$' "$common: missing versioned Replaces"
 	if printf '%s\n' "$common_control" | grep -q '^Conflicts:'; then
 		fail "$common: Conflicts must not block the transition"
 	fi
 	check_control_field "$linkease_control" '^Package: linkease$' "$linkease: wrong Package"
-	check_control_field "$linkease_control" '^Version: 1\.7\.6~[^-[:space:]]+-r1$' "$linkease: wrong Version"
+	check_control_field "$linkease_control" '^Version: 1\.7\.6(~[^-[:space:]]+-r1|-[^-[:space:]]+-1)$' "$linkease: wrong Version"
 	check_control_field "$linkease_control" '^Depends: .*linkease-common-bin \(>=[[:space:]]*1\.7\.6~0\)' "$linkease: missing versioned common dependency"
 
 	common_files=$(data_list_of "$common")
@@ -102,7 +102,7 @@ for root in "$@"; do
 	full=$(one_ipk "$root" linkeasefull)
 	if [[ -n "$full" ]]; then
 		full_control=$(control_of "$full")
-		check_control_field "$full_control" '^Version: 3\.0\.22~[^-[:space:]]+-r2$' "$full: wrong Version"
+		check_control_field "$full_control" '^Version: 3\.0\.22(~[^-[:space:]]+-r2|-[^-[:space:]]+-2)$' "$full: wrong Version"
 		check_control_field "$full_control" '^Depends: .*linkease-common-bin \(>=[[:space:]]*1\.7\.6~0\)' "$full: missing versioned common dependency"
 	fi
 
