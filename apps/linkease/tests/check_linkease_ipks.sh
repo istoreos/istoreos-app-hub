@@ -88,7 +88,7 @@ for root in "$@"; do
 	fi
 	check_control_field "$linkease_control" '^Package: linkease$' "$linkease: wrong Package"
 	check_control_field "$linkease_control" '^Version: 1\.7\.6~[^-[:space:]]+-r1$' "$linkease: wrong Version"
-	check_control_field "$linkease_control" '^Depends: .*linkease-common-bin \(>= 1\.7\.6~\)' "$linkease: missing versioned common dependency"
+	check_control_field "$linkease_control" '^Depends: .*linkease-common-bin \(>=[[:space:]]*1\.7\.6~\)' "$linkease: missing versioned common dependency"
 
 	common_files=$(data_list_of "$common")
 	linkease_files=$(data_list_of "$linkease")
@@ -103,15 +103,15 @@ for root in "$@"; do
 	if [[ -n "$full" ]]; then
 		full_control=$(control_of "$full")
 		check_control_field "$full_control" '^Version: 3\.0\.22~[^-[:space:]]+-r2$' "$full: wrong Version"
-		check_control_field "$full_control" '^Depends: .*linkease-common-bin \(>= 1\.7\.6~\)' "$full: missing versioned common dependency"
+		check_control_field "$full_control" '^Depends: .*linkease-common-bin \(>=[[:space:]]*1\.7\.6~\)' "$full: missing versioned common dependency"
 	fi
 
 	transition=$(one_ipk "$root" linkease-runtime-transition)
 	if [[ -n "$transition" ]]; then
 		control=$(control_of "$transition")
 		check_control_field "$control" '^Version: 1\.7\.6-r1$' "$transition: wrong Version"
-		check_control_field "$control" '^Depends: .*linkease \(>= 1\.7\.6~\)' "$transition: missing versioned LinkEase dependency"
-		check_control_field "$control" '^Depends: .*luci-lib-linkeasefile \(>= 2\.1\.70-r4\)' "$transition: missing versioned LuCI handoff dependency"
+		check_control_field "$control" '^Depends: .*linkease \(>=[[:space:]]*1\.7\.6~\)' "$transition: missing versioned LinkEase dependency"
+		check_control_field "$control" '^Depends: .*luci-lib-linkeasefile \(>=[[:space:]]*2\.1\.70-r4\)' "$transition: missing versioned LuCI handoff dependency"
 	fi
 
 	for spec in 'app-meta-linkease:3\.0\.0-r3' 'app-meta-linkeasefull:3\.0\.22-r3'; do

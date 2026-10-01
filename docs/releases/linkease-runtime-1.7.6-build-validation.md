@@ -42,9 +42,9 @@ directories. It verified:
 - `linkease-common-bin` is `1.7.6~<variant>-r1`, has
   `Replaces: linkease (<< 1.7.6~)`, and has no transition-blocking `Conflicts`;
 - `linkease` is `1.7.6~<variant>-r1` and requires
-  `linkease-common-bin (>= 1.7.6~)`;
+  `linkease-common-bin (>=1.7.6~)`;
 - `linkeasefull` is `3.0.22~<variant>-r2` and requires
-  `linkease-common-bin (>= 1.7.6~)` where that product supports the architecture;
+  `linkease-common-bin (>=1.7.6~)` where that product supports the architecture;
 - `luci-lib-linkeasefile 2.1.70-r4` replaces
   `luci-app-linkease (<< 2.1.70-r4)`, while `luci-app-linkease 2.1.70-r4`
   requires the new library generation;
