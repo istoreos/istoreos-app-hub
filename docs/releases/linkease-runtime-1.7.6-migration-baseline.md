@@ -105,7 +105,7 @@ Baseline verdict: **RED**.
 
 The check becomes green only after the device has all of the following:
 
-- installed `linkease >= 1.7.6~`;
-- installed `linkease-common-bin >= 1.7.6~`;
+- installed `linkease >= 1.7.6~0`;
+- installed `linkease-common-bin >= 1.7.6~0`;
 - `Replaces: linkease (<< 1.7.6~)` in the installed common package control;
 - exclusive `linkease-common-bin` ownership of the three shared paths.

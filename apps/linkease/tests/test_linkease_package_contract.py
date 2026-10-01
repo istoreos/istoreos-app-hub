@@ -81,7 +81,13 @@ class LinkEasePackageContractTest(unittest.TestCase):
                     makefile,
                     r"(?m)^(?:LUCI_)?EXTRA_DEPENDS.*\([<>]=?\s+",
                     "OpenWrt APK parsing requires the operator and version "
-                    "to be one word, for example (>=1.7.6~)",
+                    "to be one word, for example (>=1.7.6~0)",
+                )
+                self.assertNotRegex(
+                    makefile,
+                    r"(?m)^(?:LUCI_)?EXTRA_DEPENDS.*[~]\)",
+                    "OpenWrt APK parsing rejects an incomplete version that "
+                    "ends with a bare tilde, for example (>=1.7.6~)",
                 )
 
     def test_standard_linkease_uses_legacy_runtime_only(self):
@@ -120,7 +126,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_SOURCE_DATE:=1.7.6", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("DEPENDS:=@(arm||x86_64||aarch64) +linkease-common-bin", makefile)
-        self.assertIn("EXTRA_DEPENDS:=linkease-common-bin (>=1.7.6~)", makefile)
+        self.assertIn("EXTRA_DEPENDS:=linkease-common-bin (>=1.7.6~0)", makefile)
         self.assertIn("PKGARCH:=all", makefile)
         self.assertNotIn("dl.istoreos.com/binary/LinkEase/LinuxStorage", makefile)
         self.assertNotIn("+linkmount", makefile)
@@ -165,7 +171,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertIn("PKG_NAME:=linkease-runtime-transition", transition)
         self.assertIn("PKG_VERSION:=1.7.6", transition)
         self.assertIn(
-            "EXTRA_DEPENDS:=linkease (>=1.7.6~), luci-lib-linkeasefile (>=2.1.70-r4)",
+            "EXTRA_DEPENDS:=linkease (>=1.7.6~0), luci-lib-linkeasefile (>=2.1.70-r4)",
             transition,
         )
         self.assertIn(
@@ -310,7 +316,7 @@ class LinkEasePackageContractTest(unittest.TestCase):
         self.assertNotIn("$(PKG_BUILD_DIR)/scripts", makefile)
         self.assertNotIn("/usr/libexec/linkeasefull/scripts", makefile)
         self.assertIn("DEPENDS:=@(x86_64||aarch64) +linkease-app-entry +linkease-common-bin +ca-bundle +cifsmount +kmod-fs-cifs", makefile)
-        self.assertIn("EXTRA_DEPENDS:=linkease-common-bin (>=1.7.6~)", makefile)
+        self.assertIn("EXTRA_DEPENDS:=linkease-common-bin (>=1.7.6~0)", makefile)
         self.assertNotIn("+linkease +luci-app-linkease", makefile)
         self.assertNotIn("$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/heif-converter $(1)/usr/bin/heif-converter", makefile)
         self.assertNotIn("/etc/config/linkease\n", makefile)

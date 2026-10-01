@@ -57,7 +57,7 @@ class LinkEaseControlGenerationTest(unittest.TestCase):
             r"""
             define Package/linkease
               DEPENDS:=+linkease-common-bin
-              EXTRA_DEPENDS:=linkease-common-bin (>=1.7.6~)
+              EXTRA_DEPENDS:=linkease-common-bin (>=1.7.6~0)
             endef
             $(eval $(Package/linkease))
             $(info Depends: $(EXTRA_DEPENDS))
@@ -74,7 +74,7 @@ class LinkEaseControlGenerationTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            "Depends: linkease-common-bin (>=1.7.6~)", result.stdout.strip()
+            "Depends: linkease-common-bin (>=1.7.6~0)", result.stdout.strip()
         )
 
 
