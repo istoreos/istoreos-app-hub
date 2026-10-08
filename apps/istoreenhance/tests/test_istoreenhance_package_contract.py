@@ -1,5 +1,8 @@
 from pathlib import Path
 import json
+import re
+import subprocess
+import tempfile
 import unittest
 
 
@@ -13,7 +16,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
     def test_runtime_package_tracks_kspeeder_release_asset(self):
         makefile = self.read("istoreenhance/Makefile")
 
-        self.assertIn("PKG_SOURCE_DATE:=0.8.1", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=0.8.3", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
@@ -21,7 +24,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             makefile,
         )
         self.assertIn(
-            "PKG_HASH:=eb95a8552428def9b6a87a06ad88261c8de9a3abb3ed2f81ef512f9f66c41f9d",
+            "PKG_HASH:=6705afb02b5b079d4f8b6ac9ed57171b9b82baa46585e8d34685d8d180b5a366",
             makefile,
         )
         self.assertIn("PKG_BUILD_DIR:=$(BUILD_DIR)/iStoreEnhance-binary-$(PKG_SOURCE_DATE)", makefile)
@@ -29,7 +32,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
     def test_meta_package_shows_runtime_version(self):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
-        self.assertIn("PKG_VERSION:=0.8.1", makefile)
+        self.assertIn("PKG_VERSION:=0.8.3", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
@@ -91,7 +94,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_VERSION:=0.8.1", makefile)
+        self.assertIn("PKG_VERSION:=0.8.3", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
@@ -109,6 +112,78 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertIn('json_add_string "href" "/cgi-bin/luci/admin/services/istoreenhance"', meta_entry)
         self.assertNotIn('json_add_string "href" "http://$host:', meta_entry)
         self.assertNotIn('linkease_apps/open?id=kspeeder', meta_entry)
+
+    def test_runtime_depends_on_ks_cli(self):
+        makefile = self.read("istoreenhance/Makefile")
+        depends = re.search(r"^\s*DEPENDS:=(.+)$", makefile, re.MULTILINE)
+
+        self.assertIsNotNone(depends)
+        self.assertIn("+ks-cli", depends.group(1).split())
+
+    def test_ks_cli_tracks_release_archive_and_supported_architectures(self):
+        makefile = self.read("ks-cli/Makefile")
+
+        self.assertIn("PKG_NAME:=ks-cli", makefile)
+        self.assertIn("PKG_VERSION:=0.8.3", makefile)
+        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_SOURCE:=ks-cli-binary-$(PKG_VERSION).tar.gz", makefile)
+        self.assertIn(
+            "PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_VERSION)/",
+            makefile,
+        )
+        self.assertIn(
+            "PKG_HASH:=24ee1bb023d04f2eeb447c28cd1dbb76d594670d30255d8fc6278553beeea811",
+            makefile,
+        )
+        self.assertIn("DEPENDS:=@(arm||x86_64||aarch64)", makefile)
+        self.assertNotRegex(makefile, r"PKGARCH\s*:?=\s*all")
+
+    def test_ks_cli_install_selects_the_target_binary(self):
+        with tempfile.TemporaryDirectory() as directory:
+            sdk = Path(directory)
+            (sdk / "rules.mk").touch()
+            (sdk / "package.mk").touch()
+            build = sdk / "build/ks-cli-binary-0.8.3"
+            build.mkdir(parents=True)
+            for arch in ("x86_64", "aarch64", "arm"):
+                (build / f"ks-cli.{arch}").write_bytes(f"binary for {arch}".encode())
+            harness = sdk / "install.mk"
+            harness.write_text(
+                "include " + str(ROOT / "ks-cli/Makefile") + "\n"
+                "install:\n\t$(call Package/ks-cli/install,$(DESTDIR))\n",
+                encoding="utf-8",
+            )
+
+            for arch in ("x86_64", "aarch64", "arm"):
+                with self.subTest(arch=arch):
+                    destination = sdk / arch
+                    result = subprocess.run(
+                        [
+                            "make", "--no-print-directory", "-f", str(harness), "install",
+                            f"TOPDIR={sdk}", f"INCLUDE_DIR={sdk}", f"BUILD_DIR={sdk / 'build'}",
+                            f"ARCH={arch}", f"DESTDIR={destination}",
+                            "INSTALL_DIR=install -d -m0755", "INSTALL_BIN=install -m0755",
+                        ],
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                    binary = destination / "usr/bin/ks-cli"
+                    self.assertEqual(binary.read_bytes(), f"binary for {arch}".encode())
+                    self.assertEqual(binary.stat().st_mode & 0o777, 0o755)
+                    files = [p for p in destination.rglob("*") if p.is_file()]
+                    self.assertEqual(files, [binary])
+
+    def test_syncapps_exports_ks_cli_with_istoreenhance(self):
+        syncapps = (ROOT.parents[1] / "syncapps.yaml").read_text(encoding="utf-8")
+        section = re.search(
+            r"(?ms)^    istoreenhance:\n(?P<body>.*?)(?=^    [a-z0-9][^:\n]*:\n|\Z)",
+            syncapps,
+        )
+
+        self.assertIsNotNone(section)
+        self.assertIn("local: apps/istoreenhance/ks-cli", section.group("body"))
+        self.assertIn("remote: nas-packages/network/services/ks-cli", section.group("body"))
 
 
 if __name__ == "__main__":
