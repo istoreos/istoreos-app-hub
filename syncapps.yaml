@@ -234,6 +234,8 @@ apps:
         services:
             - local: apps/istoreenhance/istoreenhance
               remote: nas-packages/network/services/istoreenhance
+            - local: apps/istoreenhance/ks-cli
+              remote: nas-packages/network/services/ks-cli
         luci:
             - local: apps/istoreenhance/luci-app-istoreenhance
               remote: nas-packages-luci/luci/luci-app-istoreenhance
