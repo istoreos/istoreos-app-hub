@@ -18,9 +18,12 @@ ripgrep execution failed
 - `kai_session/Makefile` installs the matching binary as `/usr/sbin/rg`.
 - Runtime archives are published under the matching
   `kai-runtime-v<version>` release in `istoreos/istoreos-app-hub`.
-- A package update must publish the new prebuilt archives first, then update
-  `PKG_VERSION` and `PKG_HASH` together for `kai`, `kai_session`, and
-  `kai-agent`.
+- Each changed package must update `PKG_VERSION` and `PKG_HASH` together,
+  using its corresponding prebuilt archive. Publish the archives before
+  committing or distributing the package update.
+- Skills-only updates can release `kai-agent` independently. Keep `kai` and
+  `kai_session` at their existing tested runtime version when their code and
+  runtime dependencies have not changed.
 - Run `./tests/test-local-agent-contract.sh` before committing the plugin.
 - On a target device, verify both `/usr/sbin/rg --version` and a real skill
   directory scan. Merely listing available skills does not exercise ripgrep.
@@ -28,6 +31,58 @@ ripgrep execution failed
 Keep this dependency in the release artifact and OpenWrt package. Installation
 is intentionally unconditional so a missing architecture-specific `rg` fails
 the package build instead of falling back to a first-run network download.
+
+## Skills update: kai-agent 0.0.26
+
+The released version combination is `kai-agent 0.0.26`, `kai 0.0.25`,
+`kai_session 0.0.25` (OpenCode 1.18.32), and `app-meta-kai 1.0.2-r8`.
+The Agent bundle uses linkease-skills commit
+`a7c5b1e7a855edcbac21ed25e46515e540fc4fae`, replacing the
+`e5ba9ec05cc6c1160242084e65277a2723a8539c` skills bundled in 0.0.25.
+
+This update adds scoped mise SDK probes and installation receipts, isolated
+pip/npm/Go dependency acceptance, and current-run gateway evidence checks.
+Client success without gateway evidence is reported as partial/pending. It
+also fixes runtime environment and opkg query guidance. The existing local
+instructions glob loads the updated routing reminder without a config change.
+
+In the `istore-ai-helper` source checkout, prepare the release with:
+
+```sh
+make test-agent-bundle
+VERSION=0.0.26 ./scripts/build-agent-bundle.sh
+sha256sum build/kai-agent-bundle-0.0.26.tar.gz
+```
+
+Expected archive SHA-256:
+`04ac5286b45e0e88e9d197992041299250a30d83151f59008fc035b1a0a62ac4`.
+The expected value identifies the prepared artifact; changing the product or
+skills commit changes the bundle manifest and requires a new checksum.
+`kai-agent-bundle-0.0.26.tar.gz`, `agent-manifest.json`, and `SHA256SUMS`
+are published in [kai-runtime-v0.0.26](https://github.com/istoreos/istoreos-app-hub/releases/tag/kai-runtime-v0.0.26).
+This is an Agent-only release; binaries remain available under
+`kai-runtime-v0.0.25`.
+
+Run `sh apps/kai/tests/test-local-agent-contract.sh`, then build and
+distribute the updated `kai-agent` and `app-meta-kai` packages. On an
+opkg-based device with the updated package feed, apply the update with:
+
+```sh
+opkg update
+opkg install kai-agent app-meta-kai
+/etc/init.d/kai restart
+readlink /usr/share/kai/agent
+cat /usr/share/kai/agent/manifest.json
+(cd /usr/share/kai/agent/skills/istoreos-mise-runtime && \
+  OPENCODE_CONFIG=/usr/share/kai/agent/opencode.json \
+  /usr/sbin/kai_session debug rg files --glob '**/*' --limit 10)
+```
+
+The active link should resolve to `agent-bundles/0.0.26`; use a fresh session
+to check the updated skills. User settings remain in the writable data
+directory. The upstream skills verification report records x86_64/musl
+device acceptance; this package preparation does not establish new ARM,
+glibc, apk-device, or cold Node/Go install acceptance.
 
 ## HTTP mount contract
 

@@ -72,11 +72,18 @@ if grep -F 'if [ -f "$(PKG_BUILD_DIR)/rg.' "$root/kai_session/Makefile" >/dev/nu
 fi
 for package in kai kai_session kai-agent; do
 	makefile="$root/$package/Makefile"
-	grep -F 'PKG_VERSION:=0.0.25' "$makefile" >/dev/null ||
-		fail "$package does not use the unified KAI runtime version"
+	grep -E '^PKG_VERSION:=[0-9]+\.[0-9]+\.[0-9]+$' "$makefile" >/dev/null ||
+		fail "$package does not pin a release version"
+	grep -E '^PKG_HASH:=[a-f0-9]{64}$' "$makefile" >/dev/null ||
+		fail "$package does not pin its archive SHA-256"
 	grep -F 'https://github.com/istoreos/istoreos-app-hub/releases/download/kai-runtime-v$(PKG_VERSION)/' "$makefile" >/dev/null ||
 		fail "$package does not use the iStoreOS KAI runtime release"
 done
+# Agent assets can ship independently of the gateway and OpenCode binaries.
+gateway_version="$(sed -n 's/^PKG_VERSION:=//p' "$root/kai/Makefile")"
+session_version="$(sed -n 's/^PKG_VERSION:=//p' "$root/kai_session/Makefile")"
+[ "$gateway_version" = "$session_version" ] ||
+	fail "kai and kai_session runtime versions differ"
 grep -F 'url("admin/services/linkease_apps/open")' "$status_view" >/dev/null ||
 	fail "LuCI KAI launcher does not use the shared apps entry"
 grep -F '?id=kai' "$status_view" >/dev/null ||
