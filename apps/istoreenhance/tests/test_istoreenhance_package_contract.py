@@ -16,7 +16,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
     def test_runtime_package_tracks_kspeeder_release_asset(self):
         makefile = self.read("istoreenhance/Makefile")
 
-        self.assertIn("PKG_SOURCE_DATE:=0.8.3", makefile)
+        self.assertIn("PKG_SOURCE_DATE:=0.8.4", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
@@ -24,7 +24,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             makefile,
         )
         self.assertIn(
-            "PKG_HASH:=6705afb02b5b079d4f8b6ac9ed57171b9b82baa46585e8d34685d8d180b5a366",
+            "PKG_HASH:=73f2cdb72b0f073af787fc615ae1ad21d2654033e91e3fc88e7fbb9374dd53f9",
             makefile,
         )
         self.assertIn("PKG_BUILD_DIR:=$(BUILD_DIR)/iStoreEnhance-binary-$(PKG_SOURCE_DATE)", makefile)
@@ -32,7 +32,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
     def test_meta_package_shows_runtime_version(self):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
-        self.assertIn("PKG_VERSION:=0.8.3", makefile)
+        self.assertIn("PKG_VERSION:=0.8.4", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
@@ -94,7 +94,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_VERSION:=0.8.3", makefile)
+        self.assertIn("PKG_VERSION:=0.8.4", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
@@ -124,7 +124,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("ks-cli/Makefile")
 
         self.assertIn("PKG_NAME:=ks-cli", makefile)
-        self.assertIn("PKG_VERSION:=0.8.3", makefile)
+        self.assertIn("PKG_VERSION:=0.8.4", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn("PKG_SOURCE:=ks-cli-binary-$(PKG_VERSION).tar.gz", makefile)
         self.assertIn(
@@ -132,7 +132,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             makefile,
         )
         self.assertIn(
-            "PKG_HASH:=24ee1bb023d04f2eeb447c28cd1dbb76d594670d30255d8fc6278553beeea811",
+            "PKG_HASH:=3393b7d6982ac7f10937abefa4d598cf009cf298c74d70a919287d49015c01e8",
             makefile,
         )
         self.assertIn("DEPENDS:=@(arm||x86_64||aarch64)", makefile)
@@ -143,7 +143,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             sdk = Path(directory)
             (sdk / "rules.mk").touch()
             (sdk / "package.mk").touch()
-            build = sdk / "build/ks-cli-binary-0.8.3"
+            build = sdk / "build/ks-cli-binary-0.8.4"
             build.mkdir(parents=True)
             for arch in ("x86_64", "aarch64", "arm"):
                 (build / f"ks-cli.{arch}").write_bytes(f"binary for {arch}".encode())
