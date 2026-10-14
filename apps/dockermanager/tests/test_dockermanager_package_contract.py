@@ -22,16 +22,16 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         app_meta_config = self.read("app-meta-dockermanager/config.sh")
         app_meta_entry = self.read("app-meta-dockermanager/entry.sh")
 
-        self.assertIn("PKG_VERSION:=0.1.1", makefile)
+        self.assertIn("PKG_VERSION:=0.1.2", makefile)
         self.assertIn(
             "PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/dockermanager-runtime-v$(PKG_VERSION)/",
             makefile,
         )
-        self.assertIn("PKG_HASH:=6bd0a5b91d32125879fa5ae54ca3a00df1a3b37bffadda8f986fbf1c4a3e0919", makefile)
+        self.assertIn("PKG_HASH:=1ecaa4363b1a20a26c31a36f994e94a8064ed0de67cd612a233fc05f5026726a", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
-        self.assertIn("PKG_VERSION:=0.1.1", meta)
-        self.assertIn("PKG_RELEASE:=4", meta)
+        self.assertIn("PKG_VERSION:=0.1.2", meta)
+        self.assertIn("PKG_RELEASE:=1", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth +linkease-app-entry", luci_makefile)
@@ -63,9 +63,9 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("option 'external_port_enabled' '0'", config)
         self.assertIn("option 'socket_path' '/var/run/dockermanager.sock'", config)
         self.assertIn('set dockermanager.@dockermanager[0].external_port_enabled="0"', app_meta_config)
-        self.assertIn('DOCKER_MANAGER_LISTEN_MODE="unix"', init)
-        self.assertIn('DOCKER_MANAGER_SOCKET_PATH="$socket_path"', init)
-        self.assertIn('DOCKER_MANAGER_LISTEN_MODE="tcp"', init)
+        self.assertIn('DOCKER_MANAGER_LISTEN_MODE=$effective_listen_mode', init)
+        self.assertIn('DOCKER_MANAGER_SOCKET_PATH=$socket_path', init)
+        self.assertIn('DOCKER_MANAGER_INTEGRATION_TOKEN_FILE=$integration_token_file', init)
         self.assertIn('"transport": "unix"', plugin)
         self.assertIn('"providerOrder": ["uci"]', plugin)
         self.assertIn('"providers"', plugin)
