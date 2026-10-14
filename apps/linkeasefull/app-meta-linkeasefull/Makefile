@@ -2,8 +2,8 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_VERSION:=3.0.22
-PKG_RELEASE:=3
+PKG_VERSION:=3.0.23
+PKG_RELEASE:=1
 META_TITLE:=易有云完整版
 META_TITLE.en:=LinkEase Full
 # Product boundary: desktop and storage core only. Business app aggregation
