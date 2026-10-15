@@ -31,7 +31,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("PKG_VERSION:=0.1.2", meta)
-        self.assertIn("PKG_RELEASE:=1", meta)
+        self.assertIn("PKG_RELEASE:=2", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth +linkease-app-entry", luci_makefile)
@@ -86,6 +86,24 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn('"fallback"', plugin)
         self.assertIn('/cgi-bin/luci/admin/services/dockermanager', app_meta_entry)
         self.assertNotIn('linkease_apps/open?id=dockermanager', app_meta_entry)
+
+    def test_luci_install_requires_the_shared_apps_modules_generation(self):
+        makefile = self.read("luci-app-dockermanager/Makefile")
+        # An unversioned dependency accepts 1.0.3, whose missing apps_compat
+        # module makes the authenticated status and open routes return 500.
+        self.assertIn(
+            "LUCI_EXTRA_DEPENDS:=luci-lib-linkeaseauth (>=1.2.1)", makefile
+        )
+        # Keep the revision in PKG_VERSION so LuCI builders that clear
+        # PKG_RELEASE still produce an upgrade over the broken 0.1.2 package.
+        self.assertIn("PKG_VERSION:=0.1.2-r2", makefile)
+        self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
+        shared = ROOT.parent / "linkeasefull/luci-lib-linkeaseauth"
+        self.assertIn("PKG_VERSION:=1.2.1", (shared / "Makefile").read_text())
+        for module in ("apps", "apps_compat", "apps_openwrt"):
+            self.assertTrue(
+                (shared / f"luasrc/model/linkease/{module}.lua").is_file(), module
+            )
 
     def test_package_registers_desktop_plugin_without_owning_auth_bridge(self):
         makefile = self.read("dockermanager/Makefile")
