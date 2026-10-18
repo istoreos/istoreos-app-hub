@@ -14,7 +14,7 @@ PKG_VERSION:=0.16.0-test20261018
 PKG_RELEASE:=1
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/
-PKG_HASH:=7f01c3ff04b8f2467a951fee59d50b8a726a5e3c08942a218241161c079b9e12
+PKG_HASH:=a22c1f7b1d3d1ee816a397bb666bd2a7cfb33ba839f21ec428551ba90b449dc6
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
