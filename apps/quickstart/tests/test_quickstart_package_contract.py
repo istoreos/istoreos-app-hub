@@ -34,9 +34,11 @@ class QuickstartPackageContractTest(unittest.TestCase):
         effective_backend_version = f"{backend_version}-r{backend_release}"
 
         self.assertEqual(luci_version, effective_backend_version)
-        self.assertIn(f'local asset_version = "{luci_version}"', template)
+        self.assertRegex(template, rf'local asset_version = "{re.escape(backend_version)}-release-[0-9a-f]{{12}}"')
         self.assertEqual(template.count("?v=<%=asset_version%>"), 3)
         self.assertRegex(make_value(backend_makefile, "PKG_HASH"), r"^[0-9a-f]{64}$")
+        for recipe in (backend_makefile, netpolicy_makefile):
+            self.assertEqual(make_value(recipe, 'RSTRIP'), ':', 'Prebuilt runtime bytes must retain manifest hashes')
         self.assertEqual(
             make_value(backend_makefile, "PKG_SOURCE_URL"),
             "https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/",
@@ -64,6 +66,12 @@ class QuickstartPackageContractTest(unittest.TestCase):
             "task-transactions-v1.json", "lan-device-model-v1.json", "network-audit.json",
         ):
             self.assertIn(f"/etc/quickstart/{state_file}", backend_makefile.read_text())
+        keep = (APP_ROOT / 'quickstart/files/quickstart.keep').read_text().splitlines()
+        for domain in ('layout', 'launcher'):
+            for suffix in ('', '.bak', '.damaged', '.bak.damaged'):
+                path = f'/etc/quickstart/home-{domain}.json{suffix}'
+                self.assertIn(path, backend_makefile.read_text())
+                self.assertIn(path, keep)
 
         icon_dir = APP_ROOT / "luci-app-quickstart" / "htdocs" / "luci-static" / "quickstart" / "device-icons"
         self.assertEqual(

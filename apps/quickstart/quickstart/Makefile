@@ -11,7 +11,7 @@ PKG_ARCH_quickstart:=$(ARCH)
 
 PKG_NAME:=quickstart
 PKG_VERSION:=0.16.1-test20261018
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/
 PKG_HASH:=6e4a111175ea3375e0edf962cdba44464d1ab0fc0c2dee32d60cec8cfea678b1
@@ -22,6 +22,9 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
+
+# Runtime manifests cover these prebuilt bytes; do not strip them again.
+RSTRIP:=:
 
 define Package/$(PKG_NAME)
 	SECTION:=net

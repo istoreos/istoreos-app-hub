@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=quickstart-netpolicy
 PKG_VERSION:=0.2.0-test20260928
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 NETPOLICY_TARGET_x86_64:=x86_64-unknown-linux-musl
 NETPOLICY_TARGET_aarch64:=aarch64-unknown-linux-musl
 NETPOLICY_TARGET:=$(NETPOLICY_TARGET_$(ARCH))
@@ -23,6 +23,9 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
 include $(INCLUDE_DIR)/package.mk
+
+# The packaged ELF must match binarySha256 in the runtime manifest.
+RSTRIP:=:
 
 define Package/$(PKG_NAME)
 	SECTION:=net
