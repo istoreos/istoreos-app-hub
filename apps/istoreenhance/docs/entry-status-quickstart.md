@@ -1,0 +1,9 @@
+# app-meta entry status correction
+
+2026-10-19: app-meta-istoreenhance0.8.4-r2 separates deployed (executable exists) from running (a procd istoreenhance instance reports running). It advertises web/protocol/port only for a running instance, retains the original LuCI href, and rejects malformed or out-of-range ports. Failed ubus/JSON reads return failure rather than a false stopped status. Existing explicit start/stop operations are unchanged; status never invokes them.
+
+Ten isolated cases ran on root@192.168.30.244 using its real shell/jsonfilter/jshn, mocking only ubus/uci and the deployment-file fixture: running, stopped with executable present, absent service, multiple instances, default port, invalid port, out-of-range port, malformed state, ubus failure, undeployed. All passed. Existing ten package contract tests passed with the meta release expectation updated; runtime and LuCI package versions were not changed.
+
+The script was atomically replaced on B after private backup. Installed SHA256: `0d67a859adffacb04ff684acc3801f27b4412330f22e88a705445431430fc341`. The observed real running instance and port5003 agreed with status. Service instance/PID and protected configuration fingerprints were unchanged; no start/stop/reload or package install occurred. This is a direct script candidate, not an opkg metadata or SDK acceptance. Canonical feeds/package publication are not performed by this change.
+
+Quickstart owns the execution report under its `docs/evidence/m70/installed-apps/entry-resolution/script-round-2/`; the preceding test harness failure was missing base64 in the device and did not deploy a broken script. The harness was changed to transport plain JSON. Runtime status decisions must remain separate from installed package identity and cached application listings.
