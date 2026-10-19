@@ -1,0 +1,505 @@
+{
+  "snapshot": "6a532f69259fef2227a5b4cab2a03696bc8d3fb1",
+  "scope": "local isolated stubs only; no device or service commands",
+  "files": [
+    {
+      "app": "baidudrive",
+      "sha256": "21b66b3179127614b7184270f17ac19a5d79284a72bc3c71f7843bc0f41b92a4",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "oneapi",
+      "sha256": "65b0cf9e3c6675ae7865ad1d3c5f10b50ab7ded0645f9e66fff4c68584cad1af",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "istorepanel",
+      "sha256": "b9446133b6619a75754b6431f2c5c2eeffbf9c40e8e74f643fc31e3ebb830688",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": false
+    },
+    {
+      "app": "openwebui",
+      "sha256": "1245df1ecaf67e2729a8ef83d0c2d1e9d83d0571910eb81b665eba531601eba9",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "pve",
+      "sha256": "381edc05e3c24f5f28de8ed8b35b8cd37c4d7bad4b09b99ff521c3a6d3462849",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "istoredup",
+      "sha256": "b7158ef5377bd39bc492a1cdcc2c34336aaac929c6672d4c05bb183e0b39b168",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": false
+    },
+    {
+      "app": "agentflow",
+      "sha256": "1eabe43e3b19e40844d97324b1083c17b81a7ba8cb0c624c759216eca6ae0e22",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "openclawmgr",
+      "sha256": "882af7dbc78ca329ee3dbd87a25a0c35d54d7da6fdcf127c3685b32b38ee0e54",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "codeserver",
+      "sha256": "5a4e65609168a8c31cbaea5f1951731f43d4762d94a6b907965233d43b8389f4",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "ubuntu",
+      "sha256": "4181a1f2ec2646d9d3fdbf59210bd058f20a45e646fdfc7603ed287a439fa870",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "istoreenhance",
+      "sha256": "0d67a859adffacb04ff684acc3801f27b4412330f22e88a705445431430fc341",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "dockermanager",
+      "sha256": "9d673f64d441f0db39c181ff6d3c1084d1d879e1c214bfbb9925abe237b10c7f",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "jellyfin",
+      "sha256": "946c6ced1ac8d73937016df9b584834f6954b2e63c065749bf8c8db96dea8ef8",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "uptimekuma",
+      "sha256": "d623e52dc7b43b04c54667cb37e6fef6335a24990f10e72ab5eb19c9af3fbfe4",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "webvirtcloud",
+      "sha256": "edce0a9e4ade13023a704645581f97d503591b26ced1ad7c2cda826a5527c3ff",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "dpanel",
+      "sha256": "1ef945f8f084502931283a8e039e1ad876507ce0bce5b9b38b425877d4468b38",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": true,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "kai",
+      "sha256": "0423f90826a8ec218ccc70227a58891b06503d516a8cc3c8bc23714e892774b6",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    },
+    {
+      "app": "fastnet",
+      "sha256": "2cfb7147822538802930074838feb68b14d730c170c4663fa6050a5aa40ab8a1",
+      "shSyntaxExitCode": 0,
+      "missingTestBracketSpace": false,
+      "hasMETA_UCI": true
+    }
+  ],
+  "probes": [
+    {
+      "app": "oneapi",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "oneapi",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/oneapi.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "oneapi",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/oneapi.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "istorepanel",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "istorepanel",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/istorepanel.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "istorepanel",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/istorepanel.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "openwebui",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "openwebui",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/openwebui.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "openwebui",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/openwebui.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "pve",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "pve",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/pve.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "pve",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/pve.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "istoredup",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "istoredup",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/istoredup.sh: 32: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "istoredup",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/istoredup.sh: 36: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "openclawmgr",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "codeserver",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "ubuntu",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "ubuntu",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/ubuntu.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "ubuntu",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/ubuntu.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "jellyfin",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "jellyfin",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/jellyfin.sh: 39: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "jellyfin",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/jellyfin.sh: 43: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "uptimekuma",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "uptimekuma",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/uptimekuma.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "uptimekuma",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/uptimekuma.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "webvirtcloud",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "webvirtcloud",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/webvirtcloud.sh: 38: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "webvirtcloud",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/webvirtcloud.sh: 42: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "dpanel",
+      "case": "provider-status-fails",
+      "exitCode": 0,
+      "running": false,
+      "deployed": false,
+      "issueReproduced": true
+    },
+    {
+      "app": "dpanel",
+      "case": "start-when-running",
+      "exitCode": 0,
+      "stubActions": [
+        "start"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/dpanel.sh: 37: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "dpanel",
+      "case": "stop-when-stopped",
+      "exitCode": 0,
+      "stubActions": [
+        "stop"
+      ],
+      "stderr": "/tmp/entry-review-zmpn_k9w/dpanel.sh: 41: [: missing ]",
+      "issueReproduced": true
+    },
+    {
+      "app": "ubuntu",
+      "case": "scheme-disagreement",
+      "href": "https://router.example:43210/",
+      "protocol": "http",
+      "issueReproduced": true
+    },
+    {
+      "app": "openclawmgr",
+      "case": "web-vs-href-token",
+      "webHasToken": false,
+      "hrefHasToken": true,
+      "issueReproduced": true
+    },
+    {
+      "app": "oneapi",
+      "case": "actual-provider-port-with-htreader-0",
+      "expectedPort": "43000",
+      "actualPort": "",
+      "stubDockerQueries": [
+        "ps --all -f name=^/htreader$ --format {{.Ports}}"
+      ],
+      "issueReproduced": true
+    },
+    {
+      "app": "oneapi",
+      "case": "actual-provider-port-with-htreader-1",
+      "expectedPort": "43000",
+      "actualPort": "49060",
+      "stubDockerQueries": [
+        "ps --all -f name=^/htreader$ --format {{.Ports}}"
+      ],
+      "issueReproduced": true
+    },
+    {
+      "app": "openwebui",
+      "case": "actual-provider-port-with-htreader-0",
+      "expectedPort": "43080",
+      "actualPort": "",
+      "stubDockerQueries": [
+        "ps --all -f name=^/htreader$ --format {{.Ports}}"
+      ],
+      "issueReproduced": true
+    },
+    {
+      "app": "openwebui",
+      "case": "actual-provider-port-with-htreader-1",
+      "expectedPort": "43080",
+      "actualPort": "49060",
+      "stubDockerQueries": [
+        "ps --all -f name=^/htreader$ --format {{.Ports}}"
+      ],
+      "issueReproduced": true
+    },
+    {
+      "app": "uptimekuma",
+      "case": "actual-provider-port-with-htreader-0",
+      "expectedPort": "43001",
+      "actualPort": "",
+      "stubDockerQueries": [
+        "ps --all -f name=^/uptimekuma$ --format {{.Ports}}"
+      ],
+      "issueReproduced": true
+    },
+    {
+      "app": "uptimekuma",
+      "case": "actual-provider-port-with-htreader-1",
+      "expectedPort": "43001",
+      "actualPort": "",
+      "stubDockerQueries": [
+        "ps --all -f name=^/uptimekuma$ --format {{.Ports}}"
+      ],
+      "issueReproduced": true
+    }
+  ],
+  "temporaryFilesCleaned": true
+}
