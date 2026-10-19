@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=1.0.2
-PKG_RELEASE:=8
+PKG_RELEASE:=9
 META_TITLE:=酷友社KAI
 META_TITLE.en:=kai
 META_DEPENDS:=+luci-app-kai +kai +kai_session +kai-agent

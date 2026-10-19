@@ -1,0 +1,1725 @@
+{
+  "result": "failed",
+  "scope": "isolated target ash/jshn, no real services",
+  "sourceHashes": {
+    "apps/oneapi/luci-app-oneapi/root/usr/libexec/istorec/oneapi.sh": "50f0085ee571649ce37aa2751a3e05602a7f0919927b45c374fc0349e3fcffae",
+    "apps/oneapi/app-meta-oneapi/entry.sh": "d0068a27c709966ab3d72114cbf34c69a0dab12941cee0e7898e30191f7045cb",
+    "apps/openwebui/luci-app-openwebui/root/usr/libexec/istorec/openwebui.sh": "a3b6f06d582f21bcb7c6727d8cd4c7f1262a58126e09331c11299a8cb245f0e0",
+    "apps/openwebui/app-meta-openwebui/entry.sh": "fd228ea1e3e9a889e9f11e68cadf86a6050484e0de94d1792e11268969c3cac2",
+    "apps/pve/luci-app-pve/root/usr/libexec/istorec/pve.sh": "9e856a786e8e347f585a4a9dbe3540699730a40fafac166bebb608e02ccda7f9",
+    "apps/pve/app-meta-pve/entry.sh": "f9930caaec783f6b2a9ce24e1accc63020a51e7c0397460354ee832a6d2cc3f5",
+    "apps/codeserver/luci-app-codeserver/root/usr/libexec/istorec/codeserver.sh": "b33b92a462528428049af6a6e8e042b1762dc8ab88a64c35735c5f99b6bf235d",
+    "apps/codeserver/app-meta-codeserver/entry.sh": "9f4a090dd3aabf47a9a9a3db24863eee86b2a662ab0cb483d9b64e6c1a42ef93",
+    "apps/ubuntu2/luci-app-ubuntu2/root/usr/libexec/istorec/ubuntu2.sh": "95af65b48d94e07ff4f5072efcd950fb0edf97f607bab990cb22a62519170464",
+    "apps/ubuntu/app-meta-ubuntu/entry.sh": "7f896ba9eeb12dffa1cd1322d7a846c61158e895d678deb7922d673c8ecc1c73",
+    "apps/jellyfin/luci-app-jellyfin/root/usr/libexec/istorec/jellyfin.sh": "c12768cf9f60027197146861b629d8e0049bbba91b18161c99f80f71b957a67a",
+    "apps/jellyfin/app-meta-jellyfin/entry.sh": "6f53eeafddd33b5cb807494b0993f503a67e0fb6c2c722624964469906dc3287",
+    "apps/uptimekuma/luci-app-uptimekuma/root/usr/libexec/istorec/uptimekuma.sh": "c634b249fc3ca83e2cbdc37075b4bd2cf2197eb5cc9c0933a1a80b4620504234",
+    "apps/uptimekuma/app-meta-uptimekuma/entry.sh": "ee96c9dd4543c14e04c535429f0c5b6ca9245a2f3dd19e48ce6d2856e8b4ec26",
+    "apps/webvirtcloud/luci-app-webvirtcloud/root/usr/libexec/istorec/webvirtcloud.sh": "0311d836359d3fff443d5aa2d76bff238a668b1a78da8cde722b69ce9b6acbc0",
+    "apps/webvirtcloud/app-meta-webvirtcloud/entry.sh": "52e8190a06544925cc33e76035c9767bd4e5527f29de13c206843466b3192322",
+    "apps/dpanel/luci-app-dpanel/root/usr/libexec/istorec/dpanel.sh": "25e91f5a19f6c813be2e731715cbea17736c2552d16f2bc103d357b6635769d2",
+    "apps/dpanel/app-meta-dpanel/entry.sh": "9aac832a002a840121f174c4d49234452723fd55d875f26197aec6a83514d408",
+    "apps/baidudrive/app-meta-baidudrive/entry.sh": "21b66b3179127614b7184270f17ac19a5d79284a72bc3c71f7843bc0f41b92a4",
+    "apps/agentflow/app-meta-agentflow/entry.sh": "1eabe43e3b19e40844d97324b1083c17b81a7ba8cb0c624c759216eca6ae0e22",
+    "apps/kai/app-meta-kai/entry.sh": "0423f90826a8ec218ccc70227a58891b06503d516a8cc3c8bc23714e892774b6",
+    "apps/istoreenhance/app-meta-istoreenhance/entry.sh": "0d67a859adffacb04ff684acc3801f27b4412330f22e88a705445431430fc341",
+    "apps/dockermanager/app-meta-dockermanager/entry.sh": "9d673f64d441f0db39c181ff6d3c1084d1d879e1c214bfbb9925abe237b10c7f",
+    "apps/openclawmgr/app-meta-openclawmgr/entry.sh": "882af7dbc78ca329ee3dbd87a25a0c35d54d7da6fdcf127c3685b32b38ee0e54",
+    "apps/fastnet/app-meta-fastnet/entry.sh": "2cfb7147822538802930074838feb68b14d730c170c4663fa6050a5aa40ab8a1"
+  },
+  "cases": [
+    {
+      "app": "oneapi",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "host-network-default",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "status-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "port-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "ambiguous-ports",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "invalid-port",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "baidudrive",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-port",
+        "mismatch-web",
+        "mismatch-href"
+      ]
+    },
+    {
+      "app": "baidudrive",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "baidudrive",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "baidudrive",
+      "name": "ubus-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "baidudrive",
+      "name": "malformed-service-json",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "baidudrive",
+      "name": "wrong-web-command",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "baidudrive",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "baidudrive",
+      "name": "start-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "baidudrive",
+      "name": "stop-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "baidudrive",
+      "name": "dependency-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "agentflow",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-port",
+        "mismatch-web",
+        "mismatch-href"
+      ]
+    },
+    {
+      "app": "agentflow",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "agentflow",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "agentflow",
+      "name": "ubus-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "agentflow",
+      "name": "malformed-service-json",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "agentflow",
+      "name": "wrong-web-command",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "agentflow",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "agentflow",
+      "name": "start-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "agentflow",
+      "name": "stop-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "agentflow",
+      "name": "ambiguous-instances",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "kai",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-port",
+        "mismatch-web",
+        "mismatch-href"
+      ]
+    },
+    {
+      "app": "kai",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "kai",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "kai",
+      "name": "ubus-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "kai",
+      "name": "malformed-service-json",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "kai",
+      "name": "wrong-web-command",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "kai",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "kai",
+      "name": "start-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "kai",
+      "name": "stop-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "kai",
+      "name": "dependency-only",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "istoreenhance",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "istoreenhance",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "istoreenhance",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "istoreenhance",
+      "name": "ubus-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "istoreenhance",
+      "name": "malformed-service-json",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "istoreenhance",
+      "name": "wrong-web-command",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "istoreenhance",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed"
+      ]
+    },
+    {
+      "app": "istoreenhance",
+      "name": "start-failure",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0"
+      ]
+    },
+    {
+      "app": "istoreenhance",
+      "name": "stop-failure",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0"
+      ]
+    },
+    {
+      "app": "istoreenhance",
+      "name": "ambiguous-instances",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dockermanager",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-port",
+        "mismatch-web",
+        "mismatch-docker",
+        "mismatch-href"
+      ]
+    },
+    {
+      "app": "dockermanager",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dockermanager",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dockermanager",
+      "name": "ubus-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dockermanager",
+      "name": "malformed-service-json",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dockermanager",
+      "name": "wrong-web-command",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dockermanager",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dockermanager",
+      "name": "start-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dockermanager",
+      "name": "stop-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dockermanager",
+      "name": "unix-listener",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "dockermanager",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-web",
+        "mismatch-href"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-deployed",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "ubus-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "malformed-service-json",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "wrong-web-command",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-running",
+        "mismatch-deployed",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "start-failure",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "stop-failure",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "openclawmgr",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "fastnet",
+      "name": "effective-runtime-port",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "absent-service",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "ubus-error",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "malformed-service-json",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "wrong-web-command",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "start-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "stop-failure",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "fastnet",
+      "name": "ambiguous-instances",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    }
+  ],
+  "temporaryFilesCleaned": true
+}

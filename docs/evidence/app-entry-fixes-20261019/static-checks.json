@@ -1,0 +1,12 @@
+{
+  "shellSyntaxPassed": 24,
+  "regressionSourceHashesMatchCurrentFiles": true,
+  "pythonSyntaxPassed": true,
+  "untouchedFilesIncludingFastnet": 48,
+  "preexistingFailingContractInputsUnchanged": [
+    "apps/linkeasefull/linkease-app-entry/Makefile",
+    "apps/fastnet/fastnet/Makefile",
+    "apps/linkeasefull/app-meta-linkeasefull/Makefile"
+  ],
+  "diffCheckPassed": true
+}

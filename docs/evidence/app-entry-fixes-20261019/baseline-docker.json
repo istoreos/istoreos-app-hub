@@ -1,0 +1,1379 @@
+{
+  "result": "failed",
+  "scope": "isolated target ash/jshn, no real services",
+  "sourceHashes": {
+    "apps/oneapi/luci-app-oneapi/root/usr/libexec/istorec/oneapi.sh": "07c27a099cd28d6a1bebf4e284be63179e8fec501a7bbf8c42a90022f62350b1",
+    "apps/oneapi/app-meta-oneapi/entry.sh": "65b0cf9e3c6675ae7865ad1d3c5f10b50ab7ded0645f9e66fff4c68584cad1af",
+    "apps/openwebui/luci-app-openwebui/root/usr/libexec/istorec/openwebui.sh": "eb83ff82334f7839c69f5bae9db4fb7e21087bf53c3abc0062e12a056188e154",
+    "apps/openwebui/app-meta-openwebui/entry.sh": "1245df1ecaf67e2729a8ef83d0c2d1e9d83d0571910eb81b665eba531601eba9",
+    "apps/pve/luci-app-pve/root/usr/libexec/istorec/pve.sh": "30761b6ce7c744597f679772cd7a707369b6d5cb772276371e87f5e039b9e571",
+    "apps/pve/app-meta-pve/entry.sh": "381edc05e3c24f5f28de8ed8b35b8cd37c4d7bad4b09b99ff521c3a6d3462849",
+    "apps/codeserver/luci-app-codeserver/root/usr/libexec/istorec/codeserver.sh": "1b99ae52ec7e6f136ea03c1aa1aa88fc8bc2a3102710ceee06b01233d9b553d9",
+    "apps/codeserver/app-meta-codeserver/entry.sh": "5a4e65609168a8c31cbaea5f1951731f43d4762d94a6b907965233d43b8389f4",
+    "apps/ubuntu2/luci-app-ubuntu2/root/usr/libexec/istorec/ubuntu2.sh": "ea6f4c9783e59b40f1668c57c785ddcbdde3609f7928a2bc41aa38c335cd4a17",
+    "apps/ubuntu/app-meta-ubuntu/entry.sh": "4181a1f2ec2646d9d3fdbf59210bd058f20a45e646fdfc7603ed287a439fa870",
+    "apps/jellyfin/luci-app-jellyfin/root/usr/libexec/istorec/jellyfin.sh": "5b7033309d7933eb22ebce5dd60d72aefa88d4efb63fe56e5fca42267087f907",
+    "apps/jellyfin/app-meta-jellyfin/entry.sh": "946c6ced1ac8d73937016df9b584834f6954b2e63c065749bf8c8db96dea8ef8",
+    "apps/uptimekuma/luci-app-uptimekuma/root/usr/libexec/istorec/uptimekuma.sh": "59366dc4f818abf457e2bc5410dce122e0144f524a643f0aced93d188e45e4d2",
+    "apps/uptimekuma/app-meta-uptimekuma/entry.sh": "d623e52dc7b43b04c54667cb37e6fef6335a24990f10e72ab5eb19c9af3fbfe4",
+    "apps/webvirtcloud/luci-app-webvirtcloud/root/usr/libexec/istorec/webvirtcloud.sh": "8b16cadbbd41fc5f5d635ce1663c2672607d3e1521de8e70b75637222603dc5f",
+    "apps/webvirtcloud/app-meta-webvirtcloud/entry.sh": "edce0a9e4ade13023a704645581f97d503591b26ced1ad7c2cda826a5527c3ff",
+    "apps/dpanel/luci-app-dpanel/root/usr/libexec/istorec/dpanel.sh": "b5a3d2b88793f6ae5d398656d7351a38bb715a98f014503bff6582c598f653b2",
+    "apps/dpanel/app-meta-dpanel/entry.sh": "1ef945f8f084502931283a8e039e1ad876507ce0bce5b9b38b425877d4468b38"
+  },
+  "cases": [
+    {
+      "app": "oneapi",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "oneapi",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "oneapi",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "openwebui",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "openwebui",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "pve",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "pve",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "codeserver",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "codeserver",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web",
+        "mismatch-protocol"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "ubuntu",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "ubuntu",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "jellyfin",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "jellyfin",
+      "name": "host-network-default",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "uptimekuma",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "webvirtcloud",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "actual-port-dual-stack",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-deployed",
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "status-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "port-error",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "stopped",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "undeployed",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "no-published-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "loopback-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "ipv6-only",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "mismatch-port",
+        "mismatch-web"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "ambiguous-ports",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "invalid-port",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "error-must-not-produce-status-json"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "start-running-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "stop-exited-{}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-service-actions"
+      ]
+    },
+    {
+      "app": "dpanel",
+      "name": "start--{}",
+      "exitCode": 1,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "start-exited-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "stop-running-{}",
+      "exitCode": 0,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "start-exited-{'ENTRY_ACTION_EXIT': '23'}",
+      "exitCode": 23,
+      "result": "passed",
+      "failures": []
+    },
+    {
+      "app": "dpanel",
+      "name": "stop-running-{'ENTRY_FAIL': 'status'}",
+      "exitCode": 0,
+      "result": "failed",
+      "failures": [
+        "unexpected-exit-0",
+        "unexpected-service-actions"
+      ]
+    }
+  ],
+  "temporaryFilesCleaned": true
+}

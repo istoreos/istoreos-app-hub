@@ -31,7 +31,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("PKG_VERSION:=0.1.2", meta)
-        self.assertIn("PKG_RELEASE:=2", meta)
+        self.assertIn("PKG_RELEASE:=3", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth +linkease-app-entry", luci_makefile)
@@ -85,7 +85,10 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertNotIn('"portFromUci"', plugin)
         self.assertIn('"fallback"', plugin)
         self.assertIn('/cgi-bin/luci/admin/services/dockermanager', app_meta_entry)
-        self.assertNotIn('linkease_apps/open?id=dockermanager', app_meta_entry)
+        # Unix listeners use the existing resolver for auth/proxy readiness;
+        # href still opens the original LuCI settings page.
+        self.assertIn('linkease_apps/open?id=dockermanager', app_meta_entry)
+        self.assertIn('json_add_string "href" "/cgi-bin/luci/admin/services/dockermanager"', app_meta_entry)
 
     def test_luci_install_requires_the_shared_apps_modules_generation(self):
         makefile = self.read("luci-app-dockermanager/Makefile")
