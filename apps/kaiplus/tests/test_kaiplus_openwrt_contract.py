@@ -20,12 +20,20 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertEqual(manifest["id"], "kaiplus")
         self.assertEqual(manifest["name"], "KaiPlus")
         self.assertEqual(manifest["icon"], "logo.png")
-        self.assertEqual(manifest["staticRoot"], "/usr/share/kaiplus/www")
-        self.assertEqual(manifest["desktop"]["mode"], "module")
-        self.assertEqual(manifest["desktop"]["entry"], "desktop-entry.js")
-        self.assertEqual(manifest["desktop"]["isolation"], "shadow-dom")
+        self.assertEqual(manifest["staticRoot"], "/usr/share/kaiplus")
+        self.assertEqual(manifest["desktop"]["mode"], "iframe")
+        self.assertEqual(manifest["desktop"]["target"]["scheme"], "http")
+        self.assertEqual(manifest["desktop"]["target"]["hostMode"], "request-host")
+        self.assertEqual(manifest["desktop"]["target"]["port"]["default"], 8189)
+        self.assertEqual(
+            manifest["desktop"]["target"]["port"]["keys"]["uci"],
+            "kaiplus.@kaiplus[0].port",
+        )
+        self.assertEqual(manifest["desktop"]["target"]["path"], "/apps/kaiplus/")
+        self.assertEqual(manifest["desktop"]["access"]["scope"], "lan")
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/kaiplus/")
         self.assertEqual(manifest["standalone"]["url"], "/apps/kaiplus/")
+        self.assertTrue(manifest["standalone"]["externalOpen"]["enabled"])
         self.assertEqual(manifest["config"]["providerOrder"], ["uci"])
         self.assertEqual(manifest["config"]["providers"]["uci"]["type"], "uci")
         self.assertEqual(manifest["backend"]["host"], "127.0.0.1")
@@ -47,7 +55,10 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
         self.assertIn("DEPENDS:=+linkease-app-entry", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/kaiplus-plugin.json $(1)/usr/share/kaiplus/kaiplus-plugin.json", makefile)
-        self.assertIn("$(INSTALL_DATA) ./files/logo.png $(1)/usr/share/kaiplus/www/logo.png", makefile)
+        self.assertIn("$(INSTALL_DATA) ./files/logo.png $(1)/usr/share/kaiplus/logo.png", makefile)
+        self.assertNotIn("$(PKG_BUILD_DIR)/www", makefile)
+        self.assertNotIn("$(PKG_BUILD_DIR)/defaults", makefile)
+        self.assertNotIn("$(PKG_BUILD_DIR)/helpers", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn(
             "ln -sf /usr/share/kaiplus/kaiplus-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json",
@@ -90,6 +101,12 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('procd_append_param command --release-channel stable', text)
         self.assertNotIn("--listen-mode unix", text)
         self.assertNotIn("--socket-path", text)
+        self.assertNotIn("--static-dir", text)
+        self.assertNotIn("--defaults-dir", text)
+        self.assertNotIn("KAIPLUS_WORKSPACE_HELPER_DIR", text)
+        self.assertNotIn("KAIPLUS_WORKSPACE_TOOL_INSTALL_DIR", text)
+        self.assertNotIn("KAIPLUS_SSH_HELPER_TOKEN", text)
+        self.assertNotIn("ssh-helper.token", text)
         self.assertNotIn('port "{}"'.format(LEGACY_PORT), text)
 
     def test_router_runtime_directories_are_private_and_init_is_ash_compatible(self):
@@ -125,7 +142,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
-        self.assertIn("PKG_RELEASE:=3", runtime_makefile)
+        self.assertIn("PKG_RELEASE:=4", runtime_makefile)
         self.assertIn("PKG_RELEASE:=5", luci_makefile)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
         self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)

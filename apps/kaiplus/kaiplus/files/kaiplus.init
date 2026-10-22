@@ -33,21 +33,6 @@ start_service() {
 	mkdir_p "$data_dir/state"
 	chmod 0700 "$data_dir/config" "$data_dir/state"
 
-	helper_token_file="$data_dir/state/ssh-helper.token"
-	if [ ! -s "$helper_token_file" ]; then
-		umask 077
-		if [ -r /proc/sys/kernel/random/uuid ]; then
-			cat /proc/sys/kernel/random/uuid > "$helper_token_file"
-		else
-			{
-				date +%s
-				cat /proc/uptime 2>/dev/null
-				dd if=/dev/urandom bs=24 count=1 2>/dev/null || true
-			} | sha256sum | awk '{print $1}' > "$helper_token_file"
-		fi
-	fi
-	helper_token="$(cat "$helper_token_file")"
-
 	logger -t kaiplus "Starting KaiPlus service"
 	procd_open_instance kaiplus_bin
 	procd_set_param env \
@@ -57,16 +42,11 @@ start_service() {
 		KAIPLUS_AUTH_MODE="openwrt_luci" \
 		LINKEASE_AUTH_PROVIDER="openwrt_luci" \
 		KAIPLUS_LISTEN_MODE="tcp" \
-		KAIPLUS_WORKSPACE_HELPER_DIR="/usr/share/kaiplus/helpers" \
-		KAIPLUS_WORKSPACE_TOOL_INSTALL_DIR="/tmp/kaiplus_workspace_tool" \
-		KAIPLUS_SSH_HELPER_TOKEN="$helper_token" \
 		REASONIX_CREDENTIALS_STORE="file"
 	procd_set_param command /usr/sbin/kaiplus_bin kaiplus-web
 	procd_append_param command --listen-mode tcp
 	procd_append_param command --addr "0.0.0.0:$port"
 	procd_append_param command --data-dir "$data_dir"
-	procd_append_param command --static-dir /usr/share/kaiplus/www
-	procd_append_param command --defaults-dir /usr/share/kaiplus/defaults
 	procd_append_param command --base-path /apps/kaiplus/
 	procd_append_param command --system-role istoreos
 	procd_append_param command --release-channel stable
