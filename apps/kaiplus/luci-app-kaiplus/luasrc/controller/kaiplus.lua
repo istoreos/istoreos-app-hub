@@ -25,7 +25,7 @@ function kaiplus_status()
 	local sys = require "luci.sys"
 	local uci = require("luci.model.uci").cursor()
 	compat():legacy_status("kaiplus", {
-		running = sys.call("pidof kaiplus_bin >/dev/null") == 0,
+		running = sys.call("pidof kaiplus >/dev/null") == 0,
 		port = uci:get_first("kaiplus", "kaiplus", "port") or "8189",
 		base_path = "/apps/kaiplus/",
 		listen_mode = "tcp",

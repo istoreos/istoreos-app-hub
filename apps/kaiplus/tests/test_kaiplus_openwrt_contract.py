@@ -97,6 +97,9 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('procd_append_param command --addr "0.0.0.0:$port"', text)
         self.assertIn('procd_append_param command --base-path /apps/kaiplus/', text)
         self.assertIn('procd_append_param command --release-channel stable', text)
+        self.assertIn('procd_open_instance kaiplus', text)
+        self.assertIn('procd_set_param command /usr/sbin/kaiplus kaiplus-web', text)
+        self.assertNotIn("kaiplus_bin", text)
         self.assertNotIn("--listen-mode unix", text)
         self.assertNotIn("--socket-path", text)
         self.assertNotIn("--static-dir", text)
@@ -140,8 +143,8 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
-        self.assertIn("PKG_RELEASE:=7", runtime_makefile)
-        self.assertIn("PKG_RELEASE:=5", luci_makefile)
+        self.assertIn("PKG_RELEASE:=8", runtime_makefile)
+        self.assertIn("PKG_RELEASE:=6", luci_makefile)
         self.assertIn("KAIPLUS_ARCH_x86_64:=amd64", runtime_makefile)
         self.assertIn("KAIPLUS_ARCH_aarch64:=arm64", runtime_makefile)
         self.assertIn(
@@ -161,9 +164,14 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn("HASH:=$(KAIPLUS_HASH_$(ARCH))", runtime_makefile)
         self.assertIn("$(eval $(call Download,kaiplus))", runtime_makefile)
         self.assertIn(
-            "$(CP) $(DL_DIR)/$(KAIPLUS_DOWNLOAD) $(PKG_BUILD_DIR)/kaiplus_bin",
+            "$(CP) $(DL_DIR)/$(KAIPLUS_DOWNLOAD) $(PKG_BUILD_DIR)/kaiplus",
             runtime_makefile,
         )
+        self.assertIn(
+            "$(INSTALL_BIN) $(PKG_BUILD_DIR)/kaiplus $(1)/usr/sbin/kaiplus",
+            runtime_makefile,
+        )
+        self.assertNotIn("kaiplus_bin", runtime_makefile)
         self.assertNotIn("github.com/istoreos/istoreos-app-hub/releases", runtime_makefile)
 
     def test_luci_menu_has_simplified_chinese_translation(self):
@@ -191,6 +199,8 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('function kaiplus_open()', controller)
         self.assertIn('compat():open("kaiplus")', controller)
         self.assertIn('compat():legacy_status("kaiplus"', controller)
+        self.assertIn('pidof kaiplus >/dev/null', controller)
+        self.assertNotIn("kaiplus_bin", controller)
         self.assertNotIn("uhttpd_apps_proxy_available", controller)
         self.assertNotIn("app_entry_running", controller)
         self.assertNotIn("enable_port", controller)
