@@ -54,8 +54,8 @@ start_service() {
 		KAIPLUS_HOME="$data_dir" \
 		KAIPLUS_SYSTEM_ROLE="istoreos" \
 		KAIPLUS_RELEASE_CHANNEL="stable" \
-		KAIPLUS_AUTH_MODE="disabled" \
-		LINKEASE_AUTH_PROVIDER="disabled" \
+		KAIPLUS_AUTH_MODE="openwrt_luci" \
+		LINKEASE_AUTH_PROVIDER="openwrt_luci" \
 		KAIPLUS_LISTEN_MODE="tcp" \
 		KAIPLUS_WORKSPACE_HELPER_DIR="/usr/share/kaiplus/helpers" \
 		KAIPLUS_WORKSPACE_TOOL_INSTALL_DIR="/tmp/kaiplus_workspace_tool" \
