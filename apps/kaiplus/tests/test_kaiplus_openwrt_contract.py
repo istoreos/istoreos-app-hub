@@ -144,7 +144,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
         self.assertIn("PKG_RELEASE:=8", runtime_makefile)
-        self.assertIn("PKG_RELEASE:=6", luci_makefile)
+        self.assertIn("PKG_RELEASE:=7", luci_makefile)
         self.assertIn("KAIPLUS_ARCH_x86_64:=amd64", runtime_makefile)
         self.assertIn("KAIPLUS_ARCH_aarch64:=arm64", runtime_makefile)
         self.assertIn(
@@ -177,8 +177,30 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
     def test_luci_menu_has_simplified_chinese_translation(self):
         text = self.read("luci-app-kaiplus/po/zh-cn/kaiplus.po")
 
-        self.assertIn('msgid "KaiPlus"', text)
-        self.assertIn('msgstr "酷友社AI"', text)
+        translations = {
+            "KaiPlus": "酷友社AI",
+            "KaiPlus is an AI workspace and session service.": "酷友社AI 是一款 AI 工作区与会话服务。",
+            "Global settings": "全局设置",
+            "Enable": "启用",
+            "Data directory": "数据目录",
+            "Required. KaiPlus stores workspace, cache, config, and state under this directory.": "必填。酷友社AI 会在此目录中保存工作区、缓存、配置和状态数据。",
+            "Access port": "访问端口",
+            "KaiPlus is available at http://router-address:port/apps/kaiplus/.": "可通过 http://路由器地址:端口/apps/kaiplus/ 访问酷友社AI。",
+            "The KaiPlus service is running.": "酷友社AI 服务正在运行。",
+            "The KaiPlus service is not running.": "酷友社AI 服务未运行。",
+            "Access mode: LinkEase Desktop proxy.": "访问模式：LinkEase Desktop 代理。",
+            "Access mode: external port.": "访问模式：外部端口。",
+            "External port access is disabled.": "外部端口访问已禁用。",
+            "Click to open KaiPlus": "点击打开酷友社AI",
+            "Status": "状态",
+            "Collecting data...": "正在获取数据……",
+        }
+
+        for source, translated in translations.items():
+            self.assertIn(
+                'msgid "{}"\nmsgstr "{}"'.format(source, translated),
+                text,
+            )
 
     def test_kaiplus_package_contains_no_legacy_port_value(self):
         for path in ROOT.rglob("*"):
