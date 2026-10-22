@@ -51,7 +51,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
-        self.assertIn("DEPENDS:=+linkease-app-entry", makefile)
+        self.assertIn("DEPENDS:=@(x86_64||aarch64) +linkease-app-entry", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/kaiplus-plugin.json $(1)/usr/share/kaiplus/kaiplus-plugin.json", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/logo.png $(1)/usr/share/kaiplus/logo.png", makefile)
         self.assertNotIn("$(PKG_BUILD_DIR)/www", makefile)
@@ -140,10 +140,31 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
-        self.assertIn("PKG_RELEASE:=6", runtime_makefile)
+        self.assertIn("PKG_RELEASE:=7", runtime_makefile)
         self.assertIn("PKG_RELEASE:=5", luci_makefile)
-        self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
-        self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
+        self.assertIn("KAIPLUS_ARCH_x86_64:=amd64", runtime_makefile)
+        self.assertIn("KAIPLUS_ARCH_aarch64:=arm64", runtime_makefile)
+        self.assertIn(
+            "KAIPLUS_HASH_x86_64:=5588a5e1b7874bc5e631ab8ff1288226f567a84d3115808f22352d142c40f5d6",
+            runtime_makefile,
+        )
+        self.assertIn(
+            "KAIPLUS_HASH_aarch64:=5be29e4715a1181937c0156a6954738ce96fde2f338a1b03cd32c68b00e61524",
+            runtime_makefile,
+        )
+        self.assertIn(
+            "URL:=https://fw.koolcenter.com/binary/kai/releases/build/",
+            runtime_makefile,
+        )
+        self.assertIn("URL_FILE:=$(KAIPLUS_URL_FILE)", runtime_makefile)
+        self.assertIn("FILE:=$(KAIPLUS_DOWNLOAD)", runtime_makefile)
+        self.assertIn("HASH:=$(KAIPLUS_HASH_$(ARCH))", runtime_makefile)
+        self.assertIn("$(eval $(call Download,kaiplus))", runtime_makefile)
+        self.assertIn(
+            "$(CP) $(DL_DIR)/$(KAIPLUS_DOWNLOAD) $(PKG_BUILD_DIR)/kaiplus_bin",
+            runtime_makefile,
+        )
+        self.assertNotIn("github.com/istoreos/istoreos-app-hub/releases", runtime_makefile)
 
     def test_luci_menu_has_simplified_chinese_translation(self):
         text = self.read("luci-app-kaiplus/po/zh-cn/kaiplus.po")
