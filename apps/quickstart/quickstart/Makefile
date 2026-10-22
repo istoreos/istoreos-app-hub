@@ -10,11 +10,11 @@ include $(TOPDIR)/rules.mk
 PKG_ARCH_quickstart:=$(ARCH)
 
 PKG_NAME:=quickstart
-PKG_VERSION:=0.16.6-test20261018
-PKG_RELEASE:=2
+PKG_VERSION:=0.17.0-test20261022
+PKG_RELEASE:=1
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/
-PKG_HASH:=84d74f64be89cd15290d05c202555594dcb7ae864d283c29a79177f9f0f5dc44
+PKG_HASH:=af844d40f1c83b8c9fcd8cbe9aa8713831a9cbf4332acd3e49f08404c2a07308
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
