@@ -28,29 +28,15 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertEqual(manifest["standalone"]["url"], "/apps/kaiplus/")
         self.assertEqual(manifest["config"]["providerOrder"], ["uci"])
         self.assertEqual(manifest["config"]["providers"]["uci"]["type"], "uci")
-        self.assertEqual(manifest["backend"]["transport"], "unix")
-        self.assertEqual(
-            manifest["backend"]["values"]["socketPath"]["keys"]["uci"],
-            "kaiplus.@kaiplus[0].socket_path",
-        )
-        self.assertEqual(manifest["backend"]["values"]["socketPath"]["default"], "/var/run/kaiplus.sock")
-        self.assertEqual(
-            manifest["backend"]["values"]["listenMode"]["keys"]["uci"],
-            "kaiplus.@kaiplus[0].listen_mode",
-        )
-        self.assertEqual(manifest["backend"]["values"]["listenMode"]["default"], "auto")
-        self.assertEqual(
-            manifest["backend"]["values"]["externalPortEnabled"]["keys"]["uci"],
-            "kaiplus.@kaiplus[0].external_port_enabled",
-        )
-        self.assertFalse(manifest["backend"]["values"]["externalPortEnabled"]["default"])
-        self.assertEqual(manifest["backend"]["values"]["port"]["keys"]["uci"], "kaiplus.@kaiplus[0].port")
-        self.assertEqual(manifest["backend"]["values"]["port"]["default"], 8189)
+        self.assertEqual(manifest["backend"]["host"], "127.0.0.1")
+        self.assertEqual(manifest["backend"]["portFromUci"], "kaiplus.@kaiplus[0].port")
+        self.assertEqual(manifest["backend"]["defaultPort"], 8189)
         self.assertEqual(manifest["backend"]["upstreamBasePath"], "/apps/kaiplus/")
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
         self.assertEqual(manifest["backend"]["pathMode"], "preserve")
-        self.assertEqual(manifest["backend"]["fallback"]["transport"], "tcp")
-        self.assertEqual(manifest["backend"]["fallback"]["host"], "127.0.0.1")
+        self.assertNotIn("transport", manifest["backend"])
+        self.assertNotIn("values", manifest["backend"])
+        self.assertNotIn("fallback", manifest["backend"])
         self.assertTrue(manifest["window"]["singleton"])
         self.assertNotIn("desktopPriority", manifest)
 
@@ -76,51 +62,41 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertIn('= "/usr/share/kaiplus/kaiplus-plugin.json"', makefile)
         self.assertIn("rm -f /usr/share/linkeasefull/desktop-apps.d/00-kaiplus-plugin.json", makefile)
 
-    def test_config_defaults_to_standalone_url_contract(self):
+    def test_config_contains_only_user_facing_runtime_options(self):
         text = self.read("kaiplus/files/kaiplus.config")
 
-        self.assertIn("option 'enabled' '0'", text)
-        self.assertIn("option 'listen_mode' 'auto'", text)
-        self.assertIn("option 'external_port_enabled' '0'", text)
-        self.assertIn("option 'socket_path' '/var/run/kaiplus.sock'", text)
-        self.assertIn("option 'port' '8189'", text)
-        self.assertIn("option 'bind_addr' '0.0.0.0'", text)
-        self.assertIn("option 'base_path' '/apps/kaiplus/'", text)
-        self.assertIn("option 'system_role' 'istoreos'", text)
-        self.assertIn("option 'release_channel' 'stable'", text)
-        self.assertIn("option 'auth_mode' 'disabled'", text)
+        self.assertEqual(
+            re.findall(r"option '([^']+)'", text),
+            ["enabled", "data_dir", "port"],
+        )
 
-    def test_init_reads_listen_config_and_passes_it_to_kaiplus_web(self):
+    def test_init_uses_fixed_tcp_runtime_contract(self):
         text = self.read("kaiplus/files/kaiplus.init")
 
         self.assertIn('config_get_bool enabled "$1" enabled 0', text)
-        self.assertIn('config_get listen_mode "$1" listen_mode "auto"', text)
-        self.assertIn('config_get_bool external_port_enabled "$1" external_port_enabled 0', text)
-        self.assertIn('config_get socket_path "$1" socket_path "/var/run/kaiplus.sock"', text)
+        self.assertIn('config_get data_dir "$1" data_dir ""', text)
         self.assertIn('config_get port "$1" port "8189"', text)
-        self.assertIn('config_get bind_addr "$1" bind_addr "0.0.0.0"', text)
-        self.assertIn('config_get base_path "$1" base_path "/apps/kaiplus/"', text)
-        self.assertIn('config_get auth_mode "$1" auth_mode "disabled"', text)
-        self.assertIn('config_get release_channel "$1" release_channel "stable"', text)
-        self.assertIn('KAIPLUS_RELEASE_CHANNEL="$release_channel"', text)
-        self.assertIn('procd_append_param command --release-channel "$release_channel"', text)
-        self.assertIn('KAIPLUS_AUTH_MODE="$auth_mode"', text)
-        self.assertIn('LINKEASE_AUTH_PROVIDER="$auth_mode"', text)
-        self.assertIn('KAIPLUS_LISTEN_MODE="unix"', text)
-        self.assertIn('KAIPLUS_SOCKET_PATH="$socket_path"', text)
+        self.assertNotIn("config_get listen_mode", text)
+        self.assertNotIn("config_get_bool external_port_enabled", text)
+        self.assertNotIn("config_get socket_path", text)
+        self.assertNotIn("config_get release_channel", text)
+        self.assertIn('KAIPLUS_RELEASE_CHANNEL="stable"', text)
+        self.assertIn('KAIPLUS_AUTH_MODE="disabled"', text)
+        self.assertIn('LINKEASE_AUTH_PROVIDER="disabled"', text)
         self.assertIn('KAIPLUS_LISTEN_MODE="tcp"', text)
-        self.assertIn('procd_append_param command --listen-mode unix', text)
-        self.assertIn('procd_append_param command --socket-path "$socket_path"', text)
         self.assertIn('procd_append_param command --listen-mode tcp', text)
-        self.assertIn('procd_append_param command --addr "$bind_addr:$port"', text)
-        self.assertIn('procd_append_param command --base-path "$base_path"', text)
+        self.assertIn('procd_append_param command --addr "0.0.0.0:$port"', text)
+        self.assertIn('procd_append_param command --base-path /apps/kaiplus/', text)
+        self.assertIn('procd_append_param command --release-channel stable', text)
+        self.assertNotIn("--listen-mode unix", text)
+        self.assertNotIn("--socket-path", text)
         self.assertNotIn('port "{}"'.format(LEGACY_PORT), text)
 
     def test_router_runtime_directories_are_private_and_init_is_ash_compatible(self):
         text = self.read("kaiplus/files/kaiplus.init")
         self.assertIn("umask 077", text)
         self.assertIn('chmod 0700 "$data_dir/config" "$data_dir/state"', text)
-        self.assertIn('procd_append_param command --system-role "$system_role"', text)
+        self.assertIn('procd_append_param command --system-role istoreos', text)
         subprocess.run(["sh", "-n", str(ROOT / "kaiplus/files/kaiplus.init")], check=True)
 
     def test_bubblewrap_is_not_a_current_runtime_dependency(self):
@@ -149,8 +125,8 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
-        self.assertIn("PKG_RELEASE:=2", runtime_makefile)
-        self.assertIn("PKG_RELEASE:=3", luci_makefile)
+        self.assertIn("PKG_RELEASE:=3", runtime_makefile)
+        self.assertIn("PKG_RELEASE:=4", luci_makefile)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
         self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
 
@@ -179,21 +155,20 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertNotIn("uci:set", controller)
         self.assertNotIn("uci:commit", controller)
         self.assertNotIn("restart", controller)
-        self.assertIn('external_port_enabled = external_port_enabled', controller)
+        self.assertIn('external_port_enabled = true', controller)
         self.assertIn('st.proxy_prefix_enabled && st.app_entry_running', status_view)
         self.assertIn('st.external_port_enabled', status_view)
         self.assertIn('<%=url("admin/services/kaiplus/open")%>', status_view)
         self.assertNotIn("window.location.hostname + ':' + st.port", status_view)
 
-    def test_luci_cbi_marks_socket_and_base_path_readonly(self):
+    def test_luci_cbi_exposes_only_enable_data_directory_and_port(self):
         text = self.read("luci-app-kaiplus/luasrc/model/cbi/kaiplus.lua")
 
-        self.assertIn('s:option(ListValue, "listen_mode", translate("Listen mode"))', text)
-        self.assertIn('s:option(Flag, "external_port_enabled", translate("Enable external port access"))', text)
-        self.assertIn('s:option(Value, "socket_path", translate("Unix socket path"))', text)
-        self.assertIn('socket_path.readonly = true', text)
-        self.assertIn('s:option(Value, "base_path", translate("Base path"))', text)
-        self.assertIn('base_path.readonly = true', text)
+        self.assertEqual(
+            re.findall(r's:option\([^,]+, "([^"]+)"', text),
+            ["enabled", "data_dir", "port"],
+        )
+        self.assertIn('translate("Access port")', text)
 
 
 if __name__ == "__main__":
