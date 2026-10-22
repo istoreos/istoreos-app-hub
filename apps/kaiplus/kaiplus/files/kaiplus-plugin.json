@@ -33,7 +33,8 @@
     "defaultPort": 8189,
     "upstreamBasePath": "/apps/kaiplus/",
     "apiPath": "api/",
-    "pathMode": "preserve"
+    "pathMode": "preserve",
+    "proxyMode": "app-base"
   },
   "window": {
     "width": 1180,

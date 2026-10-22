@@ -39,6 +39,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         self.assertEqual(manifest["backend"]["upstreamBasePath"], "/apps/kaiplus/")
         self.assertEqual(manifest["backend"]["apiPath"], "api/")
         self.assertEqual(manifest["backend"]["pathMode"], "preserve")
+        self.assertEqual(manifest["backend"]["proxyMode"], "app-base")
         self.assertNotIn("transport", manifest["backend"])
         self.assertNotIn("values", manifest["backend"])
         self.assertNotIn("fallback", manifest["backend"])
@@ -139,7 +140,7 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
 
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
-        self.assertIn("PKG_RELEASE:=5", runtime_makefile)
+        self.assertIn("PKG_RELEASE:=6", runtime_makefile)
         self.assertIn("PKG_RELEASE:=5", luci_makefile)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
         self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
