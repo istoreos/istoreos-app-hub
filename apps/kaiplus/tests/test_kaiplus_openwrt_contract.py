@@ -126,9 +126,15 @@ class KaiPlusOpenWrtContractTest(unittest.TestCase):
         for text in (runtime_makefile, luci_makefile):
             self.assertIn("PKG_VERSION:=1.0.9", text)
         self.assertIn("PKG_RELEASE:=3", runtime_makefile)
-        self.assertIn("PKG_RELEASE:=4", luci_makefile)
+        self.assertIn("PKG_RELEASE:=5", luci_makefile)
         self.assertIn("kaiplus-runtime-v$(PKG_VERSION)", runtime_makefile)
         self.assertIn("$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz", runtime_makefile)
+
+    def test_luci_menu_has_simplified_chinese_translation(self):
+        text = self.read("luci-app-kaiplus/po/zh-cn/kaiplus.po")
+
+        self.assertIn('msgid "KaiPlus"', text)
+        self.assertIn('msgstr "酷友社AI"', text)
 
     def test_kaiplus_package_contains_no_legacy_port_value(self):
         for path in ROOT.rglob("*"):
