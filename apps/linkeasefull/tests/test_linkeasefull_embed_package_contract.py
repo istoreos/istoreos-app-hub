@@ -35,8 +35,8 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         makefile = self.read("luci-app-linkeasefull-embed/Makefile")
         readme = self.read("luci-app-linkeasefull-embed/README.md")
 
-        self.assertIn("PKG_VERSION:=1.2.0", makefile)
-        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_VERSION:=1.2.0-r1", makefile)
+        self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
         self.assertNotIn("+luci-proto-bonding", makefile)
         self.assertNotIn("protocol-fallbacks", makefile)
         self.assertNotIn("openwrt-luci-maintain", makefile)

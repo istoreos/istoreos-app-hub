@@ -11,36 +11,36 @@ EXPECTED = {
     "apps/linkeasefull/linkeasefull/Makefile": ("PKG_SOURCE_DATE", "3.0.21", "1"),
     "apps/linkeasefull/app-meta-linkeasefull/Makefile": ("PKG_VERSION", "3.0.21", "1"),
     "apps/linkeasefull/linkease-app-entry/Makefile": ("PKG_VERSION", "3.0.21", "1"),
-    "apps/linkeasefull/luci-lib-linkeaseauth/Makefile": ("PKG_VERSION", "1.2.0", "1"),
-    "apps/linkeasefull/luci-app-linkeasefull-embed/Makefile": ("PKG_VERSION", "1.1.0", "1"),
-    "apps/linkeasefull/luci-app-linkeasefull/Makefile": ("PKG_VERSION", "1.0.0", "3"),
+    "apps/linkeasefull/luci-lib-linkeaseauth/Makefile": ("PKG_VERSION", "1.2.1-r1", ""),
+    "apps/linkeasefull/luci-app-linkeasefull-embed/Makefile": ("PKG_VERSION", "1.2.0-r1", ""),
+    "apps/linkeasefull/luci-app-linkeasefull/Makefile": ("PKG_VERSION", "1.0.0-r3", ""),
     "apps/kai/kai/Makefile": ("PKG_VERSION", "0.0.23", "1"),
     "apps/kai/kai_agent/Makefile": ("PKG_VERSION", "0.0.23", "1"),
     "apps/kai/kai_session/Makefile": ("PKG_VERSION", "0.0.23", "1"),
-    "apps/kai/luci-app-kai/Makefile": ("PKG_VERSION", "1.0.2", "2"),
+    "apps/kai/luci-app-kai/Makefile": ("PKG_VERSION", "1.0.2-r5", ""),
     "apps/kaiplus/app-meta-kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "2"),
     "apps/dockermanager/dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "2"),
-    "apps/dockermanager/luci-app-dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "2"),
+    "apps/dockermanager/luci-app-dockermanager/Makefile": ("PKG_VERSION", "0.1.2-r2", ""),
     "apps/dockermanager/app-meta-dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "3"),
     "apps/baidudrive/baidudrive/Makefile": ("PKG_VERSION", "1.0.6", "2"),
-    "apps/baidudrive/luci-app-baidudrive/Makefile": ("PKG_VERSION", "1.0.2", "2"),
+    "apps/baidudrive/luci-app-baidudrive/Makefile": ("PKG_VERSION", "1.0.2-r4", ""),
     "apps/baidudrive/app-meta-baidudrive/Makefile": ("PKG_VERSION", "1.0.6", "2"),
     "apps/kaiplus/kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "2"),
-    "apps/kaiplus/luci-app-kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "2"),
+    "apps/kaiplus/luci-app-kaiplus/Makefile": ("PKG_VERSION", "1.0.9-r8", ""),
     "apps/agentflow/agentflow/Makefile": ("PKG_VERSION", "0.3.0", "11"),
-    "apps/agentflow/luci-app-agentflow/Makefile": ("PKG_VERSION", "1.0.0", "8"),
+    "apps/agentflow/luci-app-agentflow/Makefile": ("PKG_VERSION", "1.0.1-r5", ""),
     "apps/agentflow/app-meta-agentflow/Makefile": ("PKG_VERSION", "0.3.0", "2"),
     "apps/fastnet/fastnet/Makefile": ("PKG_VERSION", "0.7.7", "3"),
-    "apps/fastnet/luci-app-fastnet/Makefile": ("PKG_VERSION", "0.7.7", "3"),
+    "apps/fastnet/luci-app-fastnet/Makefile": ("PKG_VERSION", "0.7.7-r5", ""),
     "apps/fastnet/app-meta-fastnet/Makefile": ("PKG_VERSION", "0.7.7", "3"),
     "apps/istoreenhance/istoreenhance/Makefile": ("PKG_SOURCE_DATE", "0.8.0", "3"),
-    "apps/istoreenhance/luci-app-istoreenhance/Makefile": ("PKG_VERSION", "0.8.0", "2"),
+    "apps/istoreenhance/luci-app-istoreenhance/Makefile": ("PKG_VERSION", "0.8.4-r1", ""),
     "apps/istoreenhance/app-meta-istoreenhance/Makefile": ("PKG_VERSION", "0.8.0", "4"),
 }
 
 
 def assignment(text: str, key: str) -> str | None:
-    match = re.search(rf"^{re.escape(key)}\s*:?=\s*(.*?)\s*$", text, re.MULTILINE)
+    match = re.search(rf"^{re.escape(key)}[ \t]*:?=[ \t]*([^\r\n]*)$", text, re.MULTILINE)
     return match.group(1) if match else None
 
 
@@ -54,13 +54,17 @@ class LinkEaseAppsVersionContractTest(unittest.TestCase):
                 if relative.endswith("linkeasefull/linkeasefull/Makefile"):
                     self.assertIsNone(assignment(text, "PKG_VERSION"))
 
-    def test_version_and_release_are_not_combined(self):
+    def test_version_and_release_follow_package_type(self):
         for relative, (version_key, _, _) in EXPECTED.items():
             with self.subTest(package=relative):
                 text = (ROOT / relative).read_text(encoding="utf-8")
                 value = assignment(text, version_key)
                 self.assertIsNotNone(value)
-                self.assertNotRegex(value, r"-r\d+$")
+                if Path(relative).parent.name.startswith("luci-"):
+                    self.assertRegex(value, r"-r\d+$")
+                    self.assertEqual(assignment(text, "PKG_RELEASE"), "")
+                else:
+                    self.assertNotRegex(value, r"-r\d+$")
 
     def test_product_composition_and_dependency_direction(self):
         full_meta = (ROOT / "apps/linkeasefull/app-meta-linkeasefull/Makefile").read_text(encoding="utf-8")

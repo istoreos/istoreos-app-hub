@@ -80,7 +80,8 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_RELEASE:=5", makefile)
+        self.assertIn("PKG_VERSION:=1.0.2-r5", makefile)
+        self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
 
 
 if __name__ == "__main__":

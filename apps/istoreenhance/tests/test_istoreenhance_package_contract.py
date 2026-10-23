@@ -94,8 +94,8 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_VERSION:=0.8.4", makefile)
-        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_VERSION:=0.8.4-r1", makefile)
+        self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
         self.assertIn('auth_url = dispatcher.build_url("admin", "services", "linkease_auth", "auth")', controller)
