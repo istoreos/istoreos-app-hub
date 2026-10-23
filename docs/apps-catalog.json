@@ -466,8 +466,8 @@
     "website": "https://www.istoreos.com",
     "author": "Xiaobao",
     "version": "3.0.21",
-    "release": "3",
-    "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kai +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
+    "release": "4",
+    "depends": "+app-meta-linkeasefull +app-meta-dockermanager +app-meta-kaiplus +app-meta-baidudrive +app-meta-istoreenhance +luci-theme-istorenas",
     "luci_entry": "/apps/",
     "meta_dir": "apps/istorex/app-meta-istorex"
   },
@@ -522,21 +522,21 @@
     "meta_dir": "apps/jellyfin/app-meta-jellyfin"
   },
   {
-    "id": "kai",
+    "id": "kaiplus",
     "title": "酷友社KAI",
-    "description": "=酷友社KAI 解决各种问题，加速软件安装",
-    "description_en": "Koolceneter Kai AI solve various network issues and speed up software installation.",
+    "description": "酷友社KAI 解决各种问题，加速软件安装",
+    "description_en": "KaiPlus AI solves various network issues and speeds up software installation.",
     "tags": [
       "ai",
       "system"
     ],
     "website": "https://ai.koolcenter.com",
     "author": "koolcenter",
-    "version": "1.0.2",
-    "release": "7",
-    "depends": "+luci-app-kai +kai +kai_session +kai-agent",
-    "luci_entry": "/cgi-bin/luci/admin/services/kai",
-    "meta_dir": "apps/kai/app-meta-kai"
+    "version": "1.0.9",
+    "release": "2",
+    "depends": "+luci-app-kaiplus +kaiplus",
+    "luci_entry": "/cgi-bin/luci/admin/services/kaiplus",
+    "meta_dir": "apps/kaiplus/app-meta-kaiplus"
   },
   {
     "id": "kodexplorer",

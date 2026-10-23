@@ -303,17 +303,17 @@ apps:
         luci:
             - local: apps/kai/luci-app-kai
               remote: nas-packages-luci/luci/luci-app-kai
-        meta:
-            - local: apps/kai/app-meta-kai
-              remote: openwrt-app-meta/applications/app-meta-kai
+        meta: []
     kaiplus:
         services:
             - local: apps/kaiplus/kaiplus
               remote: openwrt-app-actions/applications/kaiplus
         luci:
             - local: apps/kaiplus/luci-app-kaiplus
-              remote:  openwrt-app-actions/applications/luci-app-kaiplus
-        meta: []
+              remote: openwrt-app-actions/applications/luci-app-kaiplus
+        meta:
+            - local: apps/kaiplus/app-meta-kaiplus
+              remote: openwrt-app-meta/applications/app-meta-kaiplus
     kodexplorer:
         services: []
         luci:

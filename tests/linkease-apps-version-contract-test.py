@@ -18,7 +18,7 @@ EXPECTED = {
     "apps/kai/kai_agent/Makefile": ("PKG_VERSION", "0.0.23", "1"),
     "apps/kai/kai_session/Makefile": ("PKG_VERSION", "0.0.23", "1"),
     "apps/kai/luci-app-kai/Makefile": ("PKG_VERSION", "1.0.2", "2"),
-    "apps/kai/app-meta-kai/Makefile": ("PKG_VERSION", "1.0.2", "2"),
+    "apps/kaiplus/app-meta-kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "2"),
     "apps/dockermanager/dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "2"),
     "apps/dockermanager/luci-app-dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "2"),
     "apps/dockermanager/app-meta-dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "3"),
@@ -68,8 +68,8 @@ class LinkEaseAppsVersionContractTest(unittest.TestCase):
             self.assertNotIn(forbidden, full_meta)
 
         istorex = (ROOT / "apps/istorex/app-meta-istorex/Makefile").read_text(encoding="utf-8")
-        self.assertIn("+app-meta-kai", istorex)
-        self.assertNotIn("app-meta-kaiplus", istorex)
+        self.assertIn("+app-meta-kaiplus", istorex)
+        self.assertNotIn("+app-meta-kai", assignment(istorex, "META_DEPENDS").split())
 
         auth = (ROOT / "apps/linkeasefull/luci-lib-linkeaseauth/Makefile").read_text(encoding="utf-8")
         self.assertNotIn("linkease-app-entry", auth)
@@ -87,7 +87,7 @@ class LinkEaseAppsVersionContractTest(unittest.TestCase):
             self.assertIn("+linkease-app-entry", (ROOT / relative).read_text(encoding="utf-8"), relative)
 
     def test_retired_packages_remain_absent(self):
-        self.assertFalse((ROOT / "apps/kaiplus/app-meta-kaiplus").exists())
+        self.assertFalse((ROOT / "apps/kai/app-meta-kai").exists())
         self.assertFalse((ROOT / "apps/linkeaseauth/luci-lib-linkeaseauth/Makefile").exists())
 
 

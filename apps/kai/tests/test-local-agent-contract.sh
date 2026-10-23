@@ -8,8 +8,6 @@ launcher="$root/kai/files/kai-session-launch"
 status_view="$root/luci-app-kai/luasrc/view/kai/kai_status.htm"
 status_controller="$root/luci-app-kai/luasrc/controller/kai.lua"
 luci_makefile="$root/luci-app-kai/Makefile"
-meta_makefile="$root/app-meta-kai/Makefile"
-meta_entry="$root/app-meta-kai/entry.sh"
 
 fail() {
 	echo "failed: $*" >&2
@@ -49,13 +47,6 @@ grep -F 'DEPENDS:=+kai_session +kai-agent' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not depend on its runtime artifacts"
 test -f "$root/kai-agent/Makefile" ||
 	fail "kai-agent package directory does not match its package name"
-grep -F 'META_DEPENDS:=+luci-app-kai +kai +kai_session +kai-agent' "$meta_makefile" >/dev/null ||
-	fail "app-meta-kai does not expose the complete runtime dependency set"
-grep -F 'json_add_string "href" "/cgi-bin/luci/admin/services/kai"' "$meta_entry" >/dev/null ||
-	fail "app-meta-kai does not enter KAI through its LuCI page"
-if grep -F 'json_add_string "href" "http://$host:' "$meta_entry" >/dev/null; then
-	fail "app-meta-kai bypasses the LuCI authentication entry"
-fi
 grep -F 'local: apps/kai/kai-agent' "$hub_root/syncapps.yaml" >/dev/null ||
 	fail "syncapps does not publish kai-agent to the package feed"
 if grep -F '$(CP) $(PKG_BUILD_DIR)/*' "$root/kai-agent/Makefile" >/dev/null; then
