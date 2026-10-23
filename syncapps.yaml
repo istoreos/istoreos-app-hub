@@ -309,10 +309,10 @@ apps:
     kaiplus:
         services:
             - local: apps/kaiplus/kaiplus
-              remote: nas-packages/network/services/kaiplus
+              remote: openwrt-app-actions/applications/kaiplus
         luci:
             - local: apps/kaiplus/luci-app-kaiplus
-              remote: nas-packages-luci/luci/luci-app-kaiplus
+              remote:  openwrt-app-actions/applications/luci-app-kaiplus
         meta: []
     kodexplorer:
         services: []
