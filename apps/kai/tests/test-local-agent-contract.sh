@@ -5,9 +5,8 @@ root="$(CDPATH= cd -- "$(dirname "$0")/.." && pwd -P)"
 hub_root="$(CDPATH= cd -- "$root/../.." && pwd -P)"
 init="$root/kai/files/kai.init"
 launcher="$root/kai/files/kai-session-launch"
-status_view="$root/luci-app-kai/luasrc/view/kai/kai_status.htm"
-status_controller="$root/luci-app-kai/luasrc/controller/kai.lua"
-luci_makefile="$root/luci-app-kai/Makefile"
+status_view="$hub_root/apps/kaiplus/luci-app-kaiplus/luasrc/view/kaiplus/classic_status.htm"
+luci_makefile="$hub_root/apps/kaiplus/luci-app-kaiplus/Makefile"
 
 fail() {
 	echo "failed: $*" >&2
@@ -86,11 +85,11 @@ grep -F '?id=kai' "$status_view" >/dev/null ||
 if grep -E 'linkease_auth/auth|openKai|/apps/kai/web/' "$status_view" >/dev/null; then
 	fail "LuCI KAI launcher bypasses shared route resolution"
 fi
-grep -F 'uci:get_first("kai", "kai", "port")' "$status_controller" >/dev/null ||
-	fail "LuCI KAI status does not report the configured KAI port"
 grep -F '+luci-lib-linkeaseauth' "$luci_makefile" >/dev/null ||
-	fail "luci-app-kai does not directly depend on its auth bridge"
+	fail "the classic tab's LuCI package does not directly depend on its auth bridge"
 grep -F '+linkease-app-entry' "$luci_makefile" >/dev/null ||
-	fail "luci-app-kai does not directly depend on the shared app entry"
+	fail "the classic tab's LuCI package does not directly depend on the shared app entry"
+test ! -e "$root/luci-app-kai" ||
+	fail "the retired standalone KAI LuCI page is still present"
 
 echo "KAI local Agent runtime contract: PASS"

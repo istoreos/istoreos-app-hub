@@ -59,7 +59,7 @@ Current management-first mappings are:
 
 | Application | Software-center/LuCI entry | Open button target |
 | --- | --- | --- |
-| KAI | `/cgi-bin/luci/admin/services/kai` | `linkease_apps/open?id=kai` |
+| CLASSIC KAI | `/cgi-bin/luci/admin/services/kaiplus/classic` | `linkease_apps/open?id=kai` |
 | FastNet | `/cgi-bin/luci/admin/services/fastnet` | `linkease_apps/open?id=fastnet` |
 | Docker Manager | `/cgi-bin/luci/admin/services/dockermanager` | `linkease_apps/open?id=dockermanager` |
 | BaiduDrive | `/cgi-bin/luci/admin/services/baidudrive` | `linkease_apps/open?id=baidudrive` |
@@ -146,7 +146,6 @@ caller must match both shared packages, while runtime packages must retain
 
 ```sh
 for file in \
-  apps/kai/luci-app-kai/Makefile \
   apps/dockermanager/luci-app-dockermanager/Makefile \
   apps/fastnet/luci-app-fastnet/Makefile \
   apps/istoreenhance/luci-app-istoreenhance/Makefile \

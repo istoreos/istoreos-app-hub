@@ -1,5 +1,29 @@
 # KAI OpenWrt packaging notes
 
+## Classic KAI package roles
+
+The classic management page is built into `luci-app-kaiplus`, at
+`/cgi-bin/luci/admin/services/kaiplus/classic`. The standalone `luci-app-kai`
+source recipe and its LuCI sync mapping have been retired. All three runtime
+packages remain:
+
+| Package | Source | Installed contents and responsibility |
+| --- | --- | --- |
+| `kai` | `istore-ai-helper/server` and `web` | `/usr/sbin/kai_bin`: gateway, embedded Web UI, authentication and API forwarding; also owns `/etc/init.d/kai`, `/etc/config/kai`, the session launcher and desktop registration. Default public port: 8197. |
+| `kai_session` | `istore-ai-helper/opencode` | `/usr/sbin/kai_session`: AI runtime for model requests, sessions and tools. The launcher binds it to `127.0.0.1:8196`. Also includes `/usr/sbin/rg` for offline file and skill scans. |
+| `kai-agent` | `kai-skills` bundle | Local skills, instructions, prompts, `opencode.json` and the provenance manifest under `/usr/share/kai/agent-bundles/<version>/`, selected by `/usr/share/kai/agent`. This is a resource package, not a separate process. |
+
+`kai` requires both `kai_session` and `kai-agent`. `/etc/init.d/kai` launches
+the engine and gateway together, using the selected local agent bundle and
+the configured writable data directory. KaiPlus (`reasonix-kai`) is a separate
+runtime and is not required to execute these classic binaries.
+
+The classic Update button explicitly runs `is-opkg upgrade kai kai_session`
+after refreshing the iStore feed. It never installs or updates the retired
+`luci-app-kai`. A newer `kai` package can still pull in a newer `kai-agent`
+through its minimum-version dependency. Releasing only a new skill bundle
+does not force an independent skills update through this two-package button.
+
 ## `kai_session` must bundle ripgrep
 
 OpenCode's native `skill` tool invokes ripgrep while enumerating files next to
@@ -42,7 +66,8 @@ The canonical skills repository is [kai-skills](https://github.com/linkease/kai-
 The version set is `kai 0.0.27-r1`, `kai_session 0.0.27-r1`, and
 `kai-agent 0.0.27-r1`. OpenCode remains the device-validated `1.18.32` engine
 from runtime release `0.0.25`; the release manifest records its actual source
-commit rather than the newer source checkout. `luci-app-kai` remains unchanged.
+commit rather than the newer source checkout. Classic management now lives in
+the `luci-app-kaiplus` classic tab described above.
 
 `kai-skills` is included in the KAI installation through the mandatory
 `kai-agent` package. `kai` additionally requires `kai-agent >= 0.0.27~0`, so

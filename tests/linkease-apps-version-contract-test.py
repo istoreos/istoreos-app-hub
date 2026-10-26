@@ -17,8 +17,7 @@ EXPECTED = {
     "apps/kai/kai/Makefile": ("PKG_VERSION", "0.0.27", "1"),
     "apps/kai/kai-agent/Makefile": ("PKG_VERSION", "0.0.27", "1"),
     "apps/kai/kai_session/Makefile": ("PKG_VERSION", "0.0.27", "1"),
-    "apps/kai/luci-app-kai/Makefile": ("PKG_VERSION", "1.0.2-r5", ""),
-    "apps/kaiplus/app-meta-kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "2"),
+    "apps/kaiplus/app-meta-kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "3"),
     "apps/dockermanager/dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "2"),
     "apps/dockermanager/luci-app-dockermanager/Makefile": ("PKG_VERSION", "0.1.2-r2", ""),
     "apps/dockermanager/app-meta-dockermanager/Makefile": ("PKG_VERSION", "0.1.1", "3"),
@@ -26,7 +25,7 @@ EXPECTED = {
     "apps/baidudrive/luci-app-baidudrive/Makefile": ("PKG_VERSION", "1.0.2-r4", ""),
     "apps/baidudrive/app-meta-baidudrive/Makefile": ("PKG_VERSION", "1.0.6", "2"),
     "apps/kaiplus/kaiplus/Makefile": ("PKG_VERSION", "1.0.9", "2"),
-    "apps/kaiplus/luci-app-kaiplus/Makefile": ("PKG_VERSION", "1.0.9-r8", ""),
+    "apps/kaiplus/luci-app-kaiplus/Makefile": ("PKG_VERSION", "1.0.9-r9", ""),
     "apps/agentflow/agentflow/Makefile": ("PKG_VERSION", "0.3.0", "11"),
     "apps/agentflow/luci-app-agentflow/Makefile": ("PKG_VERSION", "1.0.1-r5", ""),
     "apps/agentflow/app-meta-agentflow/Makefile": ("PKG_VERSION", "0.3.0", "2"),
@@ -92,6 +91,7 @@ class LinkEaseAppsVersionContractTest(unittest.TestCase):
 
     def test_retired_packages_remain_absent(self):
         self.assertFalse((ROOT / "apps/kai/app-meta-kai").exists())
+        self.assertFalse((ROOT / "apps/kai/luci-app-kai").exists())
         self.assertFalse((ROOT / "apps/linkeaseauth/luci-lib-linkeaseauth/Makefile").exists())
 
 

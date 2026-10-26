@@ -91,13 +91,13 @@ implementations:
 
 | Application ID | Runtime package | LuCI package | Notes |
 | --- | --- | --- | --- |
-| `kai` | `kai` | `luci-app-kai` | runtime also directly uses `luci-lib-linkeaseauth` for KAI's LuCI authentication middleware |
+| `kai` | `kai` | `luci-app-kaiplus` classic tab | optional classic runtime; `kai` also directly uses `luci-lib-linkeaseauth` for its LuCI authentication middleware; standalone `luci-app-kai` is retired |
 | `dockermanager` | `dockermanager` | `luci-app-dockermanager` | Unix-first; direct TCP fallback is user-controlled |
 | `fastnet` | `fastnet` | `luci-app-fastnet` | browser-direct target still uses shared launch/auth resolution |
 | `kspeeder` | `istoreenhance` | `luci-app-istoreenhance` | package names are historical; manifest application ID remains `kspeeder` |
 | `agentflow` | `agentflow` | `luci-app-agentflow` | app-base service using the common launch route |
 | `baidudrive` | `baidudrive` | `luci-app-baidudrive` | direct listener root differs from the shared public path |
-| `kaiplus` | `kaiplus` | `luci-app-kaiplus` | runtime and LuCI remain, but there is no current `app-meta-kaiplus` |
+| `kaiplus` | `kaiplus` | `luci-app-kaiplus` | Reasonix product; `app-meta-kaiplus` installs it without requiring the classic KAI runtime |
 
 For example, a new application's packages normally contain:
 
