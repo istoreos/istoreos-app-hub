@@ -46,6 +46,15 @@ grep -F 'DEPENDS:=+kai_session +kai-agent' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not depend on its runtime artifacts"
 grep -F 'EXTRA_DEPENDS:=kai-agent (>=' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not require a sufficiently recent packaged skills bundle"
+required_engine_version="$(sed -n 's/^PKG_VERSION:=//p' "$root/kai/Makefile")"
+grep -F "kai_session (>=$required_engine_version~0)" "$root/kai/Makefile" >/dev/null ||
+    fail "the v2 gateway permits an incompatible old engine"
+grep -F 'KAI_ENGINE_API=v2' "$init" >/dev/null ||
+    fail "init does not select the current engine API"
+grep -F 'KAI_ENGINE_PASSWORD_FILE=/var/run/kai/engine-password' "$init" >/dev/null ||
+    fail "init does not share a private engine credential path"
+grep -F 'export OPENCODE_PASSWORD' "$launcher" >/dev/null ||
+    fail "launcher does not authenticate the engine"
 grep -F 'URL:=https://github.com/linkease/kai-skills' "$root/kai-agent/Makefile" >/dev/null ||
 	fail "kai-agent does not identify the canonical kai-skills repository"
 test -f "$root/kai-agent/Makefile" ||

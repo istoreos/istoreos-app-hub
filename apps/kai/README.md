@@ -56,6 +56,40 @@ Keep this dependency in the release artifact and OpenWrt package. Installation
 is intentionally unconditional so a missing architecture-specific `rg` fails
 the package build instead of falling back to a first-run network download.
 
+## KAI 0.0.28: current engine and gateway
+
+Current recipes pin `kai`, `kai_session`, and `kai-agent` to **0.0.28-r1**.
+`kai_session` is now built from the current OpenCode **2.1.4** checkout
+(`08ac673ab849bd7c8155033679a1f27ae983a07a`), rather than reusing the 1.18.32
+binary. The gateway adapts the new engine API to the existing classic KAI UI.
+
+The release includes both x86_64 baseline musl and aarch64 musl executables,
+plus ripgrep 15.2.0 and all 20 current iStoreOS skills. The three Makefiles pin
+[0.0.28 release archives](https://github.com/istoreos/istoreos-app-hub/releases/tag/kai-runtime-v0.0.28)
+and their SHA-256 values. `kai` requires `kai_session >= 0.0.28~0` and
+`kai-agent >= 0.0.28~0` so an upgrade cannot mix the new gateway with the old
+engine. The classic Update button still requests only `kai kai_session`; the
+package manager resolves the skills dependency.
+
+Init creates a private engine credential file and passes its path to both
+programs. The engine binds to `127.0.0.1:8196`; the gateway defaults to `8197`.
+LuCI login uses its actual configured listener, verified at port 10000 on
+192.168.30.7 and port 80 on 192.168.30.93. Both architectures passed startup,
+readiness, skill discovery, and private API checks.
+
+Back up writable KAI data before this engine major-version upgrade. The
+product's direct deployment scripts back up data/config/state and launch
+scripts before migration. v1 conversation migration, model settings, command
+approval and streamed responses were validated against the real new engine.
+
+Only binary/skills archives are released here. Compile IPK/APK from these
+recipes; no OpenWrt SDK download or package build is required to prepare the
+binaries. KAI has no app-meta package; do not bump the separate KaiPlus meta
+package for this runtime update.
+
+The following sections document previous releases. Reproducing 0.0.27 requires
+the product source at its recorded historical commit.
+
 ## KAI 0.0.27: packaged skills and LuCI port fixes
 
 KAI is the OpenCode product: `opencode/` builds `kai_session`, `server/`
