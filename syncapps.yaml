@@ -631,9 +631,7 @@ apps:
         luci:
             - local: apps/webvirtcloud/luci-app-webvirtcloud
               remote: openwrt-app-actions/applications/luci-app-webvirtcloud
-        meta:
-            - local: apps/webvirtcloud/app-meta-webvirtcloud
-              remote: openwrt-app-meta/applications/app-meta-webvirtcloud
+        meta: []
     wxedge:
         services: []
         luci:
