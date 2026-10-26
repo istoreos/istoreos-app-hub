@@ -45,6 +45,10 @@ grep -F 'exec /usr/sbin/kai_session serve --port 8196 --hostname 127.0.0.1' "$la
 	fail "launcher command differs from the runtime contract"
 grep -F 'DEPENDS:=+kai_session +kai-agent' "$root/kai/Makefile" >/dev/null ||
 	fail "kai does not depend on its runtime artifacts"
+grep -F 'EXTRA_DEPENDS:=kai-agent (>=' "$root/kai/Makefile" >/dev/null ||
+	fail "kai does not require a sufficiently recent packaged skills bundle"
+grep -F 'URL:=https://github.com/linkease/kai-skills' "$root/kai-agent/Makefile" >/dev/null ||
+	fail "kai-agent does not identify the canonical kai-skills repository"
 test -f "$root/kai-agent/Makefile" ||
 	fail "kai-agent package directory does not match its package name"
 grep -F 'local: apps/kai/kai-agent' "$hub_root/syncapps.yaml" >/dev/null ||

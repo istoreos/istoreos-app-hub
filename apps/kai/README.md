@@ -32,11 +32,67 @@ Keep this dependency in the release artifact and OpenWrt package. Installation
 is intentionally unconditional so a missing architecture-specific `rg` fails
 the package build instead of falling back to a first-run network download.
 
-## Skills update: kai-agent 0.0.26
+## KAI 0.0.27: packaged skills and LuCI port fixes
+
+KAI is the OpenCode product: `opencode/` builds `kai_session`, `server/`
+builds `kai_bin`, and `web/` is embedded in the gateway. KaiPlus is the
+separate Reasonix product in `reasonix-kai/`; this release does not update it.
+The canonical skills repository is [kai-skills](https://github.com/linkease/kai-skills).
+
+The version set is `kai 0.0.27-r1`, `kai_session 0.0.27-r1`, and
+`kai-agent 0.0.27-r1`. OpenCode remains the device-validated `1.18.32` engine
+from runtime release `0.0.25`; the release manifest records its actual source
+commit rather than the newer source checkout. `luci-app-kai` remains unchanged.
+
+`kai-skills` is included in the KAI installation through the mandatory
+`kai-agent` package. `kai` additionally requires `kai-agent >= 0.0.27~0`, so
+upgrading the gateway cannot silently retain an older skills bundle. The
+package installs all 20 iStoreOS/OpenCode skills, instructions, the local
+OpenCode configuration, and the source manifest under:
+
+```text
+/usr/share/kai/agent-bundles/0.0.27/
+/usr/share/kai/agent -> agent-bundles/0.0.27
+```
+
+These are packaged files, not first-run downloads or external skills URLs.
+User configuration remains in the device's writable KAI data directory.
+The bundle pins `kai-skills` commit
+`a7c5b1e7a855edcbac21ed25e46515e540fc4fae`.
+
+The gateway now discovers LuCI's actual HTTP/HTTPS listeners, preserving the
+browser hostname and KAI return port. API, runtime-status, and event-stream
+login expiration share a dedicated reauthentication state. This fixes LuCI
+ports such as 88 or 10000 being replaced by the HTTP default port 80.
+
+Release assets are under
+[kai-runtime-v0.0.27](https://github.com/istoreos/istoreos-app-hub/releases/tag/kai-runtime-v0.0.27).
+Each package Makefile pins its own archive SHA-256. The retired `app-meta-kai`
+package is intentionally not restored; the current KAI mapping has no meta
+package. Do not bump `app-meta-kaiplus` for a KAI release.
+
+From `istore-ai-helper`, reproduce the release with:
+
+```sh
+KAI_RUNTIME_BASE_RELEASE=0.0.25 VERSION=0.0.27 make release
+```
+
+Verify package installation staging with the actual archive and expected
+source commit, in addition to the regular plugin contract checks:
+
+```sh
+sh apps/kai/tests/test-local-agent-contract.sh
+python3 apps/kai/tests/test_kai_desktop_plugin_contract.py
+sh apps/kai/tests/test-agent-bundle-staging.sh \
+  /path/to/kai-agent-bundle-0.0.27.tar.gz \
+  a7c5b1e7a855edcbac21ed25e46515e540fc4fae
+```
+
+## Previous skills update: kai-agent 0.0.26
 
 The released version combination is `kai-agent 0.0.26`, `kai 0.0.25`,
 `kai_session 0.0.25` (OpenCode 1.18.32), and `app-meta-kai 1.0.2-r8`.
-The Agent bundle uses linkease-skills commit
+The Agent bundle uses kai-skills commit
 `a7c5b1e7a855edcbac21ed25e46515e540fc4fae`, replacing the
 `e5ba9ec05cc6c1160242084e65277a2723a8539c` skills bundled in 0.0.25.
 
