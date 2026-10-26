@@ -295,11 +295,11 @@ apps:
     kai:
         services:
             - local: apps/kai/kai
-              remote: nas-packages/network/services/kai
+              remote: openwrt-app-actions/applications/kai
             - local: apps/kai/kai_session
-              remote: nas-packages/network/services/kai_session
+              remote: openwrt-app-actions/applications/kai_session
             - local: apps/kai/kai-agent
-              remote: nas-packages/network/services/kai-agent
+              remote: openwrt-app-actions/applications/kai-agent
         luci: []
         meta: []
     kaiplus:
