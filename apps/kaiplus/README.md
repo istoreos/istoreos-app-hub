@@ -64,8 +64,8 @@ success. Installation and updating share the same task ID to prevent overlap.
 
 ## Package versions and checks
 
-The current package set uses `kaiplus 1.0.9-r9`,
-`luci-app-kaiplus 1.0.9-r9`, and `app-meta-kaiplus 1.0.9-r4`. The runtime
+The current package set uses `kaiplus 1.0.10-r9`,
+`luci-app-kaiplus 1.0.9-r9`, and `app-meta-kaiplus 1.0.10-r4`. The runtime
 binaries come from Reasonix commit `177cddf0626f876380e46a3edf8d82253ead1be2`.
 Existing `syncapps.yaml` mappings cover all changed packages.
 
