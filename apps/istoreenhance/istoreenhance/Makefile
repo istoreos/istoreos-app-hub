@@ -11,7 +11,7 @@ PKG_ARCH_ISTOREENHANCE:=$(ARCH)
 
 PKG_NAME:=istoreenhance
 # use PKG_SOURCE_DATE instead of PKG_VERSION for compitable
-PKG_SOURCE_DATE:=0.8.5
+PKG_SOURCE_DATE:=0.8.7
 PKG_RELEASE:=2
 ARCH_HEXCODE:=
 ifeq ($(ARCH),x86_64)
@@ -26,7 +26,7 @@ endif
 PKG_SOURCE_VERSION:=$(ARCH_HEXCODE)
 PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz
 PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_SOURCE_DATE)/
-PKG_HASH:=9bd2fb08b6c2cc950c7c436abd7e04fbd11496105998303ae3da9dc28e63c0d3
+PKG_HASH:=35b0a7eff79dd79e5786477372ba4a74b240237f1e14c9bc422164a529a44acd
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/iStoreEnhance-binary-$(PKG_SOURCE_DATE)
 KSPEEDER_WEB_ROOT:=$(PKG_BUILD_DIR)/wwwroot
