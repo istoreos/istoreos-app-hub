@@ -17,7 +17,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("istoreenhance/Makefile")
 
         self.assertIn("PKG_SOURCE_DATE:=0.8.5", makefile)
-        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_RELEASE:=2", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
             "PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_SOURCE_DATE)/",
@@ -33,7 +33,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.8.5", makefile)
-        self.assertIn("PKG_RELEASE:=4", makefile)
+        self.assertIn("PKG_RELEASE:=5", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
             "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
@@ -44,26 +44,41 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             makefile,
         )
 
-    def test_runtime_package_installs_kspeeder_desktop_module(self):
+    def test_runtime_package_installs_kspeeder_iframe_assets(self):
         makefile = self.read("istoreenhance/Makefile")
 
         self.assertIn("$(1)/usr/share/kspeeder/www", makefile)
         self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("./files/kspeeder-plugin.json", makefile)
         self.assertIn("KSPEEDER_WEB_ROOT:=$(PKG_BUILD_DIR)/wwwroot", makefile)
-        self.assertIn("$(KSPEEDER_WEB_ROOT)/desktop-entry.js", makefile)
+        self.assertIn("$(KSPEEDER_WEB_ROOT)/index.html", makefile)
+        self.assertNotIn("$(KSPEEDER_WEB_ROOT)/desktop-entry.js", makefile)
         self.assertIn("$(CP) $(KSPEEDER_WEB_ROOT)/* $(1)/usr/share/kspeeder/www/", makefile)
-        self.assertIn("./files/www/desktop-entry.js", makefile)
+        self.assertNotIn("./files/www/desktop-entry.js", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/logo.png $(1)/usr/share/kspeeder/www/logo.png", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("/usr/share/linkeasefull/desktop-apps.d/20-kspeeder.json", makefile)
 
-    def test_kspeeder_desktop_manifest_uses_linkease_runtime_proxy(self):
+    def test_kspeeder_desktop_manifest_uses_iframe_with_uci_admin_port(self):
         manifest = json.loads(self.read("istoreenhance/files/kspeeder-plugin.json"))
 
         self.assertEqual(manifest["id"], "kspeeder")
         self.assertEqual(manifest["staticRoot"], "/usr/share/kspeeder/www")
-        self.assertEqual(manifest["desktop"]["entry"], "desktop-entry.js")
+        self.assertEqual(manifest["desktop"]["mode"], "iframe")
+        self.assertNotIn("entry", manifest["desktop"])
+        self.assertNotIn("isolation", manifest["desktop"])
+        target = manifest["desktop"]["target"]
+        self.assertEqual(target["scheme"], "http")
+        self.assertEqual(target["hostMode"], "request-host")
+        self.assertEqual(target["port"]["default"], 5003)
+        self.assertEqual(
+            target["port"]["keys"]["uci"],
+            "istoreenhance.@istoreenhance[0].adminport",
+        )
+        self.assertEqual(target["path"], "/")
+        self.assertEqual(manifest["desktop"]["access"]["scope"], "lan")
+        self.assertEqual(manifest["config"]["providerOrder"], ["uci"])
+        self.assertEqual(manifest["config"]["providers"]["uci"]["type"], "uci")
         self.assertEqual(manifest["standalone"]["basePath"], "/apps/kspeeder/")
         self.assertTrue(manifest["standalone"]["externalOpen"]["enabled"])
         self.assertEqual(manifest["standalone"]["externalOpen"]["defaultPort"], 5003)
@@ -74,16 +89,8 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertEqual(manifest["backend"]["upstreamBasePath"], "/")
         self.assertEqual(manifest["backend"]["pathMode"], "strip-public-base")
 
-    def test_kspeeder_desktop_entry_is_browser_safe_single_spa_module(self):
-        entry = self.read("istoreenhance/files/www/desktop-entry.js")
-
-        self.assertIn("export async function bootstrap", entry)
-        self.assertIn("export async function mount", entry)
-        self.assertIn("export async function unmount", entry)
-        self.assertIn("context.apiBase", entry)
-        self.assertIn("normalizeAPIBase(context)", entry)
-        self.assertNotIn("process.", entry)
-        self.assertNotIn("require(", entry)
+    def test_runtime_package_does_not_ship_obsolete_desktop_module(self):
+        self.assertFalse((ROOT / "istoreenhance/files/www/desktop-entry.js").exists())
 
     def test_default_entry_stays_on_luci_while_open_uses_shared_route(self):
         makefile = self.read("luci-app-istoreenhance/Makefile")
