@@ -25,7 +25,16 @@ local manifests = {
 			basePath = "/apps/kspeeder/",
 			externalOpen = { enabled = true, path = "/" }
 		},
-		desktop = { mode = "module", entry = "desktop-entry.js" },
+		desktop = {
+			mode = "iframe",
+			target = {
+				scheme = "http", hostMode = "request-host", path = "/",
+				port = {
+					default = 5003,
+					keys = { uci = "istoreenhance.@istoreenhance[0].adminport" }
+				}
+			}
+		},
 		backend = {
 			type = "http", portFromUci = "istoreenhance.@istoreenhance[0].adminport",
 			defaultPort = 5003
