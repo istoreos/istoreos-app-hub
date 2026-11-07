@@ -2,7 +2,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_VERSION:=0.7.8
+PKG_VERSION:=0.8.0
 PKG_RELEASE:=8
 META_TITLE:=FastNet 网络测速
 META_TITLE.en:=FastNet
