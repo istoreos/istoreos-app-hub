@@ -31,7 +31,7 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertEqual(luci_version.group(1), f"{source_version.group(1)}-r5")
         self.assertEqual(luci_release.group(1), "")
         self.assertEqual(meta_version.group(1), source_version.group(1))
-        self.assertEqual(meta_release.group(1), "8")
+        self.assertEqual(meta_release.group(1), "9")
         self.assertIn(
             "istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/",
             runtime,
