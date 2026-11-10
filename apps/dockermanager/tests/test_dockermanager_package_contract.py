@@ -31,7 +31,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("PKG_VERSION:=0.1.2", meta)
-        self.assertIn("PKG_RELEASE:=3", meta)
+        self.assertIn("PKG_RELEASE:=4", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth +linkease-app-entry", luci_makefile)
@@ -111,9 +111,9 @@ class DockerManagerPackageContractTest(unittest.TestCase):
     def test_package_registers_desktop_plugin_without_owning_auth_bridge(self):
         makefile = self.read("dockermanager/Makefile")
 
-        self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertNotIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
-        self.assertIn(
+        self.assertNotIn(
             "ln -sf /usr/share/dockermanager/dockermanager-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/20-dockermanager-plugin.json",
             makefile,
         )

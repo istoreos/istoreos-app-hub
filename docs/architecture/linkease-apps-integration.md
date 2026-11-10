@@ -1,5 +1,8 @@
 # LinkEase Apps integration
 
+Application registry paths and package ownership are governed solely by
+[Application registration](linkease-app-registration.md).
+
 Routed applications use one LuCI launch contract and one runtime entry. An
 application does not depend on LinkEaseFull and does not implement uhttpd,
 worker, authentication, or fallback decisions in its own controller.
@@ -47,15 +50,15 @@ An application runtime package:
 1. depends on `linkease-app-entry`;
 2. installs its manifest at an application-owned stable path;
 3. creates a symlink in `/usr/share/linkease/apps.d`;
-4. may also create the legacy `/usr/share/linkeasefull/desktop-apps.d` symlink
-   during the compatibility window;
-5. removes a symlink in `prerm` only when `readlink` still points to its own
-   manifest.
+4. removes a symlink in `prerm` only when `readlink` still points to its own
+   manifest;
+5. retires only its own old registration during upgrade, without writing a
+   second registration directory.
 
 The OpenWrt LuCI embed is an intentional exception: its manifest declares
 `desktop.mode=builtin` and names the LinkEaseFull-only `LuciContainer`
 component. It remains owned by `luci-app-linkeasefull-embed`, depends on
-`linkeasefull`, and registers only in the LinkEaseFull desktop directory. The
+`linkeasefull`, and registers in the same `/usr/share/linkease/apps.d` directory. The
 fallback gateway must ignore builtin manifests rather than pretending they are
 standalone `/apps` applications.
 

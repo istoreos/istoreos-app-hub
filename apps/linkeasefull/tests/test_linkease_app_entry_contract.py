@@ -27,7 +27,7 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
         self.assertNotIn("define Package/linkease-app-entry", full_makefile)
         self.assertNotIn("linkease-app-entryd", full_makefile)
         self.assertNotIn("linkease-app-gateway", full_makefile)
-        self.assertIn("PKG_VERSION:=3.0.22", makefile)
+        self.assertIn("PKG_VERSION:=3.0.23", makefile)
         self.assertIn("PKG_RELEASE:=1", makefile)
         self.assertIn(
             "PKG_SOURCE:=linkease-app-entry-runtime-$(PKG_VERSION)-linux-$(LINKEASE_RUNTIME_ARCH).tar.gz",
@@ -38,11 +38,11 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
             makefile,
         )
         self.assertIn(
-            "4c8f0e64c0dce16a8a4aa51eadd21b597efe7edbab207cd97e21d3ad55b38dd5",
+            "f5a974187ca1c50f043459150e52195c85799673f9ebc18221e9f5d206a4fb3c",
             makefile,
         )
         self.assertIn(
-            "d05e8b1a0b9c46de01e298ab14b4d92c1591e86e935bca701c68875b0911240c",
+            "ef4a48e999339bdd6c2a802ce1c1fbcb885ad28c7ed63315a21d4034d1e66a2c",
             makefile,
         )
         self.assertNotIn(
@@ -95,14 +95,13 @@ class LinkEaseAppEntryContractTest(unittest.TestCase):
         self.assertIn("+luci-app-linkeasefull-embed", core)
         for package in (
             "app-meta-dockermanager",
-            "app-meta-kai",
+            "app-meta-kaiplus",
             "app-meta-baidudrive",
             "app-meta-istoreenhance",
         ):
             self.assertNotIn("+" + package, core, package)
             self.assertIn("+" + package, bundle, package)
         self.assertNotIn("+app-meta-kaiplus", core)
-        self.assertNotIn("+app-meta-kaiplus", bundle)
         self.assertIn("+app-meta-linkeasefull", bundle)
 
 

@@ -7,6 +7,8 @@ on:
       - 'apps/**'
       - 'tools/cmd/appcatalog/**'
       - 'tools/tests/test-app-diagnostics-index.sh'
+      - 'tools/tests/test_app_registration.py'
+      - 'tools/tests/fixtures/legacy-registrations/**'
       - 'docs/app-diagnostics.jsonl'
       - 'Makefile'
       - '.github/workflows/app-diagnostics-index.yml'
@@ -21,3 +23,5 @@ jobs:
           go-version-file: tools/go.mod
       - name: Verify generated diagnostic index
         run: make apps-diagnostics-check
+      - name: Verify application registration ownership and upgrade hooks
+        run: python3 -B tools/tests/test_app_registration.py

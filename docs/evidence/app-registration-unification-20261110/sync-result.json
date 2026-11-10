@@ -1,0 +1,217 @@
+[
+  {
+    "source": "apps/agentflow/agentflow/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/agentflow/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "3449e27ae61350373a789c4865873484de9c286fa56ce793f275813916aaefa2"
+  },
+  {
+    "source": "apps/agentflow/app-meta-agentflow/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-agentflow/Makefile",
+    "action": "write",
+    "baseline": "different-existing-target",
+    "preservedLegacyFields": {
+      "PKG_RELEASE": "3"
+    },
+    "sha256": "c2bfe55799c81f564ff6b10b3d8634c20bc1a67e5ba786781a52dd42b8470a9f"
+  },
+  {
+    "source": "apps/baidudrive/app-meta-baidudrive/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-baidudrive/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "c3c032d15232e792c2218a4c9485f1174bfd43287c12b01ad75d435b148ab393"
+  },
+  {
+    "source": "apps/baidudrive/baidudrive/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages/network/services/baidudrive/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "d05d1dd166b3ec9b42c3ca22f021a71762b902c7d91a1f5eff01f8231d646d87"
+  },
+  {
+    "source": "apps/ddnsto/app-meta-ddnsto/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-ddnsto/Makefile",
+    "action": "write",
+    "baseline": "different-existing-target",
+    "preservedLegacyFields": {
+      "PKG_VERSION": "4.2.8"
+    },
+    "sha256": "22a7c6a7583229bff35cd5ca47be1b63b5967332b69596ac4e78aac983518a97"
+  },
+  {
+    "source": "apps/ddnsto/app-meta-ddnsto/root/usr/share/linkeasefull/app-meta/ddnsto/logo.png",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-ddnsto/root/usr/share/linkeasefull/app-meta/ddnsto/logo.png",
+    "action": "delete",
+    "baseline": "target-absent",
+    "preservedLegacyFields": {},
+    "sha256": null
+  },
+  {
+    "source": "apps/ddnsto/app-meta-ddnsto/root/usr/share/linkeasefull/desktop-apps.d/16-ddnsto.json",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-ddnsto/root/usr/share/linkeasefull/desktop-apps.d/16-ddnsto.json",
+    "action": "delete",
+    "baseline": "target-absent",
+    "preservedLegacyFields": {},
+    "sha256": null
+  },
+  {
+    "source": "apps/ddnsto/luci-app-ddnsto/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-app-ddnsto/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "8693fac8441f0cd315119a46103dc783b75908fad230d4543b31fadba9ab9076"
+  },
+  {
+    "source": "apps/ddnsto/luci-app-ddnsto/root/usr/share/ddnsto/ddnsto-plugin.json",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-app-ddnsto/root/usr/share/ddnsto/ddnsto-plugin.json",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "6c806cb782c8992cf3ee581d211f4a4cc4b525affe13054ce5f80eeb975a108a"
+  },
+  {
+    "source": "apps/ddnsto/luci-app-ddnsto/root/usr/share/ddnsto/www/logo.png",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-app-ddnsto/root/usr/share/ddnsto/www/logo.png",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "b1c07f409d37e0504fa871aa46746d61fc8ca3cab590c4f2e79bf788052a96df"
+  },
+  {
+    "source": "apps/ddnsto/luci-app-ddnsto/root/usr/share/linkease/apps.d/16-ddnsto.json",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-app-ddnsto/root/usr/share/linkease/apps.d/16-ddnsto.json",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": null
+  },
+  {
+    "source": "apps/dockermanager/app-meta-dockermanager/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-dockermanager/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "70321594f7453d153de4eac95c1e9f9ab5e6c7c0f8442ae65cff8a1dede9d7f8"
+  },
+  {
+    "source": "apps/dockermanager/dockermanager/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages/network/services/dockermanager/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "7dfa87f87ccd55d1d09f9d1d58b18138bfa8f00e0b9fe492b6993b544b4618ea"
+  },
+  {
+    "source": "apps/fastnet/app-meta-fastnet/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-fastnet/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "d183077d59fa4cbecfa8dfae342cdc6d30388fa5bfca4ef7a471f1e4928d93bb"
+  },
+  {
+    "source": "apps/fastnet/app-meta-fastnet/root/usr/share/linkeasefull/desktop-apps.d/17-fastnet.json",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-fastnet/root/usr/share/linkeasefull/desktop-apps.d/17-fastnet.json",
+    "action": "delete",
+    "baseline": "target-absent",
+    "preservedLegacyFields": {},
+    "sha256": null
+  },
+  {
+    "source": "apps/fastnet/fastnet/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages/network/services/fastnet/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "c16a1fe884cde4853c81953a736422d1c81c6cb0904396f368c969bf1a3a6e1b"
+  },
+  {
+    "source": "apps/istoreenhance/app-meta-istoreenhance/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-istoreenhance/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "c3c0c8973b3e709180bcf43379b246d6a6b13465fdd2985ed396c5eef5c0d855"
+  },
+  {
+    "source": "apps/istoreenhance/istoreenhance/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages/network/services/istoreenhance/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "4bee0264f44820c7e28c641d95d64f94985363f55a465494b31c3b5a42d12b79"
+  },
+  {
+    "source": "apps/kai/kai/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/kai/Makefile",
+    "action": "write",
+    "baseline": "different-existing-target",
+    "preservedLegacyFields": {
+      "EXTRA_DEPENDS": null,
+      "PKG_RELEASE": "11"
+    },
+    "sha256": "5db420fad5a1029eee74bc9821b91350a1c1e87e2d6ef8a0a4607906d073ba61"
+  },
+  {
+    "source": "apps/kaiplus/app-meta-kaiplus/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-kaiplus/Makefile",
+    "action": "write",
+    "baseline": "different-existing-target",
+    "preservedLegacyFields": {
+      "PKG_VERSION": "1.0.11",
+      "PKG_RELEASE": "4"
+    },
+    "sha256": "d6ea45bd5d57e80eb98b302542df32fc5b04f0f203ed99e04fb5ac92ae3490f3"
+  },
+  {
+    "source": "apps/kaiplus/kaiplus/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/kaiplus/Makefile",
+    "action": "write",
+    "baseline": "different-existing-target",
+    "preservedLegacyFields": {
+      "PKG_RELEASE": "2",
+      "KAIPLUS_HASH_aarch64": "8ea9ce946e42f95b02f98749869d4990008d7221705beb51a9a90c00a1b00f83",
+      "KAIPLUS_HASH_x86_64": "945d1bcd7871426a10a77089512328e01e1db292f5dafbcf4e5c6b38f5a15cce",
+      "PKG_VERSION": "1.0.11"
+    },
+    "sha256": "a6e2273de95a366cbd3fe4dd4f35cc2271bbb39b7dbb0b66e1bb1db809280933"
+  },
+  {
+    "source": "apps/linkeasefull/app-meta-linkeasefull/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-linkeasefull/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "ae033655d3e2a09509fe08c12c7be61ccef07120c812384bd9638d0fe1d35912"
+  },
+  {
+    "source": "apps/linkeasefull/luci-app-linkeasefull-embed/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-app-linkeasefull-embed/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "73743fd6aedf90cc81e4a225504ea69f4fd37f7a3c3ad97eac25c8a8dfa83b7e"
+  },
+  {
+    "source": "apps/linkeasefull/luci-lib-linkeaseauth/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-lib-linkeaseauth/Makefile",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "9bde11577c1058a11269c14d63ab159b37f250340c4e91a2784c647133a40e22"
+  },
+  {
+    "source": "apps/linkeasefull/luci-lib-linkeaseauth/luasrc/model/linkease/apps_openwrt.lua",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-lib-linkeaseauth/luasrc/model/linkease/apps_openwrt.lua",
+    "action": "write",
+    "baseline": "baseline-matches",
+    "preservedLegacyFields": {},
+    "sha256": "b61f8ec5242dc52e978ac51a145fac81561147f5b26a9580558618f54a4b0559"
+  }
+]

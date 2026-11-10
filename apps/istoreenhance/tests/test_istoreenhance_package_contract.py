@@ -17,7 +17,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("istoreenhance/Makefile")
 
         self.assertIn("PKG_SOURCE_DATE:=0.9.0", makefile)
-        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_RELEASE:=2", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
             "PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_SOURCE_DATE)/",
@@ -33,7 +33,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.9.0", makefile)
-        self.assertIn("PKG_RELEASE:=8", makefile)
+        self.assertIn("PKG_RELEASE:=9", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
             "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
@@ -48,7 +48,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("istoreenhance/Makefile")
 
         self.assertIn("$(1)/usr/share/kspeeder/www", makefile)
-        self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertNotIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("./files/kspeeder-plugin.json", makefile)
         self.assertIn("KSPEEDER_WEB_ROOT:=$(PKG_BUILD_DIR)/wwwroot", makefile)
         self.assertIn("$(KSPEEDER_WEB_ROOT)/index.html", makefile)
@@ -57,7 +57,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertNotIn("./files/www/desktop-entry.js", makefile)
         self.assertIn("$(INSTALL_DATA) ./files/logo.png $(1)/usr/share/kspeeder/www/logo.png", makefile)
         self.assertNotIn("../app-meta-", makefile)
-        self.assertIn("/usr/share/linkeasefull/desktop-apps.d/20-kspeeder.json", makefile)
+        self.assertIn("/usr/share/linkease/apps.d/20-kspeeder.json", makefile)
 
     def test_kspeeder_desktop_manifest_uses_iframe_with_uci_admin_port(self):
         manifest = json.loads(self.read("istoreenhance/files/kspeeder-plugin.json"))

@@ -35,7 +35,7 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         makefile = self.read("baidudrive/Makefile")
 
         self.assertIn("$(1)/usr/share/baidudrive/www", makefile)
-        self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertNotIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
         self.assertIn("+linkease-app-entry", makefile)
         self.assertIn("$(CP) $(PKG_BUILD_DIR)/web/dist/. $(1)/usr/share/baidudrive/www/", makefile)
@@ -43,7 +43,7 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
             "$(INSTALL_DATA) ./files/baidudrive-plugin.json $(1)/usr/share/baidudrive/baidudrive-plugin.json",
             makefile,
         )
-        self.assertIn(
+        self.assertNotIn(
             "ln -sf /usr/share/baidudrive/baidudrive-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/10-baidudrive-plugin.json",
             makefile,
         )
@@ -56,10 +56,10 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         makefile = self.read("baidudrive/Makefile")
 
         self.assertIn("define Package/$(PKG_NAME)/prerm", makefile)
-        self.assertIn("readlink /usr/share/linkeasefull/desktop-apps.d/10-baidudrive-plugin.json", makefile)
+        self.assertIn('readlink "$${registration}"', makefile)
         self.assertIn('= "/usr/share/baidudrive/baidudrive-plugin.json"', makefile)
-        self.assertIn("rm -f /usr/share/linkeasefull/desktop-apps.d/10-baidudrive-plugin.json", makefile)
-        self.assertIn("rm -f /usr/share/linkease/apps.d/10-baidudrive-plugin.json", makefile)
+        self.assertIn('rm -f "$${registration}"', makefile)
+        self.assertIn('rm -f "$${registration}"', makefile)
 
     def test_luci_uses_shared_apps_entry_and_preserves_legacy_status(self):
         makefile = self.read("luci-app-baidudrive/Makefile")
@@ -75,7 +75,7 @@ class BaiduDriveOpenWrtContractTest(unittest.TestCase):
         self.assertIn('compat():legacy_status("baidudrive"', controller)
         self.assertIn('url("admin/services/baidudrive/open")', status)
         self.assertNotIn('window.location.hostname + ":" + st.port', status)
-        self.assertIn("PKG_RELEASE:=4", meta)
+        self.assertIn("PKG_RELEASE:=5", meta)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/baidudrive", meta)
         self.assertIn('/cgi-bin/luci/admin/services/baidudrive', entry)
         self.assertNotIn('linkease_apps/open?id=baidudrive', entry)

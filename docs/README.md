@@ -16,3 +16,5 @@ For LinkEase application entry work, start with:
 2. [Application routing test runbook](operations/linkease-app-routing-test.md)
 
 Do not use a document under `archive/` as the current package contract.
+
+应用注册与包归属统一遵循 [应用注册规范](architecture/linkease-app-registration.md)。`app-meta-*` 不安装应用清单或注册链接；实际运行包或已有 LuCI 包负责登记。

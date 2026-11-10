@@ -71,3 +71,5 @@ LEGACY_ROOT=/path/to/openwrt-apps make syncapps-app APP=app-foo
 2) 实际会影响的 legacy 目录列表
 3) 是否需要 `DELETE=1` 的建议
 ```
+
+应用注册与包归属统一遵循 [应用注册规范](architecture/linkease-app-registration.md)。`app-meta-*` 不安装应用清单或注册链接；实际运行包或已有 LuCI 包负责登记。

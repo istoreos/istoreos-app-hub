@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "minimumVersionConstraintsAdded": false,
+  "sharedMetaMkUnchanged": true,
+  "existingMetadataCIUnchanged": true,
+  "newMetadataWorkflowPresent": false,
+  "packages": [
+    {
+      "file": "/projects/workspace-linkease-ubuntu/openwrt-apps/istoreos-app-hub/apps/fastnet/app-meta-fastnet/Makefile",
+      "dependencies": "META_DEPENDS:=+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn"
+    },
+    {
+      "file": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-fastnet/Makefile",
+      "dependencies": "META_DEPENDS:=+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn"
+    },
+    {
+      "file": "/projects/workspace-linkease-ubuntu/openwrt-apps/istoreos-app-hub/apps/ddnsto/app-meta-ddnsto/Makefile",
+      "dependencies": "META_DEPENDS:=+ddnsto +luci-app-ddnsto +luci-i18n-ddnsto-zh-cn"
+    },
+    {
+      "file": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-ddnsto/Makefile",
+      "dependencies": "META_DEPENDS:=+ddnsto +luci-app-ddnsto +luci-i18n-ddnsto-zh-cn"
+    },
+    {
+      "file": "/projects/workspace-linkease-ubuntu/openwrt-apps/istoreos-app-hub/apps/linkeasefull/app-meta-linkeasefull/Makefile",
+      "dependencies": "META_DEPENDS:=+linkease-runtime-transition +linkease +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn"
+    },
+    {
+      "file": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-linkeasefull/Makefile",
+      "dependencies": "META_DEPENDS:=+linkease-runtime-transition +linkease +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn"
+    }
+  ]
+}

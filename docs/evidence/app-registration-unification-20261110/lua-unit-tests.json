@@ -1,0 +1,27 @@
+[
+  {
+    "test": "test_linkease_apps.lua",
+    "exit": 0,
+    "output": "linkease apps decision tests passed\n"
+  },
+  {
+    "test": "test_linkease_apps_compat.lua",
+    "exit": 0,
+    "output": "linkease apps compatibility tests passed\n"
+  },
+  {
+    "test": "test_linkease_apps_http.lua",
+    "exit": 0,
+    "output": "linkease apps HTTP boundary tests passed\n"
+  },
+  {
+    "test": "test_linkease_apps_openwrt.lua",
+    "exit": 0,
+    "output": "linkease apps OpenWrt adapter tests passed\n"
+  },
+  {
+    "test": "test_linkease_auth.lua",
+    "exit": 0,
+    "output": "linkease auth bridge tests passed\n"
+  }
+]

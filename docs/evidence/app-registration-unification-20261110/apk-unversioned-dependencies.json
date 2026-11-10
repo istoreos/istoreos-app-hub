@@ -1,0 +1,12 @@
+{
+  "host": "root@192.168.3.164",
+  "system": "iStoreOS 25.12.5",
+  "apkVersion": "3.0.5",
+  "command": "apk add --simulate --network=no --logfile=no luci-app-ddnsto luci-app-linkeasefull-embed luci-lib-linkeaseauth",
+  "exitCode": 0,
+  "output": "OK: 1277.2 MiB in 1094 packages\n",
+  "installedPackagesWorldAndRegistryUnchanged": true,
+  "before": "531322cfa1f523ea74a072193f635d3555d9bc92c5cf4adc00c9863677f59efe  /etc/apk/world\nce670982e7000882ebfbb70b1e9785a6a5cb1107e9b01a098063c4313d194fe5  -\n5eaa6c08049c6332e810c85c31fca3c74a0d2cac2f5e13b3f614c2b2b66a8a2d  -\n",
+  "after": "531322cfa1f523ea74a072193f635d3555d9bc92c5cf4adc00c9863677f59efe  /etc/apk/world\nce670982e7000882ebfbb70b1e9785a6a5cb1107e9b01a098063c4313d194fe5  -\n5eaa6c08049c6332e810c85c31fca3c74a0d2cac2f5e13b3f614c2b2b66a8a2d  -\n",
+  "actualPackageInstallPerformed": false
+}

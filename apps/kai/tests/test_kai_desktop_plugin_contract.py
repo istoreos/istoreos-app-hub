@@ -49,7 +49,7 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
         self.assertIn("+linkease-app-entry", makefile)
         self.assertIn("$(1)/usr/share/kai/www", makefile)
         self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
-        self.assertIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertNotIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
         self.assertIn(
             "$(INSTALL_DATA) ./files/kai-plugin.json $(1)/usr/share/kai/kai-plugin.json",
             makefile,
@@ -62,7 +62,7 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
             "ln -sf /usr/share/kai/kai-plugin.json $(1)/usr/share/linkease/apps.d/05-kai-plugin.json",
             makefile,
         )
-        self.assertIn(
+        self.assertNotIn(
             "ln -sf /usr/share/kai/kai-plugin.json $(1)/usr/share/linkeasefull/desktop-apps.d/05-kai-plugin.json",
             makefile,
         )
@@ -71,8 +71,8 @@ class KaiDesktopPluginContractTest(unittest.TestCase):
         makefile = self.read("kai/Makefile")
 
         self.assertIn("define Package/$(PKG_NAME)/prerm", makefile)
-        self.assertIn("readlink /usr/share/linkease/apps.d/05-kai-plugin.json", makefile)
-        self.assertIn("readlink /usr/share/linkeasefull/desktop-apps.d/05-kai-plugin.json", makefile)
+        self.assertIn('readlink "$${registration}"', makefile)
+        self.assertIn('readlink "$${registration}"', makefile)
         self.assertIn('= "/usr/share/kai/kai-plugin.json"', makefile)
 
     def test_classic_tab_declares_both_shared_launch_dependencies(self):

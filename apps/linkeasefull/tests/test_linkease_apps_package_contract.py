@@ -12,7 +12,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
     def test_shared_luci_package_is_versioned_as_apps_integration(self):
         makefile = self.read("linkeasefull/luci-lib-linkeaseauth/Makefile")
         self.assertIn("LUCI_TITLE:=LuCI shared integration for LinkEase apps", makefile)
-        self.assertIn("PKG_VERSION:=1.2.1-r1", makefile)
+        self.assertIn("PKG_VERSION:=1.2.1-r2", makefile)
         self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
 
     def test_shared_package_keeps_auth_and_adds_separate_apps_routes(self):
@@ -51,7 +51,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             self.assertNotIn("+linkeasefull", runtime, app)
             self.assertNotIn("+linkeasefull", luci, app)
 
-    def test_migrated_apps_register_neutral_and_legacy_manifests_safely(self):
+    def test_migrated_apps_register_once_and_retire_owned_legacy(self):
         cases = (
             ("dockermanager", "dockermanager/dockermanager/Makefile", "20", "/usr/share/dockermanager/dockermanager-plugin.json"),
             ("kaiplus", "kaiplus/kaiplus/Makefile", "00", "/usr/share/kaiplus/kaiplus-plugin.json"),
@@ -69,7 +69,9 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
                 legacy = f"/usr/share/linkeasefull/desktop-apps.d/{prefix}-{app}.json"
             self.assertIn(neutral, makefile)
             self.assertIn(legacy, makefile)
-            self.assertIn(f'readlink {neutral}', makefile)
+            self.assertIn('readlink "$${registration}"', makefile)
+            install = makefile.split('define Package/$(PKG_NAME)/install', 1)[1]
+            self.assertNotIn(legacy, install)
             self.assertIn(f'= "{target}"', makefile)
 
     def test_app_controllers_delegate_instead_of_implementing_routing(self):
@@ -165,8 +167,8 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             "linkeasefull/luci-app-linkeasefull-embed/files/openwrt-luci/openwrt-luci.json"
         )
         self.assertIn("DEPENDS:=+linkeasefull", makefile)
-        self.assertIn("/usr/share/linkeasefull/desktop-apps.d", makefile)
-        self.assertNotIn("/usr/share/linkease/apps.d", makefile)
+        self.assertNotIn("$(1)/usr/share/linkeasefull/desktop-apps.d", makefile)
+        self.assertIn("$(1)/usr/share/linkease/apps.d", makefile)
         self.assertIn('"mode": "builtin"', manifest)
         self.assertIn('"component": "LuciContainer"', manifest)
 

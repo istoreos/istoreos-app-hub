@@ -1,0 +1,32 @@
+{
+  "istoreos-app-hub": {
+    "path": "/projects/workspace-linkease-ubuntu/openwrt-apps/istoreos-app-hub",
+    "head": "8d1716e353c511c6586e5935bfa4251a6dec1f9c",
+    "status": ""
+  },
+  "openwrt-app-meta": {
+    "path": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta",
+    "head": "9904e03fd40cd77601665cac65b9a2f23e0e7577",
+    "status": " M applications/app-meta-fastnet/Makefile\n"
+  },
+  "nas-packages": {
+    "path": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages",
+    "head": "8e7d6b4bef5b1d92d5c46f43d4527b376000ab24",
+    "status": " M network/services/fastnet/Makefile\n M network/services/fastnet/files/fastnet-plugin.json\n M network/services/fastnet/files/fastnet.init\n"
+  },
+  "nas-packages-luci": {
+    "path": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci",
+    "head": "aa182ecfb44bedbd323a38f4729db616ae999b3e",
+    "status": " M luci/luci-app-fastnet/Makefile\n M luci/luci-app-fastnet/luasrc/controller/fastnet.lua\n M luci/luci-app-fastnet/root/etc/uci-defaults/50_luci-fastnet\n?? luci/luci-app-fastnet/luasrc/model/fastnet/\n?? luci/luci-app-fastnet/root/usr/\n?? luci/luci-app-fastnet/root/www/\n"
+  },
+  "openwrt-app-actions": {
+    "path": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions",
+    "head": "fb4eb2f7edf8c8fff15c7257d6bb49129dad4436",
+    "status": ""
+  },
+  "linkease-desktop": {
+    "path": "/projects/workspace-linkease-ubuntu/linkease-github/linkease-desktop",
+    "head": "7c8e968adf4010b861f41eebf8ff93ef00a44e1b",
+    "status": ""
+  }
+}

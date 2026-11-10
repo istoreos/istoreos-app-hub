@@ -164,4 +164,15 @@ equal(builtin.registered, true)
 equal(builtin.available, false)
 equal(builtin.reason, "entry_unsupported_and_external_disabled")
 
+local scanned = {}
+local default_deps = dependencies("fastnet.json", false)
+default_deps.registration_dirs = nil
+default_deps.fs.dir = function(directory)
+ table.insert(scanned, directory)
+ return function() return nil end
+end
+apps_openwrt.new(default_deps):resolve("missing-app")
+equal(#scanned, 1, "default discovery must scan only one registry")
+equal(scanned[1], "/usr/share/linkease/apps.d")
+
 print("linkease apps OpenWrt adapter tests passed")

@@ -1,0 +1,32 @@
+[
+  {
+    "suite": "fastnet",
+    "exit": 0,
+    "tail": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "suite": "dockermanager",
+    "exit": 0,
+    "tail": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.041s\n\nOK\n"
+  },
+  {
+    "suite": "baidudrive",
+    "exit": 0,
+    "tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.021s\n\nOK\n"
+  },
+  {
+    "suite": "kai",
+    "exit": 0,
+    "tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.002s\n\nOK\n"
+  },
+  {
+    "suite": "istoreenhance",
+    "exit": 0,
+    "tail": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.039s\n\nOK\n"
+  },
+  {
+    "suite": "linkeasefull",
+    "exit": 1,
+    "tail": "\u4e91\u6587\u4ef6\u7ba1\u7406\u5165\u53e3\uff0c\u8fd0\u884c\u65f6\u4f1a\u505c\u7528\u6807\u51c6\u7248\u6613\u6709\u4e91\u3002\\nMETA_DESCRIPTION.en:=LinkEase Full provides the local web desktop, embedded OpenWrt administration, and the legacy 8897 entry; it reuses the shared LinkEase file entry and disables the standard LinkEase runtime while running.\\nMETA_AUTHOR:=xiaobao\\nMETA_ARCH:=x86_64 aarch64\\nMETA_TAGS:=nas service\\nMETA_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkeasefull\\nMETA_WEBSITE:=https://www.linkease.com/\\nMETA_TUTORIAL:=https://doc.linkease.com/zh/guide/istore/software/linkease.html\\n\\ninclude ../../meta.mk\\n\\n# call BuildPackage - OpenWrt buildroot signature\\n'\n\n----------------------------------------------------------------------\nRan 23 tests in 0.027s\n\nFAILED (failures=4)\n"
+  }
+]
