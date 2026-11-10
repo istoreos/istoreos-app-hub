@@ -3,27 +3,27 @@
   "abi": "quickstart-card-v1",
   "vue": "3.5.44",
   "compiler": "3.5.44",
-  "version": "0.8.3-1",
-  "sourceCommit": "2206ce1b801098f22625ae2ab1a6deab35e2371a",
+  "version": "0.8.3-2",
+  "sourceCommit": "03c5d665bd5e7a8db9e28d8ee71fc834c221d89c",
   "sourceFiles": {
-    "quickstart-card/manifest.json": "bd55fbef8cc7abc395f0cb839fc4c040295ec75bcdcecda2e211e8f4a2859b8a",
+    "quickstart-card/manifest.json": "2561c3413f2e08503ebd3dd1b6e7c6fc5b0c89960459e11037702d9049e61541",
     "quickstart-card/package-lock.json": "daaa5d8d53587115f2fb7127adb51cbfaa9c5d55906e598ab643e8b4b0fc3a6d",
     "quickstart-card/package.json": "7683ee1fb095bbf9897941bc4bf4796c488545cc9f712a943870ded1cdf7fccb",
-    "quickstart-card/src/Card.vue": "c1c345e94c88d21a4b2d45b4dc1de11094dbaccfdf59fa5f03e2f1117c470525",
+    "quickstart-card/src/Card.vue": "e32d61180aa826fac426c9487fc7cf661b84bad3c454c998e188c3c828f75a53",
     "quickstart-card/src/Details.vue": "a94eb71ec6ac389f4c1d6e5ea82c546ed1be5e31da410a63563c78e8a233407c",
-    "quickstart-card/src/WebDialog.vue": "1e0e3f2130f5c6fcba99250a2583c82f17b36517476ff4d5e12a6402b5ddee7e",
+    "quickstart-card/src/WebDialog.vue": "242b4937fc1e8282bdb732d7833072fc793b823fa257ee7e5b503ced6c3796ad",
     "quickstart-card/src/index.js": "48c908c983f14c159bf50c1d2ab3c54824f04bc2ecdacc714691164dea974c75",
     "quickstart-card/src/model.js": "0497552a2caadd0f3d1333f359cb6704a9e370e68ce71ed80c2d9090857124e3",
     "quickstart-card/src/style.css": "32114d063128b67b96627e444d27fa54a7a5da3c65923759b6c42524cd07d12f",
-    "quickstart-card/src/webStyle.css": "2cdb8cff9c45025a9c560cd94b1c5769d8a3ee4b0e95841189dec0338ff892af",
+    "quickstart-card/src/webStyle.css": "d74d7fe43eacb2718565c970a5254e71f26f0d65917bdb964bb2b424257d7b8d",
     "quickstart-card/vite.config.js": "7dda71bfe6923df40b4142608d38fa239da9e79e0b30ff3cd6d1747c49f657eb",
     "scripts/build-quickstart-card.sh": "345645c1513398221c612f6f1c0da77b3e4c958a86a18ef9382236307a55e3e8",
     "scripts/card-provenance.py": "2bbed5b4ad40fe94310bc6b9ba6f4d20fc7ed8ec675800b4ebcb5ed68d01a026"
   },
-  "sourceSha256": "e023521f8e471b6ca77cfea55e7e28447295efd31d28e0fd3a86ae29e0cb8ade",
+  "sourceSha256": "1547dc761d9ec3a4b5ead40c5251fd02c394ad4ce90105491369eef46d88ac9f",
   "assets": {
-    "card.e5dbb4e5.js": "92fbbef4da83ff475b80fbdbe8fb1494962fcaf40a8aa82ddfe8ea31d1bae61e",
+    "card.a45aecd2.js": "a96184a3aeb51ffaf23c685dcb3bc494cc3c490938ac03433a9b7e5180f2a790",
     "chunk.31ac0177.js": "c9d9ebd0ea447c7cee8743a912f63c744ff426a50eb1c5dc8c8321b86103d4f1",
-    "chunk.b5a86843.js": "b490e7ca6b3baaa8167ef3b6a2bad8aafc84c5748c210f764719d867b823fe47"
+    "chunk.ce51aa71.js": "19e84684200646c4667f7d7d3d7ffc028431a04c48497aed33824ba7e20949c9"
   }
 }

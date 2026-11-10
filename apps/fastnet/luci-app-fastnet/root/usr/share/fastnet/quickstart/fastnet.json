@@ -4,7 +4,7 @@
   "title": "外网测速",
   "glyph": "activity",
   "abi": "quickstart-card-v1",
-  "version": "0.8.3-1",
+  "version": "0.8.3-2",
   "apiBase": "/cgi-bin/luci/admin/services/fastnet/card",
   "forms": {
     "standard": {
@@ -19,5 +19,5 @@
   "stacked": [
     "summary"
   ],
-  "entry": "/luci-static/fastnet/quickstart/card.e5dbb4e5.js"
+  "entry": "/luci-static/fastnet/quickstart/card.a45aecd2.js"
 }

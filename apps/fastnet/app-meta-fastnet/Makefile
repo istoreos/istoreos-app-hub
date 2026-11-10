@@ -3,11 +3,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=0.8.3
-PKG_RELEASE:=11
+PKG_RELEASE:=12
 META_TITLE:=FastNet 网络测速
 META_TITLE.en:=FastNet
 META_DEPENDS:=+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn
-META_EXTRA_DEPENDS:=fastnet (>=0.8.3-1), luci-app-fastnet (>=0.8.3-r1)
+META_EXTRA_DEPENDS:=fastnet (>=0.8.3-1), luci-app-fastnet (>=0.8.3-r2)
 META_DESCRIPTION:=FastNet 提供网络测速与网络诊断 Web UI，默认端口 3200。
 META_DESCRIPTION.en:=FastNet provides network testing tools and a Web UI (default port 3200).
 META_AUTHOR:=xiaobao
