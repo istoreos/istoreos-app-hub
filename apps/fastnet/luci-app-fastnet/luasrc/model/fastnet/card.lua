@@ -87,7 +87,7 @@ function M.new(deps)
  end
  local function stopped_summary(reason)
   local raw=d.state();local disk=raw and json.parse(raw) or nil
-  local latest=type(disk)=="table" and disk.schemaVersion==1 and disk.latest or nil
+  local latest=type(disk)=="table" and (disk.schemaVersion==1 or disk.schemaVersion==2) and disk.latest or nil
   local result="null"
   if type(latest)=="table" then
    result='{"runId":'..atom(latest.runId)..',"measuredAt":'..atom(latest.measuredAt)..',"download":'..measurement(latest.download)..',"upload":'..measurement(latest.upload)..',"nat":'..measurement(latest.nat)..',"ipv6":'..measurement(latest.ipv6)
@@ -95,7 +95,7 @@ function M.new(deps)
    result=result..'}'
   end
   local state = d.enabled() and "unavailable" or "disabled"
-  return reply(200,'{"schemaVersion":1,"instanceId":"","service":{"state":'..atom(state)..',"reason":'..atom(reason)..'},"latest":'..result..',"task":null}')
+  return reply(200,'{"schemaVersion":1,"instanceId":"","service":{"state":'..atom(state)..',"reason":'..atom(reason)..'},"latest":'..result..',"latestResults":'..json.stringify(type(disk)=="table" and disk.latestResults or {})..',"task":null}')
  end
  return {handle=function(_, action)
   if type(ctx.authsession)~="string" or ctx.authsession=="" then return error_reply(401,"unauthenticated") end

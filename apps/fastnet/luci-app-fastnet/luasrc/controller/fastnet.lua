@@ -52,6 +52,7 @@ function action_embed()
 	end
 	local theme = http.formvalue("theme") == "dark" and "dark" or "light"
 	url = url .. (url:find("?",1,true) and "&" or "?") .. "embed=quickstart&theme=" .. theme
+	if http.formvalue("view") == "history" then url = url .. "&view=history" end
 	http.header("Cache-Control", "no-store")
 	http.redirect(require("luci.dispatcher").build_url("admin", "services", "linkease_auth", "auth") .. "?return=" .. http.urlencode(url))
 end

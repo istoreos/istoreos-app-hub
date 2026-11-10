@@ -3,26 +3,27 @@
   "abi": "quickstart-card-v1",
   "vue": "3.5.44",
   "compiler": "3.5.44",
-  "version": "0.8.2-1",
-  "sourceCommit": "e8f0480f100b41e1f4cce6725286f9748640aa54",
+  "version": "0.8.3-1",
+  "sourceCommit": "2206ce1b801098f22625ae2ab1a6deab35e2371a",
   "sourceFiles": {
-    "quickstart-card/manifest.json": "9760ea0f209500d99938f431e469b82bc8e8ef50f43a59ea9d09f4d86fde0fac",
+    "quickstart-card/manifest.json": "bd55fbef8cc7abc395f0cb839fc4c040295ec75bcdcecda2e211e8f4a2859b8a",
     "quickstart-card/package-lock.json": "daaa5d8d53587115f2fb7127adb51cbfaa9c5d55906e598ab643e8b4b0fc3a6d",
     "quickstart-card/package.json": "7683ee1fb095bbf9897941bc4bf4796c488545cc9f712a943870ded1cdf7fccb",
-    "quickstart-card/src/Card.vue": "f14ece5e40300875d986056e21e96912d4c64093fc43cf083e01a47bc95f7f43",
-    "quickstart-card/src/Details.vue": "f429ad2cd48d6747c46c77465cf54e9f350948f9398b0be41987e7b188036e02",
-    "quickstart-card/src/WebDialog.vue": "975f12b46da41b63e744d5a9062ecb44a50c9b550d23ca9c80441cb91bf0ee28",
+    "quickstart-card/src/Card.vue": "c1c345e94c88d21a4b2d45b4dc1de11094dbaccfdf59fa5f03e2f1117c470525",
+    "quickstart-card/src/Details.vue": "a94eb71ec6ac389f4c1d6e5ea82c546ed1be5e31da410a63563c78e8a233407c",
+    "quickstart-card/src/WebDialog.vue": "1e0e3f2130f5c6fcba99250a2583c82f17b36517476ff4d5e12a6402b5ddee7e",
     "quickstart-card/src/index.js": "48c908c983f14c159bf50c1d2ab3c54824f04bc2ecdacc714691164dea974c75",
-    "quickstart-card/src/model.js": "473a625d6468c6dc5a0807c2078aba9ec30ffcc199f7620b1254d73b11a8cc48",
-    "quickstart-card/src/style.css": "e7e76f056e7d3e6c334a9a24d486d72650aefc6dbbde5922df2a09792649f84d",
+    "quickstart-card/src/model.js": "0497552a2caadd0f3d1333f359cb6704a9e370e68ce71ed80c2d9090857124e3",
+    "quickstart-card/src/style.css": "32114d063128b67b96627e444d27fa54a7a5da3c65923759b6c42524cd07d12f",
     "quickstart-card/src/webStyle.css": "2cdb8cff9c45025a9c560cd94b1c5769d8a3ee4b0e95841189dec0338ff892af",
     "quickstart-card/vite.config.js": "7dda71bfe6923df40b4142608d38fa239da9e79e0b30ff3cd6d1747c49f657eb",
     "scripts/build-quickstart-card.sh": "345645c1513398221c612f6f1c0da77b3e4c958a86a18ef9382236307a55e3e8",
     "scripts/card-provenance.py": "2bbed5b4ad40fe94310bc6b9ba6f4d20fc7ed8ec675800b4ebcb5ed68d01a026"
   },
-  "sourceSha256": "87ec39846857a5f9a3b91790e5d46db0ae3e71ecac68eda0fc9ecd001a93f499",
+  "sourceSha256": "e023521f8e471b6ca77cfea55e7e28447295efd31d28e0fd3a86ae29e0cb8ade",
   "assets": {
-    "card.673f7cc9.js": "0c6cff04a7e26949c12d0e12ad8706ea1d034a939446d4a624eebec0a68f7bad",
-    "chunk.5e62b45e.js": "3aa8897baa618d583ca9336fe13a4508b79f4a04850b9262c4ae83ef55d0bbc3"
+    "card.e5dbb4e5.js": "92fbbef4da83ff475b80fbdbe8fb1494962fcaf40a8aa82ddfe8ea31d1bae61e",
+    "chunk.31ac0177.js": "c9d9ebd0ea447c7cee8743a912f63c744ff426a50eb1c5dc8c8321b86103d4f1",
+    "chunk.b5a86843.js": "b490e7ca6b3baaa8167ef3b6a2bad8aafc84c5748c210f764719d867b823fe47"
   }
 }

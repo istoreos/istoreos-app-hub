@@ -7,9 +7,9 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for fastnet
 LUCI_DEPENDS:=+fastnet +luci-lib-linkeaseauth +linkease-app-entry
-LUCI_EXTRA_DEPENDS:=fastnet (>=0.8.2-1)
+LUCI_EXTRA_DEPENDS:=fastnet (>=0.8.3-1)
 LUCI_PKGARCH:=all
-PKG_VERSION:=0.8.2-r1
+PKG_VERSION:=0.8.3-r1
 PKG_RELEASE:=
 # Preserve LuCI translation version ordering when upgrading older git-* packages.
 PKG_PO_VERSION:=git-26.313.00000-082

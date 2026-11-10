@@ -18,7 +18,12 @@ out=a.output.resolve();out.mkdir(parents=True,exist_ok=True)
 tools=a.tools.resolve()
 digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 version=re.search(r'^PKG_VERSION:=(.+)$',(root/'fastnet/Makefile').read_text(),re.M)[1]
-assert version=='0.8.2'
+assert re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+',version)
+runtime_release=re.search(r'^PKG_RELEASE:=(.+)$',(root/'fastnet/Makefile').read_text(),re.M)[1]
+luci_version=re.search(r'^PKG_VERSION:=(.+)$',(root/'luci-app-fastnet/Makefile').read_text(),re.M)[1]
+meta_release=re.search(r'^PKG_RELEASE:=(.+)$',(root/'app-meta-fastnet/Makefile').read_text(),re.M)[1]
+runtime_version=version+'-'+runtime_release
+depends=f'fastnet (>= {runtime_version}), luci-app-fastnet (>= {luci_version})'
 record={'scope':'local source candidate; explicit inputs; not a canonical feed build or publication','version':version,'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'tools':{n:digest(tools/n) for n in ['ipkg-build','meta.mk','po2lmo']},'sourceFiles':{str(f.relative_to(root)):digest(f) for f in sorted(root.rglob('*')) if f.is_file() and '__pycache__' not in str(f)},'packages':[]}
 # Deterministic runtime archive is the exact future PKG_SOURCE input.
 runtime=out/'runtime'/('fastnet-binary-'+version);runtime.mkdir(parents=True,exist_ok=True)
@@ -77,7 +82,7 @@ for arch in ['x86_64','aarch64']:
  dest=out/'payload'/arch/'fastnet';(dest/'CONTROL').mkdir(parents=True,exist_ok=True)
  run_recipe('fastnet',dest,arch)
  (dest/'CONTROL/conffiles').write_text('/etc/config/fastnet\n')
- package('fastnet',version+'-1','aarch64_generic' if arch=='aarch64' else arch,'linkease-app-entry',dest)
+ package('fastnet',runtime_version,'aarch64_generic' if arch=='aarch64' else arch,'linkease-app-entry',dest)
 dest=out/'payload/all/luci-app-fastnet';(dest/'CONTROL').mkdir(parents=True,exist_ok=True)
 shutil.copytree(root/'luci-app-fastnet/luasrc',dest/'usr/lib/lua/luci',dirs_exist_ok=True)
 shutil.copytree(root/'luci-app-fastnet/root',dest,dirs_exist_ok=True)
@@ -85,12 +90,12 @@ text=(root/'luci-app-fastnet/Makefile').read_text()
 for hook in ['postinst','prerm']:
  body=re.search(r'define Package/luci-app-fastnet/'+hook+r'\n(.*?)\nendef',text,re.S)[1]
  (dest/'CONTROL'/hook).write_text(body.replace('$$','$')+'\n')
-package('luci-app-fastnet',version+'-r1','all','fastnet (>= 0.8.2-1), luci-lib-linkeaseauth, linkease-app-entry, luci-lua-runtime',dest)
+package('luci-app-fastnet',luci_version,'all',f'fastnet (>= {runtime_version}), luci-lib-linkeaseauth, linkease-app-entry, luci-lua-runtime',dest)
 dest=out/'payload/all/luci-i18n-fastnet-zh-cn';(dest/'usr/lib/lua/luci/i18n').mkdir(parents=True,exist_ok=True)
 subprocess.run([str(tools/'po2lmo'),str(root/'luci-app-fastnet/po/zh-cn/fastnet.po'),str(dest/'usr/lib/lua/luci/i18n/fastnet.zh-cn.lmo')],check=True)
 package('luci-i18n-fastnet-zh-cn',re.search(r'^PKG_PO_VERSION:=(.+)$',text,re.M)[1],'all','luci-app-fastnet',dest)
 dest=out/'payload/all/app-meta-fastnet';(dest/'CONTROL').mkdir(parents=True,exist_ok=True)
 run_recipe('app-meta-fastnet',dest,'x86_64')
-package('app-meta-fastnet',version+'-10','all','fastnet (>= 0.8.2-1), luci-app-fastnet (>= 0.8.2-r1), luci-i18n-fastnet-zh-cn',dest)
+package('app-meta-fastnet',version+'-'+meta_release,'all',depends+', luci-i18n-fastnet-zh-cn',dest)
 (out/'candidate.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n')
 print(json.dumps({'packages':len(record['packages']),'runtimeSha256':record['runtime']['sha256']}))
