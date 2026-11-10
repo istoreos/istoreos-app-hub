@@ -14,7 +14,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/
-PKG_HASH:=c928c352c4560c4f897b1f2e08c3fe6ad2b6db3fced747234cdacff6362cab1b
+PKG_HASH:=fcb6dbcd41a3c8bdcc3bdd484f8e4756fcd800a75a11f31a84e69a57a233f998
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 

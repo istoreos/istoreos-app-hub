@@ -8,6 +8,7 @@ function index()
 
 	entry({"admin", "services", "fastnet"}, cbi("fastnet"), _("FastNet"), 50).dependent = true
 	entry({"admin", "services", "fastnet", "status"}, call("action_status")).leaf = true
+	entry({"admin", "services", "fastnet", "browser-origin"}, call("action_browser_origin")).leaf = true
 	entry({"admin", "services", "fastnet", "embed"}, call("action_embed")).leaf = true
 	local open = entry({"admin", "services", "fastnet", "open"}, call("action_open"))
 	open.leaf = true
@@ -59,3 +60,23 @@ function action_card_summary() require("luci.model.fastnet.card").new():handle("
 function action_card_run() require("luci.model.fastnet.card").new():handle("run") end
 function action_card_task() require("luci.model.fastnet.card").new():handle("task") end
 function action_card_cancel() require("luci.model.fastnet.card").new():handle("cancel") end
+
+-- uHTTPd owns REMOTE_ADDR. The app proxy's loopback peer and browser-provided
+-- forwarded headers cannot stand in for the real browser in LAN capability UI.
+function action_browser_origin()
+ local http = require "luci.http"
+ local ctx = require("luci.dispatcher").context
+ if not ctx.authsession or ctx.authuser ~= "root" then http.status(403); return end
+ if http.getenv("REQUEST_METHOD") ~= "GET" then http.status(405); return end
+ local address = http.getenv("REMOTE_ADDR")
+ if type(address) ~= "string" or address == "" or #address > 64 or not address:match("^[%x:%.]+$") then http.status(503); return end
+ local loopback = address == "::1" or address:match("^127%.") ~= nil or address:match("^::ffff:127%.") ~= nil
+ local local_address = loopback
+ for _, entry in ipairs(require("nixio").getifaddrs() or {}) do
+  if entry.addr == address then local_address = true; break end
+ end
+ http.prepare_content("application/json")
+ http.header("Cache-Control", "no-store")
+ http.header("X-Content-Type-Options", "nosniff")
+ http.write_json({isLoopback=loopback,isLocal=local_address,isLocalInterface=local_address})
+end

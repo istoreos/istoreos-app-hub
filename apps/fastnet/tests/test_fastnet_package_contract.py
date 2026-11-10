@@ -42,14 +42,18 @@ class FastNetPackageContractTest(unittest.TestCase):
         )
         self.assertNotIn("PKGARCH:=all", runtime)
 
-    def test_app_meta_registers_a_standard_lan_web_module(self):
+    def test_app_meta_keeps_lan_target_and_registers_same_origin_gateway(self):
         manifest_path = ROOT / "fastnet/files/fastnet-plugin.json"
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
         self.assertEqual(manifest["schemaVersion"], 1)
         self.assertEqual(manifest["id"], "fastnet")
         self.assertNotIn("staticRoot", manifest)
-        self.assertNotIn("backend", manifest)
+        self.assertEqual(manifest["backend"], {
+            "type": "http", "scheme": "http", "host": "127.0.0.1",
+            "portFromUci": "fastnet.@fastnet[0].port", "defaultPort": 3200,
+            "upstreamBasePath": "/", "pathMode": "strip-public-base", "proxyMode": "app-base",
+        })
 
         desktop = manifest["desktop"]
         self.assertEqual(desktop["mode"], "iframe")
