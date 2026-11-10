@@ -9,12 +9,12 @@ include $(TOPDIR)/rules.mk
 PKG_ARCH_FASTNET:=$(ARCH)
 
 PKG_NAME:=fastnet
-PKG_VERSION:=0.8.1
+PKG_VERSION:=0.8.2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-binary-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/istoreos/istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/
-PKG_HASH:=29e29c6f11ea788098fd66f812f069e916f55547b0d9bad1059ce951efeb6404
+PKG_HASH:=c928c352c4560c4f897b1f2e08c3fe6ad2b6db3fced747234cdacff6362cab1b
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-binary-$(PKG_VERSION)
 
@@ -34,6 +34,7 @@ endef
 define Package/$(PKG_NAME)/prerm
 #!/bin/sh
 if [ "$${IPKG_INSTROOT}" = "" ]; then
+	/etc/init.d/fastnet stop 2>/dev/null || true
 	if [ "$$(readlink /usr/share/linkease/apps.d/17-fastnet.json 2>/dev/null)" = "/usr/share/fastnet/fastnet-plugin.json" ]; then
 		rm -f /usr/share/linkease/apps.d/17-fastnet.json
 	fi
