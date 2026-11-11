@@ -2,6 +2,8 @@
 
 2026-11-10。结论：页面使用 iframe，但当前从 Quickstart 卡片及 LinkEase 桌面打开的 LAN 测速仍经过应用网关；不能视为浏览器直连测速。
 
+后续状态（2026-11-11）：此记录描述修复前基线。FastNet 0.8.9 候选已改为直连 iframe，源码与测试部署详情见 FastNet 仓库 `docs/product/direct-iframe.md` 和 `docs/evidence/direct-iframe-20261111/verification.md`；未正式发布。
+
 ## 源码调用链
 
 - FastNet `quickstart-card/src/WebDialog.vue` 创建 iframe，入口为 `/cgi-bin/luci/admin/services/fastnet/embed`。

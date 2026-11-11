@@ -31,7 +31,7 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertEqual(luci_version.group(1), f"{source_version.group(1)}-r1")
         self.assertEqual(luci_release.group(1), "")
         self.assertEqual(meta_version.group(1), source_version.group(1))
-        self.assertEqual(meta_release.group(1), "18")
+        self.assertEqual(meta_release.group(1), "19")
         self.assertIn(
             "istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/",
             runtime,
@@ -52,7 +52,7 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertEqual(manifest["backend"], {
             "type": "http", "scheme": "http", "host": "127.0.0.1",
             "portFromUci": "fastnet.@fastnet[0].port", "defaultPort": 3200,
-            "upstreamBasePath": "/", "pathMode": "strip-public-base", "proxyMode": "app-base",
+            "upstreamBasePath": "/", "pathMode": "strip-public-base",
         })
 
         desktop = manifest["desktop"]
@@ -78,7 +78,7 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertIn("+linkease-app-entry", makefile)
         self.assertIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/fastnet", meta)
         self.assertNotIn("META_LUCI_ENTRY:=/cgi-bin/luci/admin/services/linkease_apps/open", meta)
-        self.assertIn('compat():open("fastnet")', controller)
+        self.assertIn('"fastnet", "embed") .. "?standalone=1"', controller)
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
         self.assertIn('auth_url = dispatcher.build_url("admin", "services", "linkease_auth", "auth")', controller)
