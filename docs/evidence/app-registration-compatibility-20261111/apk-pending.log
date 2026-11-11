@@ -1,0 +1,6 @@
+(1/1) Installing fastnet (1.0-r1)
+1 error; 4096 B in 1 packages
+ERROR: fastnet-1.0-r1: failed to extract usr/share/registration-test/fastnet: file format is obsolete (e.g. missing embedded checksum)
+LIVE_DB_BEFORE=60a50a5b48a9a97d5a1619f2e5c4b7ef5517d571d45db7c22d20d18eab8b1ed7
+LIVE_DB_AFTER=60a50a5b48a9a97d5a1619f2e5c4b7ef5517d571d45db7c22d20d18eab8b1ed7
+TASK_DIR=/tmp/registration-compatibility.BcCmEp

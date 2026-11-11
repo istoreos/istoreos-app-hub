@@ -1,0 +1,8 @@
+{
+  "testsPassed": 35,
+  "packages": [
+    "linkease/src/common/desktopplugins",
+    "linkease/src/appgateway"
+  ],
+  "failures": []
+}

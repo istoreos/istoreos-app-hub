@@ -31,7 +31,7 @@ class DockerManagerPackageContractTest(unittest.TestCase):
         self.assertIn("$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dockermanager/www/logo.svg", makefile)
         self.assertNotIn("../app-meta-", makefile)
         self.assertIn("PKG_VERSION:=0.1.2", meta)
-        self.assertIn("PKG_RELEASE:=4", meta)
+        self.assertIn("PKG_RELEASE:=5", meta)
         self.assertIn("DEPENDS:=+docker +dockerd +ca-bundle +linkease-app-entry", makefile)
         self.assertNotIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("LUCI_DEPENDS:=+dockermanager +luci-lib-linkeaseauth +linkease-app-entry", luci_makefile)

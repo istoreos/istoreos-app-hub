@@ -1,0 +1,12 @@
+{
+  "mirroredFilesVerified": 22,
+  "protectedFiles": {
+    "openwrt-apps/openwrt-app-meta/meta.mk": "43a9494400d8d022f7d60dceaa0c22fe4aa821fac37e3500dac37f73cbc80175",
+    "openwrt-apps/openwrt-app-meta/.github/workflows/ci.yml": "a5baf06bd83c3d19e7d68cd30588f59d5a9e6fe21a0263d79a402ad7cd46bd12",
+    "openwrt-apps/istoreos-app-hub/.github/workflows/app-diagnostics-index.yml": "85454d28234e8da7703c8cccd4ff7310b54e99c2ca46c461a3f889e1ad689137",
+    "openwrt-apps/istoreos-app-hub/apps/fastnet/fastnet/files/fastnet-plugin.json": "e1109a9475b821c752ee4999f5ebdd5405e42a90211c264bff245b4fa19864e3",
+    "openwrt-apps/istoreos-app-hub/apps/fastnet/luci-app-fastnet/luasrc/controller/fastnet.lua": "392450a18fd17a8502782ff454b59a09620dd20de7f503b39b6ada55ba08298b"
+  },
+  "fastnetSourceAndQuickstartWorkspaceUnchanged": true,
+  "noMetadataMinimumVersions": true
+}

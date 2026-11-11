@@ -17,7 +17,7 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         embed = self.read("luci-app-linkeasefull-embed/Makefile")
 
         self.assertIn("PKG_VERSION:=3.0.23", meta)
-        self.assertIn("PKG_RELEASE:=2", meta)
+        self.assertIn("PKG_RELEASE:=3", meta)
         self.assertIn("PKG_SOURCE_DATE:=3.0.23", runtime)
         self.assertIn(
             "be335bf228e6acbfa149bdcf30707f30a5ff498a97e37d9e6a421014d382eee3",
@@ -35,7 +35,7 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         makefile = self.read("luci-app-linkeasefull-embed/Makefile")
         readme = self.read("luci-app-linkeasefull-embed/README.md")
 
-        self.assertIn("PKG_VERSION:=1.2.0-r2", makefile)
+        self.assertIn("PKG_VERSION:=1.2.0-r3", makefile)
         self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
         self.assertNotIn("+luci-proto-bonding", makefile)
         self.assertNotIn("protocol-fallbacks", makefile)

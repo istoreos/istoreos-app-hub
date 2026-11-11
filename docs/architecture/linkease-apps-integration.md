@@ -52,7 +52,8 @@ An application runtime package:
 3. creates a symlink in `/usr/share/linkease/apps.d`;
 4. removes a symlink in `prerm` only when `readlink` still points to its own
    manifest;
-5. retires only its own old registration during upgrade, without writing a
+5. maintains a compatibility symlink to the same manifest in
+   `/usr/share/linkeasefull/desktop-apps.d` during migration, without writing a
    second registration directory.
 
 The OpenWrt LuCI embed is an intentional exception: its manifest declares

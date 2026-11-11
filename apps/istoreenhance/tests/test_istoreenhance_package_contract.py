@@ -17,7 +17,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("istoreenhance/Makefile")
 
         self.assertIn("PKG_SOURCE_DATE:=0.9.0", makefile)
-        self.assertIn("PKG_RELEASE:=2", makefile)
+        self.assertIn("PKG_RELEASE:=3", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
             "PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_SOURCE_DATE)/",
@@ -33,7 +33,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.9.0", makefile)
-        self.assertIn("PKG_RELEASE:=9", makefile)
+        self.assertIn("PKG_RELEASE:=10", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
             "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",

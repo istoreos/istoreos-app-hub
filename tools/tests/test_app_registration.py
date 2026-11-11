@@ -14,7 +14,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = Path('usr/share/linkease/apps.d')
-RETIRED = Path('usr/share/linkeasefull/desktop-apps.d')
+LEGACY = Path('usr/share/linkeasefull/desktop-apps.d')
 FIXTURES = Path(__file__).parent / 'fixtures/legacy-registrations'
 CASES = [
     ('kaiplus/kaiplus', 'kaiplus', '00-kaiplus-plugin.json'),
@@ -102,7 +102,7 @@ class ApplicationRegistrationTest(unittest.TestCase):
             self.addCleanup(temporary.cleanup)
             yield PackageStage(relative, Path(temporary.name)), app, filename
 
-    def test_fresh_install_has_one_owned_manifest_and_no_retired_directory(self):
+    def test_fresh_install_has_one_manifest_and_both_entries(self):
         ids = set()
         for package, app, filename in self.stages():
             links = list((package.stage / REGISTRY).glob('*.json'))
@@ -117,22 +117,22 @@ class ApplicationRegistrationTest(unittest.TestCase):
                 icon = package.stage / manifest['staticRoot'].lstrip('/') / manifest['icon']
                 self.assertTrue(icon.is_file(), str(icon))
             package.hook('postinst')
-            self.assertFalse((package.stage / RETIRED).exists())
+            self.assertEqual((package.stage / LEGACY / filename).readlink(), links[0].readlink())
+            self.assertEqual(len([p for p in package.stage.rglob("*-plugin.json") if not p.is_symlink()]), 1 if app != "openwrt-luci" else 0)
 
-    def test_upgrade_removes_own_old_link_and_is_idempotent(self):
+    def test_upgrade_keeps_own_old_link_and_is_idempotent(self):
         for package, _, filename in self.stages():
-            old = package.stage / RETIRED / filename
+            old = package.stage / LEGACY / filename
             old.parent.mkdir(parents=True)
             old.symlink_to((package.stage / REGISTRY / filename).readlink())
             package.hook('postinst')
             package.hook('postinst')
-            self.assertFalse(old.is_symlink())
-            self.assertFalse(old.parent.exists())
+            self.assertEqual(old.readlink(), (package.stage / REGISTRY / filename).readlink())
             self.assertTrue((package.stage / REGISTRY / filename).is_symlink())
 
     def test_upgrade_preserves_custom_files_and_other_owners(self):
         for package, _, filename in self.stages():
-            old = package.stage / RETIRED / filename
+            old = package.stage / LEGACY / filename
             old.parent.mkdir(parents=True)
             old.write_text('{"custom":true}')
             package.hook('postinst')
@@ -141,29 +141,79 @@ class ApplicationRegistrationTest(unittest.TestCase):
             old.symlink_to('/usr/share/other/registration.json')
             package.hook('postinst')
             self.assertEqual(str(old.readlink()), '/usr/share/other/registration.json')
+            old.unlink()
+            old.mkdir()
+            (old / 'custom.txt').write_text('keep')
+            package.hook('postinst')
+            package.hook('prerm')
+            self.assertEqual((old / 'custom.txt').read_text(), 'keep')
 
-    def test_exact_old_metadata_files_are_retired_but_modified_files_survive(self):
+    def test_exact_old_metadata_files_become_links_but_modified_files_survive(self):
         for relative, _, filename in [CASES[6], CASES[7]]:
             with self.subTest(package=relative), tempfile.TemporaryDirectory() as directory:
                 package = PackageStage(relative, Path(directory))
-                old = package.stage / RETIRED / filename
+                old = package.stage / LEGACY / filename
                 old.parent.mkdir(parents=True)
                 old.write_bytes((FIXTURES / filename).read_bytes())
                 package.hook('postinst')
-                self.assertFalse(old.exists())
+                self.assertEqual(old.readlink(), (package.stage / REGISTRY / filename).readlink())
+                old.unlink()
                 old.parent.mkdir(parents=True, exist_ok=True)
                 old.write_bytes((FIXTURES / filename).read_bytes() + b'\n')
                 package.hook('postinst')
                 self.assertTrue(old.exists())
 
-    def test_uninstall_removes_only_registration_still_owned_by_the_package(self):
+    def test_uninstall_removes_only_links_still_owned_by_the_package(self):
         for package, _, filename in self.stages():
-            registration = package.stage / REGISTRY / filename
+            package.hook('postinst')
             package.hook('prerm')
-            self.assertFalse(registration.is_symlink())
-            registration.symlink_to('/usr/share/replacement/registration.json')
+            for directory in [REGISTRY, LEGACY]:
+                registration = package.stage / directory / filename
+                self.assertFalse(registration.is_symlink())
+                registration.parent.mkdir(parents=True, exist_ok=True)
+                registration.symlink_to('/usr/share/replacement/registration.json')
             package.hook('prerm')
-            self.assertEqual(str(registration.readlink()), '/usr/share/replacement/registration.json')
+            for directory in [REGISTRY, LEGACY]:
+                self.assertEqual(str((package.stage / directory / filename).readlink()),
+                                 '/usr/share/replacement/registration.json')
+
+    def test_reinstall_restores_missing_compatibility_entry(self):
+        for package, _, filename in self.stages():
+            package.hook('postinst')
+            legacy = package.stage / LEGACY / filename
+            legacy.unlink()
+            package.hook('postinst')
+            self.assertEqual(legacy.readlink(), (package.stage / REGISTRY / filename).readlink())
+
+    def test_metadata_upgrade_repairs_only_when_owner_is_installed(self):
+        for relative, app, filename in [CASES[6], CASES[7]]:
+            with self.subTest(app=app), tempfile.TemporaryDirectory() as directory:
+                package = PackageStage(relative, Path(directory))
+                text = (ROOT / 'apps' / app / ('app-meta-' + app) / 'Makefile').read_text()
+                body = re.search(r'define Package/app-meta-' + app + r'/postinst\n(.*?)\nendef', text, re.S)[1]
+                hook = Path(directory) / 'meta-postinst'
+                hook.write_text(body.replace('$$', '$') + '\n')
+                def repair():
+                    subprocess.run(['sh', str(hook)], check=True,
+                                   env={**os.environ, 'IPKG_INSTROOT': str(package.stage)})
+                # Metadata-first with no owning plugin yet is safe and writes nothing.
+                helper = package.stage / ('usr/share/' + app + '/register-desktop.sh')
+                saved = helper.read_bytes()
+                helper.unlink()
+                repair()
+                self.assertFalse((package.stage / LEGACY).exists())
+                helper.write_bytes(saved)
+                package.hook('postinst')
+                legacy = package.stage / LEGACY / filename
+                # Simulate old metadata removing its former owned JSON after plugin upgrade.
+                legacy.unlink()
+                repair()
+                repair()
+                self.assertEqual(legacy.readlink(), (package.stage / REGISTRY / filename).readlink())
+                legacy.unlink()
+                legacy.write_text('{"custom":true}')
+                repair()
+                self.assertEqual(legacy.read_text(), '{"custom":true}')
 
     def test_metadata_repositories_do_not_ship_application_registrations(self):
         for base in [ROOT / 'apps']:

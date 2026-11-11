@@ -12,7 +12,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
     def test_shared_luci_package_is_versioned_as_apps_integration(self):
         makefile = self.read("linkeasefull/luci-lib-linkeaseauth/Makefile")
         self.assertIn("LUCI_TITLE:=LuCI shared integration for LinkEase apps", makefile)
-        self.assertIn("PKG_VERSION:=1.2.1-r2", makefile)
+        self.assertIn("PKG_VERSION:=1.2.1-r3", makefile)
         self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
 
     def test_shared_package_keeps_auth_and_adds_separate_apps_routes(self):
@@ -51,7 +51,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
             self.assertNotIn("+linkeasefull", runtime, app)
             self.assertNotIn("+linkeasefull", luci, app)
 
-    def test_migrated_apps_register_once_and_retire_owned_legacy(self):
+    def test_migrated_apps_register_once_and_keep_owned_legacy(self):
         cases = (
             ("dockermanager", "dockermanager/dockermanager/Makefile", "20", "/usr/share/dockermanager/dockermanager-plugin.json"),
             ("kaiplus", "kaiplus/kaiplus/Makefile", "00", "/usr/share/kaiplus/kaiplus-plugin.json"),
@@ -68,7 +68,7 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
                 neutral = f"/usr/share/linkease/apps.d/{prefix}-{app}.json"
                 legacy = f"/usr/share/linkeasefull/desktop-apps.d/{prefix}-{app}.json"
             self.assertIn(neutral, makefile)
-            self.assertIn(legacy, makefile)
+            self.assertIn("/usr/share/linkeasefull/desktop-apps.d", makefile)
             self.assertIn('readlink "$${registration}"', makefile)
             install = makefile.split('define Package/$(PKG_NAME)/install', 1)[1]
             self.assertNotIn(legacy, install)
@@ -115,7 +115,10 @@ class LinkEaseAppsPackageContractTest(unittest.TestCase):
                 meta,
                 app,
             )
-            self.assertIn(f'compat():open("{app}")', controller, app)
+            if app == "fastnet":
+                self.assertIn('"fastnet", "embed") .. "?standalone=1"', controller)
+            else:
+                self.assertIn(f'compat():open("{app}")', controller, app)
             for forbidden in (
                 "uhttpd_apps_proxy_available",
                 "linkeasefull_running",

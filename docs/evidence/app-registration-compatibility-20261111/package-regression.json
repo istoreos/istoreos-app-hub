@@ -1,0 +1,42 @@
+[
+  {
+    "test": "apps/fastnet/tests/test_fastnet_package_contract.py",
+    "exitCode": 0,
+    "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "test": "apps/baidudrive/tests/test_baidudrive_openwrt_contract.py",
+    "exitCode": 0,
+    "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "test": "apps/dockermanager/tests/test_dockermanager_package_contract.py",
+    "exitCode": 0,
+    "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "test": "apps/istoreenhance/tests/test_istoreenhance_package_contract.py",
+    "exitCode": 0,
+    "output": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.090s\n\nOK\n"
+  },
+  {
+    "test": "apps/kai/tests/test_kai_desktop_plugin_contract.py",
+    "exitCode": 0,
+    "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.000s\n\nOK\n"
+  },
+  {
+    "test": "apps/linkeasefull/tests/test_linkease_apps_package_contract.py",
+    "exitCode": 0,
+    "output": "........\n----------------------------------------------------------------------\nRan 8 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "test": "apps/linkeasefull/tests/test_linkeasefull_embed_package_contract.py",
+    "exitCode": 0,
+    "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nOK\n"
+  },
+  {
+    "test": "apps/linkeasefull/tests/test_linkease_app_entry_contract.py",
+    "exitCode": 0,
+    "output": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.001s\n\nOK\n"
+  }
+]

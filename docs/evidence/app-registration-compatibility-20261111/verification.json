@@ -1,0 +1,74 @@
+{
+  "recordedAt": "2026-11-11T03:02:47.670165+00:00",
+  "milestones": {
+    "RC01": "passed",
+    "RC02": "passed",
+    "RC03": "passed",
+    "RC04": "opkg passed; APK fixture rejected after three corrections; awaiting explicit extra-round decision",
+    "RC05": "passed"
+  },
+  "validation": {
+    "registrationRecipeTests": 9,
+    "packageContractTests": 39,
+    "metadataOwnershipTests": 1,
+    "goTests": 35,
+    "luaAdapters": [
+      "192.168.30.7 passed",
+      "192.168.3.164 passed"
+    ],
+    "opkgScenarios": 4,
+    "apkScenariosPassed": 0,
+    "livePackageDatabasesUnchanged": true,
+    "mirroredFiles": 22
+  },
+  "metadataReleaseIncrements": [
+    {
+      "application": "agentflow",
+      "previousRelease": 3,
+      "release": 4
+    },
+    {
+      "application": "baidudrive",
+      "previousRelease": 5,
+      "release": 6
+    },
+    {
+      "application": "ddnsto",
+      "previousRelease": 2,
+      "release": 3
+    },
+    {
+      "application": "dockermanager",
+      "previousRelease": 4,
+      "release": 5
+    },
+    {
+      "application": "fastnet",
+      "previousRelease": 19,
+      "release": 20
+    },
+    {
+      "application": "istoreenhance",
+      "previousRelease": 9,
+      "release": 10
+    },
+    {
+      "application": "kaiplus",
+      "previousRelease": 4,
+      "release": 5
+    },
+    {
+      "application": "linkeasefull",
+      "previousRelease": 2,
+      "release": 3
+    }
+  ],
+  "published": false,
+  "deployedBusinessServices": false,
+  "committed": true,
+  "limits": [
+    "Device package tests use inert fixtures, not SDK release packages.",
+    "No new desktop binary was built/deployed; reader compatibility is source-tested.",
+    "APK fixture packaging remains incomplete; application registration logic has not yet been exercised through APK."
+  ]
+}

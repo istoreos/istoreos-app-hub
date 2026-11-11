@@ -1,0 +1,208 @@
+[
+  {
+    "file": "fastnet_1.0-1.ipk",
+    "sha256": "d94b1ec8e08f2c075f358fb5e2836665e307de34ffe5d0efc9af54ef674e1b15",
+    "application": "fastnet",
+    "format": "ipk",
+    "revision": 1,
+    "payload": [
+      "usr/share/registration-test/fastnet"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "fastnet_1.0-r1.apk",
+    "sha256": "98d5d80acb538a23f49608f961b682103aaa05a2e4b02cfa05f89ede677d886b",
+    "application": "fastnet",
+    "format": "apk",
+    "revision": 1,
+    "payload": [
+      "usr/share/registration-test/fastnet"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "app-meta-fastnet_1.0-1.ipk",
+    "sha256": "901e94d94677416c5ca84a29472abdddcf0273b89fda3f61f91d2923ad6fb8f7",
+    "application": "fastnet",
+    "format": "ipk",
+    "revision": 1,
+    "payload": [
+      "usr/share/linkeasefull/desktop-apps.d/17-fastnet.json"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "app-meta-fastnet_1.0-r1.apk",
+    "sha256": "a95148c2a701633a63b84ff602006fb292b497a82acb7fb9d815f9d9327b4a79",
+    "application": "fastnet",
+    "format": "apk",
+    "revision": 1,
+    "payload": [
+      "usr/share/linkeasefull/desktop-apps.d/17-fastnet.json"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "fastnet_1.0-2.ipk",
+    "sha256": "b1baf60067431160b1ba86052577db5bfce2ea9e7fc86dc743eeb97cd64bc366",
+    "application": "fastnet",
+    "format": "ipk",
+    "revision": 2,
+    "payload": [
+      "usr/share/fastnet/fastnet-plugin.json",
+      "usr/share/fastnet/register-desktop.sh",
+      "usr/share/linkease/apps.d/17-fastnet.json"
+    ],
+    "hooks": [
+      "postinst",
+      "prerm"
+    ]
+  },
+  {
+    "file": "fastnet_1.0-r2.apk",
+    "sha256": "091073c7d170ed4f9613ca5110f4b7a902397f55301a0abdf4adbb3d62fb75a0",
+    "application": "fastnet",
+    "format": "apk",
+    "revision": 2,
+    "payload": [
+      "usr/share/fastnet/fastnet-plugin.json",
+      "usr/share/fastnet/register-desktop.sh",
+      "usr/share/linkease/apps.d/17-fastnet.json"
+    ],
+    "hooks": [
+      "postinst",
+      "prerm"
+    ]
+  },
+  {
+    "file": "app-meta-fastnet_1.0-2.ipk",
+    "sha256": "b8125858e87bf2246665d5e5ce489f11bcfba6859508b6cfb96885ca2f7c6b45",
+    "application": "fastnet",
+    "format": "ipk",
+    "revision": 2,
+    "payload": [
+      "usr/share/registration-test/app-meta-fastnet"
+    ],
+    "hooks": [
+      "postinst"
+    ]
+  },
+  {
+    "file": "app-meta-fastnet_1.0-r2.apk",
+    "sha256": "6232b0eab78d3c1b54c148c450e3582ab43d8c22ec0b3aa51b8cfd2330d6c4af",
+    "application": "fastnet",
+    "format": "apk",
+    "revision": 2,
+    "payload": [
+      "usr/share/registration-test/app-meta-fastnet"
+    ],
+    "hooks": [
+      "postinst"
+    ]
+  },
+  {
+    "file": "luci-app-ddnsto_1.0-1.ipk",
+    "sha256": "5ebfb2fe7e92a2373ccfa3eb9f1c8cc7ca0611e52ce3e8ec41c66e6d7f72f04e",
+    "application": "ddnsto",
+    "format": "ipk",
+    "revision": 1,
+    "payload": [
+      "usr/share/registration-test/luci-app-ddnsto"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "luci-app-ddnsto_1.0-r1.apk",
+    "sha256": "a8f7f72fa1f3524b992a897b741587a635e0c3cea22bd9aee41767b7a0ca261b",
+    "application": "ddnsto",
+    "format": "apk",
+    "revision": 1,
+    "payload": [
+      "usr/share/registration-test/luci-app-ddnsto"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "app-meta-ddnsto_1.0-1.ipk",
+    "sha256": "69dafad0ced3af961ba9b60c7d4c1cfda4a4efb78e07d71765bb0f8101c18d99",
+    "application": "ddnsto",
+    "format": "ipk",
+    "revision": 1,
+    "payload": [
+      "usr/share/linkeasefull/desktop-apps.d/16-ddnsto.json"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "app-meta-ddnsto_1.0-r1.apk",
+    "sha256": "c115bac06d389e4f577bedd48f076b0e9723ee5970f4047bb7d6e361e2c2f517",
+    "application": "ddnsto",
+    "format": "apk",
+    "revision": 1,
+    "payload": [
+      "usr/share/linkeasefull/desktop-apps.d/16-ddnsto.json"
+    ],
+    "hooks": []
+  },
+  {
+    "file": "luci-app-ddnsto_1.0-2.ipk",
+    "sha256": "808f9eb7deea2c6af738b8c951385f12c26c87f40020d88b58fc3dfe60e50066",
+    "application": "ddnsto",
+    "format": "ipk",
+    "revision": 2,
+    "payload": [
+      "usr/share/ddnsto/ddnsto-plugin.json",
+      "usr/share/ddnsto/register-desktop.sh",
+      "usr/share/ddnsto/www/logo.png",
+      "usr/share/linkease/apps.d/16-ddnsto.json"
+    ],
+    "hooks": [
+      "postinst",
+      "prerm"
+    ]
+  },
+  {
+    "file": "luci-app-ddnsto_1.0-r2.apk",
+    "sha256": "a562a3a771a041aeb81994e819e45120b30516d8b79b395872232e466feb6f2c",
+    "application": "ddnsto",
+    "format": "apk",
+    "revision": 2,
+    "payload": [
+      "usr/share/ddnsto/ddnsto-plugin.json",
+      "usr/share/ddnsto/register-desktop.sh",
+      "usr/share/ddnsto/www/logo.png",
+      "usr/share/linkease/apps.d/16-ddnsto.json"
+    ],
+    "hooks": [
+      "postinst",
+      "prerm"
+    ]
+  },
+  {
+    "file": "app-meta-ddnsto_1.0-2.ipk",
+    "sha256": "45d11e63eec1a5ae6ccade47f2f7af86731bb06d570b564e337d119fe63bc218",
+    "application": "ddnsto",
+    "format": "ipk",
+    "revision": 2,
+    "payload": [
+      "usr/share/registration-test/app-meta-ddnsto"
+    ],
+    "hooks": [
+      "postinst"
+    ]
+  },
+  {
+    "file": "app-meta-ddnsto_1.0-r2.apk",
+    "sha256": "3b720c1d9f0c2610fe45c1f3704a10a1ffd1d6e973ab11a3b0cbecd957ca0234",
+    "application": "ddnsto",
+    "format": "apk",
+    "revision": 2,
+    "payload": [
+      "usr/share/registration-test/app-meta-ddnsto"
+    ],
+    "hooks": [
+      "postinst"
+    ]
+  }
+]

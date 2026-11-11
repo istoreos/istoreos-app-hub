@@ -1,0 +1,31 @@
+{
+  "repositories": [
+    {
+      "repository": "openwrt-apps/istoreos-app-hub",
+      "changedFiles": 36
+    },
+    {
+      "repository": "openwrt-apps/openwrt-app-meta",
+      "changedFiles": 9
+    },
+    {
+      "repository": "openwrt-apps/nas-packages",
+      "changedFiles": 5
+    },
+    {
+      "repository": "openwrt-apps/nas-packages-luci",
+      "changedFiles": 6
+    },
+    {
+      "repository": "openwrt-apps/openwrt-app-actions",
+      "changedFiles": 3
+    },
+    {
+      "repository": "linkease-github/linkease-desktop",
+      "changedFiles": 8
+    }
+  ],
+  "diffChecksPassed": true,
+  "shellAndPythonSyntaxPassed": true,
+  "apkStatus": "pending explicit authorization for extra fixture correction"
+}
