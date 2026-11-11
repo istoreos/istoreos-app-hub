@@ -18,7 +18,6 @@ LEGACY = Path('usr/share/linkeasefull/desktop-apps.d')
 FIXTURES = Path(__file__).parent / 'fixtures/legacy-registrations'
 CASES = [
     ('kaiplus/kaiplus', 'kaiplus', '00-kaiplus-plugin.json'),
-    ('kai/kai', 'kai', '05-kai-plugin.json'),
     ('baidudrive/baidudrive', 'baidudrive', '10-baidudrive-plugin.json'),
     ('dockermanager/dockermanager', 'dockermanager', '20-dockermanager-plugin.json'),
     ('agentflow/agentflow', 'agentflow', '30-agentflow.json'),
@@ -149,7 +148,7 @@ class ApplicationRegistrationTest(unittest.TestCase):
             self.assertEqual((old / 'custom.txt').read_text(), 'keep')
 
     def test_exact_old_metadata_files_become_links_but_modified_files_survive(self):
-        for relative, _, filename in [CASES[6], CASES[7]]:
+        for relative, _, filename in [case for case in CASES if case[1] in ('fastnet', 'ddnsto')]:
             with self.subTest(package=relative), tempfile.TemporaryDirectory() as directory:
                 package = PackageStage(relative, Path(directory))
                 old = package.stage / LEGACY / filename
@@ -186,7 +185,7 @@ class ApplicationRegistrationTest(unittest.TestCase):
             self.assertEqual(legacy.readlink(), (package.stage / REGISTRY / filename).readlink())
 
     def test_metadata_upgrade_repairs_only_when_owner_is_installed(self):
-        for relative, app, filename in [CASES[6], CASES[7]]:
+        for relative, app, filename in [case for case in CASES if case[1] in ('fastnet', 'ddnsto')]:
             with self.subTest(app=app), tempfile.TemporaryDirectory() as directory:
                 package = PackageStage(relative, Path(directory))
                 text = (ROOT / 'apps' / app / ('app-meta-' + app) / 'Makefile').read_text()

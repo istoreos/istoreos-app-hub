@@ -1,0 +1,25 @@
+{
+  "scope": "KAI desktop retirement; KaiPlus remains the desktop entry",
+  "compatibilityApplications": 8,
+  "validation": {
+    "kaiPackageRetirementTests": 3,
+    "otherApplicationRegistrationTests": 9,
+    "classicKaiEntryTests": 6,
+    "metadataOwnershipTests": 1,
+    "classicLuaHosts": [
+      "192.168.30.7",
+      "192.168.3.164"
+    ],
+    "mirroredFilesAndDeletions": 9,
+    "diffChecksPassed": true
+  },
+  "knownBaselineFailure": "apps/kai/tests/test-local-agent-contract.sh already fails at the packaged skills minimum-version assertion on unchanged HEAD; see existing-test-failure.json",
+  "versions": {
+    "kai": "0.0.28-13",
+    "luci-app-kaiplus": "1.0.11-r2",
+    "app-meta-kaiplus": "1.0.11 release 6"
+  },
+  "deployed": false,
+  "committed": true,
+  "apkPreviousPendingStatus": "unchanged; no extra APK fixture correction authorized or attempted"
+}

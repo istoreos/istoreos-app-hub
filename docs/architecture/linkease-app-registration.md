@@ -25,9 +25,10 @@
 | dockermanager | dockermanager | 20-dockermanager-plugin.json |
 | baidudrive | baidudrive | 10-baidudrive-plugin.json |
 | kaiplus | kaiplus | 00-kaiplus-plugin.json |
-| kai | kai | 05-kai-plugin.json |
 | agentflow | agentflow | 30-agentflow.json |
 | openwrt-luci | luci-app-linkeasefull-embed | 15-openwrt-luci.json |
+
+经典版 Kai 不注册桌面入口，也不创建兼容链接；升级时仅清理自身旧链接。桌面入口由 KaiPlus 提供，经典版继续从 KaiPlus 的 LuCI 管理页经认证桥直连服务端口打开。
 
 FastNet 的首页卡片另有 Quickstart ABI 注册；其职责是卡片资源/尺寸/接口，不是完整应用注册，不在本规范中合并为同一份协议。
 

@@ -1,0 +1,47 @@
+[
+  {
+    "source": "apps/kai/kai/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/kai/Makefile",
+    "action": "write"
+  },
+  {
+    "source": "apps/kaiplus/luci-app-kaiplus/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/luci-app-kaiplus/Makefile",
+    "action": "write"
+  },
+  {
+    "source": "apps/kaiplus/luci-app-kaiplus/luasrc/model/kaiplus/classic.lua",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/luci-app-kaiplus/luasrc/model/kaiplus/classic.lua",
+    "action": "write"
+  },
+  {
+    "source": "apps/kaiplus/luci-app-kaiplus/luasrc/view/kaiplus/classic_status.htm",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/luci-app-kaiplus/luasrc/view/kaiplus/classic_status.htm",
+    "action": "write"
+  },
+  {
+    "source": "apps/kaiplus/luci-app-kaiplus/tests/classic_kai_runtime.lua",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/luci-app-kaiplus/tests/classic_kai_runtime.lua",
+    "action": "write"
+  },
+  {
+    "source": "apps/kaiplus/luci-app-kaiplus/tests/classic_kai_browser.cjs",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/luci-app-kaiplus/tests/classic_kai_browser.cjs",
+    "action": "write"
+  },
+  {
+    "source": "apps/kaiplus/app-meta-kaiplus/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-kaiplus/Makefile",
+    "action": "write"
+  },
+  {
+    "source": "apps/kai/kai/files/kai-plugin.json",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/kai/files/kai-plugin.json",
+    "action": "delete"
+  },
+  {
+    "source": "apps/kai/kai/files/logo.png",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-actions/applications/kai/files/logo.png",
+    "action": "delete"
+  }
+]

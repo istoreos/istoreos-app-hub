@@ -87,12 +87,14 @@ gateway_version="$(sed -n 's/^PKG_VERSION:=//p' "$root/kai/Makefile")"
 session_version="$(sed -n 's/^PKG_VERSION:=//p' "$root/kai_session/Makefile")"
 [ "$gateway_version" = "$session_version" ] ||
 	fail "kai and kai_session runtime versions differ"
-grep -F 'url("admin/services/linkease_apps/open")' "$status_view" >/dev/null ||
-	fail "LuCI KAI launcher does not use the shared apps entry"
-grep -F '?id=kai' "$status_view" >/dev/null ||
-	fail "LuCI KAI launcher does not select the KAI app"
-if grep -E 'linkease_auth/auth|openKai|/apps/kai/web/' "$status_view" >/dev/null; then
-	fail "LuCI KAI launcher bypasses shared route resolution"
+grep -F 'url("admin/services/linkease_auth/auth")' "$status_view" >/dev/null ||
+	fail "classic KAI launcher does not use the existing auth bridge"
+grep -F 'window.location.hostname' "$status_view" >/dev/null ||
+	fail "classic KAI launcher does not target the current device"
+grep -F "'/apps/kai/'" "$status_view" >/dev/null ||
+	fail "classic KAI launcher does not preserve the native server mount"
+if grep -F '?id=kai' "$status_view" >/dev/null; then
+	fail "classic KAI launcher still depends on a desktop registration"
 fi
 grep -F '+luci-lib-linkeaseauth' "$luci_makefile" >/dev/null ||
 	fail "the classic tab's LuCI package does not directly depend on its auth bridge"

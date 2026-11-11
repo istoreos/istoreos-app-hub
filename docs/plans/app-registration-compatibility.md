@@ -2,17 +2,19 @@
 
 目标：一份插件清单，新旧两个入口；允许桌面、插件和元包分批升级。标准目录为 `/usr/share/linkease/apps.d`，兼容目录为 `/usr/share/linkeasefull/desktop-apps.d`，不增加第三个目录。
 
+后续产品决策（2026-11-11）：经典版 Kai 不再提供桌面入口，由 KaiPlus 承接。当前兼容入口共 8 个应用；Kai 的历史新旧链接由升级钩子精确清理。初次实施的 9 应用验收记录保留为历史证据。
+
 任务树与验收（每项首次实施后检查，失败最多修正三次）：
 
 | 项目 | 任务 | 可测试验收 | 状态 |
 | --- | --- | --- | --- |
 | RC01 | 统一规范与仓库指导 | 唯一清单由插件持有，元包不恢复清单/注册链接，共享 meta.mk/CI 不变 | 通过 |
-| RC02 | 9 个应用安装/升级/卸载兼容入口 | 两入口指向同一清单；幂等；保护自定义文件/链接；离线根目录安全 | 通过 |
+| RC02 | 8 个应用兼容入口；Kai 退出桌面注册 | 两入口指向同一清单；幂等；保护自定义文件/链接；离线根目录安全 | 通过 |
 | RC03 | Go 桌面/网关及 Lua 读取兼容 | 新目录优先、按 ID 去重、旧目录兜底、显式目录配置不扩大 | 通过 |
 | RC04 | FastNet/DDNSTO 局部迁移钩子 | 插件/元包双向升级顺序最终有效；opkg/APK 隔离根目录实测；系统包状态不变 | 部分通过：opkg 通过；APK 等待追加轮次 |
 | RC05 | 显式映射同步及回归 | 构建源一致；发布号增加一次；FastNet 直连清单和前端/测速业务不变 | 通过 |
 
-范围：fastnet、ddnsto、kspeeder（istoreenhance）、dockermanager、baidudrive、kaiplus、kai、agentflow、openwrt-luci。元包仅 FastNet/DDNSTO 需要处理历史清单归属的局部升级钩子；其他元包只更新发布号。元包不提供最低版本限制。
+范围：fastnet、ddnsto、kspeeder（istoreenhance）、dockermanager、baidudrive、kaiplus、agentflow、openwrt-luci。元包仅 FastNet/DDNSTO 需要处理历史清单归属的局部升级钩子；其他元包只更新发布号。元包不提供最低版本限制。
 
 旧目录的兼容链接由插件 postinst 创建，不放进包文件清单，避免与尚未更新的历史元包发生同路径文件归属冲突。FastNet/DDNSTO 的元包升级后调用插件自带修复脚本，避免旧包文件回收导致兼容链接丢失。仅升级元包且尚未安装新版插件，不承诺完成迁移；两者更新完成后必须与升级顺序无关。
 

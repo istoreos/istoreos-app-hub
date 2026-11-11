@@ -1,0 +1,7 @@
+{
+  "baselineCommit": "391ad6c3dc6be7fddda5681ce681a80408ceb113",
+  "test": "apps/kai/tests/test-local-agent-contract.sh",
+  "exitCode": 1,
+  "stdout": "",
+  "stderr": "failed: kai does not require a sufficiently recent packaged skills bundle\n"
+}

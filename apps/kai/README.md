@@ -199,10 +199,20 @@ directory. The upstream skills verification report records x86_64/musl
 device acceptance; this package preparation does not establish new ARM,
 glibc, apk-device, or cold Node/Go install acceptance.
 
+## Desktop entry
+
+KaiPlus provides the desktop entry. Classic KAI does not register under either
+`/usr/share/linkease/apps.d` or `/usr/share/linkeasefull/desktop-apps.d`.
+Upgrades remove only the old `05-kai-plugin.json` links still pointing to KAI's
+former manifest, preserving custom files and links. The classic tab in
+`luci-app-kaiplus` checks the actual runtime files and opens the configured KAI
+port through the existing LuCI authentication bridge, without a desktop registry
+or shared application proxy dependency.
+
 ## HTTP mount contract
 
 The LuCI entry opens the stable `/apps/kai/` root, which KAI redirects to
 `/apps/kai/web/`. Browser traffic stays below `/apps/kai/`, including
 `/apps/kai/event`, `/apps/kai/session/*` and product
-APIs. Keep the plugin entry path aligned with the server mount when either side
+APIs. Keep the classic launch path aligned with the server mount when either side
 changes.
