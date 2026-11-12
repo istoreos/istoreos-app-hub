@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 PKG_VERSION:=0.2.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 META_TITLE:=时光机
 META_TITLE.en:=Device Time Machine
 META_DEPENDS:=+optimemachine +luci-app-optimemachine

@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=optimemachine
-PKG_VERSION:=0.2.0-otm17-rc1
+PKG_VERSION:=0.2.0-otm17-rc2
 PKG_RELEASE:=1
 include ./release.mk
 PKG_SOURCE:=optimemachine-$(PKG_VERSION)-$(ARCH).tar.gz

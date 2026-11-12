@@ -84,7 +84,7 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
     releases = {}
     for name, version, prefix, inputs in [
-        ("optimemachine", "0.2.0-otm17-rc1", "OPTIMEMACHINE", [args.otm_amd64, args.otm_arm64]),
+        ("optimemachine", "0.2.0-otm17-rc2", "OPTIMEMACHINE", [args.otm_amd64, args.otm_arm64]),
         ("linkspace", "0.2.0-otm.4", "LINKSPACE", [args.linkspace_amd64, args.linkspace_arm64]),
     ]:
         folder = HUB / "apps" / name / name
@@ -109,7 +109,7 @@ def main():
     (sdk / "include/package.mk").write_text("")
     packages = {}
     for name, version, binary in [("linkspace", "0.2.0-otm.4", args.linkspace_amd64),
-                                  ("optimemachine", "0.2.0-otm17-rc1", args.otm_amd64)]:
+                                  ("optimemachine", "0.2.0-otm17-rc2", args.otm_amd64)]:
         folder = HUB / "apps" / name / name
         build = sdk / "build" / f"{name}-{version}"
         build.mkdir(parents=True, exist_ok=True)
@@ -136,9 +136,9 @@ def main():
         packages[name] = ipk(output, name, version + "-1", "x86_64", stage, depends, scripts, config.splitlines())
 
     for name, version, source, depends in [
-        ("luci-app-optimemachine", "0.2.0-r1", HUB / "apps/optimemachine/luci-app-optimemachine/root",
+        ("luci-app-optimemachine", "0.2.0-r2", HUB / "apps/optimemachine/luci-app-optimemachine/root",
          ["optimemachine", "luci-base", "luci-lib-linkeaseauth", "linkease-app-entry"]),
-        ("app-meta-optimemachine", "0.2.0-1", HUB / "apps/optimemachine/app-meta-optimemachine",
+        ("app-meta-optimemachine", "0.2.0-2", HUB / "apps/optimemachine/app-meta-optimemachine",
          ["optimemachine", "luci-app-optimemachine"]),
     ]:
         stage = work / f"stage-{name}"
