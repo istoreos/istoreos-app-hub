@@ -12,13 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class FastNetPackageContractTest(unittest.TestCase):
-    def translation_versions(self, apk):
-        # Expand the actual recipe with GNU make; only the SDK includes are inert.
+    def translation_versions(self, apk, sdk_translation=None):
+        # Expand the actual recipe; the SDK stub optionally supplies its default.
         with tempfile.TemporaryDirectory() as directory:
             sdk = Path(directory)
             (sdk / "feeds/luci").mkdir(parents=True)
             (sdk / "rules.mk").touch()
-            (sdk / "feeds/luci/luci.mk").touch()
+            (sdk / "feeds/luci/luci.mk").write_text(
+                "PKG_PO_VERSION?=" + sdk_translation + "\n" if sdk_translation else ""
+            )
             harness = sdk / "versions.mk"
             harness.write_text(
                 f"include {ROOT / 'luci-app-fastnet/Makefile'}\n"
@@ -30,20 +32,26 @@ class FastNetPackageContractTest(unittest.TestCase):
                 text=True,
             ).splitlines()
 
-    def test_apk_translation_version_is_valid_and_tracks_luci_release(self):
-        luci, translation = self.translation_versions(apk=True)
-        self.assertRegex(translation, r"^[0-9]+\.[0-9]+\.[0-9]+-r[0-9]+$")
-        self.assertEqual(translation, luci)
-        # An installed APK 3.x CLI can additionally exercise the real validator.
+    def test_apk_translation_version_is_owned_by_sdk(self):
+        _, translation = self.translation_versions(apk=True)
+        self.assertEqual(translation, "", "APK recipe must not override SDK translation versioning")
         command = os.environ.get("APK_VERSION_COMMAND")
-        if command:
-            result = subprocess.run(shlex.split(command) + [translation],
-                                    text=True, capture_output=True, timeout=20)
-            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        for sdk_version in ("26.315.12345~abcdef0", "0.261112.12345"):
+            with self.subTest(sdk_version=sdk_version):
+                _, translation = self.translation_versions(apk=True, sdk_translation=sdk_version)
+                self.assertEqual(translation, sdk_version)
+                if command:
+                    result = subprocess.run(shlex.split(command) + [translation],
+                                            text=True, capture_output=True, timeout=20)
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
-    def test_opkg_translation_keeps_existing_upgrade_order(self):
+    def test_opkg_translation_version_is_owned_by_sdk(self):
         _, translation = self.translation_versions(apk=False)
-        self.assertEqual(translation, "git-26.313.00000-082")
+        self.assertEqual(translation, "", "OPKG recipe must not override SDK translation versioning")
+        for sdk_version in ("git-26.181.32799-853c877", "26.315.12345~abcdef0"):
+            with self.subTest(sdk_version=sdk_version):
+                _, translation = self.translation_versions(apk=False, sdk_translation=sdk_version)
+                self.assertEqual(translation, sdk_version)
 
     def test_release_versions_and_binary_contract_are_aligned(self):
         runtime = (ROOT / "fastnet/Makefile").read_text(encoding="utf-8")
