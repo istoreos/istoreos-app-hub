@@ -1,6 +1,10 @@
 from pathlib import Path
 import json
+import os
 import re
+import shlex
+import subprocess
+import tempfile
 import unittest
 
 
@@ -8,6 +12,39 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class FastNetPackageContractTest(unittest.TestCase):
+    def translation_versions(self, apk):
+        # Expand the actual recipe with GNU make; only the SDK includes are inert.
+        with tempfile.TemporaryDirectory() as directory:
+            sdk = Path(directory)
+            (sdk / "feeds/luci").mkdir(parents=True)
+            (sdk / "rules.mk").touch()
+            (sdk / "feeds/luci/luci.mk").touch()
+            harness = sdk / "versions.mk"
+            harness.write_text(
+                f"include {ROOT / 'luci-app-fastnet/Makefile'}\n"
+                "versions:\n\t@printf '%s\\n' '$(PKG_VERSION)' '$(PKG_PO_VERSION)'\n"
+            )
+            return subprocess.check_output(
+                ["make", "--no-print-directory", "-f", str(harness), "versions",
+                 f"TOPDIR={sdk}", "CONFIG_USE_APK=" + ("y" if apk else "")],
+                text=True,
+            ).splitlines()
+
+    def test_apk_translation_version_is_valid_and_tracks_luci_release(self):
+        luci, translation = self.translation_versions(apk=True)
+        self.assertRegex(translation, r"^[0-9]+\.[0-9]+\.[0-9]+-r[0-9]+$")
+        self.assertEqual(translation, luci)
+        # An installed APK 3.x CLI can additionally exercise the real validator.
+        command = os.environ.get("APK_VERSION_COMMAND")
+        if command:
+            result = subprocess.run(shlex.split(command) + [translation],
+                                    text=True, capture_output=True, timeout=20)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_opkg_translation_keeps_existing_upgrade_order(self):
+        _, translation = self.translation_versions(apk=False)
+        self.assertEqual(translation, "git-26.313.00000-082")
+
     def test_release_versions_and_binary_contract_are_aligned(self):
         runtime = (ROOT / "fastnet/Makefile").read_text(encoding="utf-8")
         luci = (ROOT / "luci-app-fastnet/Makefile").read_text(encoding="utf-8")
@@ -28,10 +65,10 @@ class FastNetPackageContractTest(unittest.TestCase):
         self.assertIsNotNone(meta_version)
         self.assertIsNotNone(meta_release)
         self.assertIsNotNone(source_hash)
-        self.assertEqual(luci_version.group(1), f"{source_version.group(1)}-r1")
+        self.assertEqual(luci_version.group(1), f"{source_version.group(1)}-r2")
         self.assertEqual(luci_release.group(1), "")
         self.assertEqual(meta_version.group(1), source_version.group(1))
-        self.assertEqual(meta_release.group(1), "20")
+        self.assertEqual(meta_release.group(1), "21")
         self.assertIn(
             "istoreos-app-hub/releases/download/fastnet-runtime-v$(PKG_VERSION)/",
             runtime,

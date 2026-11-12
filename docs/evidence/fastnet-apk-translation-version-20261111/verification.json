@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-11-11T07:18:10.488714+00:00",
+  "failedJob": "https://github.com/linkease/openwrt-app-actions/actions/runs/42974176332/job/130369360528",
+  "rootCause": "FastNet explicitly pinned an OPKG git-* translation version on both package formats. APK rejects it. SDK/feed source matches this explicit value.",
+  "redLoop": {
+    "command": "ssh root@192.168.3.164 apk version --check git-26.313.00000-082",
+    "exitCode": 1,
+    "recipeExpansionRegression": "test_apk_translation_version_is_valid_and_tracks_luci_release failed before the fix"
+  },
+  "fix": {
+    "luciPackage": "0.8.9-r2",
+    "apkTranslation": "0.8.9-r2",
+    "opkgTranslation": "git-26.313.00000-082",
+    "metaRelease": 21,
+    "coreRuntime": "0.8.9-2 unchanged"
+  },
+  "validation": {
+    "fastnetPackageContractTests": 5,
+    "realApkValidator": "APK 3.0.5 on 192.168.3.164 accepted the GNU-make-expanded recipe version",
+    "opkgOrdering": "compare-versions >= unchanged installed git-* version returned 0 on 192.168.30.7",
+    "registrationRecipeTests": 9,
+    "metadataOwnershipTests": 1,
+    "mirrorConsistency": true,
+    "diffChecksPassed": true
+  },
+  "scope": {
+    "sharedBuildOrCIChanged": false,
+    "runtimeArchiveChanged": false,
+    "frontendOrCardAssetsChanged": false,
+    "deviceInstallOrServiceChanges": false,
+    "githubActionsRerun": false,
+    "fullSdkBuildPerformed": false,
+    "committed": true
+  }
+}

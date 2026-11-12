@@ -1,0 +1,10 @@
+[
+  {
+    "source": "apps/fastnet/luci-app-fastnet/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/nas-packages-luci/luci/luci-app-fastnet/Makefile"
+  },
+  {
+    "source": "apps/fastnet/app-meta-fastnet/Makefile",
+    "target": "/projects/workspace-linkease-ubuntu/openwrt-apps/openwrt-app-meta/applications/app-meta-fastnet/Makefile"
+  }
+]
