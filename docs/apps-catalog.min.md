@@ -50,6 +50,7 @@ Format: `id — title — description`
 - oneapi — OneAPI — OneAPI 是LLM API 管理 & 分发系统，支持 OpenAI、Azure、Anthropic Claude、Google Gemini、DeepSeek。
 - openclawmgr — OpenClaw Launcher — 在 OpenWrt 上原生安装、启动并管理官方 OpenClaw。
 - openwebui — OpenWebUI — Open WebUI 是一款可扩展、自托管的 AI 界面，能够无缝适配您的工作流程，且所有操作均可完全离线运行。
+- optimemachine — 时光机 — 增量备份、历史版本浏览、设备失联自动恢复与审计日志
 - owntone — Owntone音乐平台 — Owntone是一个支持iTunes, AirPlay, Chromecast等的音乐串流平台。
 - penpot — Penpot设计平台 — Penpot是第一个开源的便于团队协作的在线设计平台。
 - photoprism — PhotoPrism相册管理 — PhotoPrism是一个AI驱动的相册管理应用。

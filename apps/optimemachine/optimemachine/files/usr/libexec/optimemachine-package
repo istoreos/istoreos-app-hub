@@ -1,0 +1,29 @@
+#!/bin/sh
+set -eu
+[ -n "${IPKG_INSTROOT:-}" ] && exit 0
+bin=/usr/sbin/optimemachine_bin
+config=/etc/optimemachine/config.json
+phase=${1:-}
+case "$phase" in
+ preinst|prerm)
+  if [ -x "$bin" ] && [ -f "$config" ]; then
+   "$bin" maintenance-check --config "$config" >/dev/null || exit 1
+   if [ -S /var/run/optimemachine.sock ]; then touch /var/run/optimemachine-package-restart; /etc/init.d/optimemachine stop || exit 1; fi
+   "$bin" maintenance-check --config "$config" >/dev/null || { /etc/init.d/optimemachine start; exit 1; }
+  fi
+ ;;
+ postinst)
+  "$bin" initialize --config "$config" >/dev/null
+  if [ -f /usr/share/linkspace/dependency.json ] || [ -f /usr/share/optimemachine/dependency.json ]; then
+   "$bin" sync-backend --config "$config" >/dev/null
+  else
+   # During an OTM-first upgrade the old package may have removed its owned
+   # descriptor. Keep the already pinned old backend until Linkspace updates.
+   "$bin" doctor --config "$config" >/dev/null
+  fi
+  "$bin" refresh-runtime --config "$config" >/dev/null
+  if [ -f /var/run/optimemachine-package-enable ]; then /etc/init.d/optimemachine enable; rm -f /var/run/optimemachine-package-enable; fi
+  if [ -f /var/run/optimemachine-package-restart ]; then /etc/init.d/optimemachine start; rm -f /var/run/optimemachine-package-restart; fi
+ ;;
+ *) exit 2 ;;
+esac

@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "id": "optimemachine",
+  "name": "时光机",
+  "icon": "logo.svg",
+  "staticRoot": "/usr/share/optimemachine/www",
+  "desktop": {
+    "mode": "module",
+    "entry": "desktop-entry.js",
+    "isolation": "shadow-dom"
+  },
+  "standalone": {
+    "basePath": "/apps/optimemachine/",
+    "externalOpen": {
+      "enabled": false
+    }
+  },
+  "auth": {
+    "mode": "passthrough"
+  },
+  "backend": {
+    "type": "http",
+    "transport": "unix",
+    "scheme": "http",
+    "values": {
+      "socketPath": {
+        "default": "/var/run/optimemachine.sock",
+        "keys": {
+          "uci": "optimemachine.main.socket_path"
+        }
+      }
+    },
+    "upstreamBasePath": "/apps/optimemachine/",
+    "pathMode": "preserve",
+    "proxyMode": "app-base"
+  },
+  "window": {
+    "width": 1180,
+    "height": 800,
+    "singleton": true
+  },
+  "capabilities": [
+    "backup",
+    "restore",
+    "device-protection"
+  ],
+  "categories": [
+    "system"
+  ]
+}

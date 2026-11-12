@@ -676,3 +676,19 @@ apps:
         meta:
             - local: apps/openclawmgr/app-meta-openclawmgr
               remote: openwrt-app-meta/applications/app-meta-openclawmgr
+    optimemachine:
+        services:
+            - local: apps/optimemachine/optimemachine
+              remote: openwrt-app-actions/applications/optimemachine
+        luci:
+            - local: apps/optimemachine/luci-app-optimemachine
+              remote: openwrt-app-actions/applications/luci-app-optimemachine
+        meta:
+            - local: apps/optimemachine/app-meta-optimemachine
+              remote: openwrt-app-meta/applications/app-meta-optimemachine
+    linkspace:
+        services:
+            - local: apps/linkspace/linkspace
+              remote: openwrt-app-actions/applications/linkspace
+        luci: []
+        meta: []

@@ -17,6 +17,7 @@ REGISTRY = Path('usr/share/linkease/apps.d')
 LEGACY = Path('usr/share/linkeasefull/desktop-apps.d')
 FIXTURES = Path(__file__).parent / 'fixtures/legacy-registrations'
 CASES = [
+    ('optimemachine/optimemachine', 'optimemachine', '25-optimemachine.json'),
     ('kaiplus/kaiplus', 'kaiplus', '00-kaiplus-plugin.json'),
     ('baidudrive/baidudrive', 'baidudrive', '10-baidudrive-plugin.json'),
     ('dockermanager/dockermanager', 'dockermanager', '20-dockermanager-plugin.json'),
