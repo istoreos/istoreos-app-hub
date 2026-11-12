@@ -3,6 +3,8 @@ import unittest
 import json
 from pathlib import Path
 
+from verify_quickstart_runtime import EXPECTED_GO_MODULE, GO_SECURITY_FLOORS
+
 
 APP_ROOT = Path(__file__).resolve().parents[1]
 
@@ -37,11 +39,15 @@ class QuickstartPackageContractTest(unittest.TestCase):
         self.assertRegex(template, rf'local asset_version = "{re.escape(backend_version)}-release-[0-9a-f]{{12}}"')
         self.assertEqual(template.count("?v=<%=asset_version%>"), 3)
         self.assertRegex(make_value(backend_makefile, "PKG_HASH"), r"^[0-9a-f]{64}$")
+        runtime_verifier = APP_ROOT / "tests" / "verify_quickstart_runtime.py"
+        self.assertTrue(runtime_verifier.is_file())
+        self.assertEqual(GO_SECURITY_FLOORS, {(1, 26): 11, (1, 27): 4})
+        self.assertEqual(EXPECTED_GO_MODULE, "github.com/istoreos/quickstart/backend/cmd/backend")
         for recipe in (backend_makefile, netpolicy_makefile):
             self.assertEqual(make_value(recipe, 'RSTRIP'), ':', 'Prebuilt runtime bytes must retain manifest hashes')
         self.assertEqual(
             make_value(backend_makefile, "PKG_SOURCE_URL"),
-            "https://github.com/istoreos/istoreos-app-hub/releases/download/quickstart-runtime-v$(PKG_VERSION)/",
+            "https://github.com/istoreos/quickstart/releases/download/v$(PKG_VERSION)/",
         )
         self.assertEqual(make_value(netpolicy_makefile, "PKG_VERSION"), "0.2.0-test20260928")
         netpolicy_recipe = netpolicy_makefile.read_text()
