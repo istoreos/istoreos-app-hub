@@ -49,7 +49,7 @@ class QuickstartPackageContractTest(unittest.TestCase):
             make_value(backend_makefile, "PKG_SOURCE_URL"),
             "https://github.com/istoreos/quickstart/releases/download/v$(PKG_VERSION)/",
         )
-        self.assertEqual(make_value(netpolicy_makefile, "PKG_VERSION"), "0.2.0-test20260928")
+        self.assertEqual(make_value(netpolicy_makefile, "PKG_VERSION"), "0.2.1-rc20261113")
         netpolicy_recipe = netpolicy_makefile.read_text()
         self.assertRegex(make_value(netpolicy_makefile, "PKG_HASH_x86_64"), r"^[0-9a-f]{64}$")
         self.assertRegex(make_value(netpolicy_makefile, "PKG_HASH_aarch64"), r"^[0-9a-f]{64}$")
@@ -61,6 +61,12 @@ class QuickstartPackageContractTest(unittest.TestCase):
         self.assertIn("NETPOLICY_TARGET_aarch64:=aarch64-unknown-linux-musl", netpolicy_recipe)
         self.assertIn("@(x86_64||aarch64)", netpolicy_recipe)
         self.assertIn("/usr/bin/quickstart-netpolicy", netpolicy_recipe)
+        for recipe in (backend_makefile.read_text(), netpolicy_recipe, luci_makefile.read_text()):
+            self.assertIn("PKG_VERSION:=$(subst -rc,_rc,$(PKG_VERSION))", recipe)
+        self.assertIn(
+            "$(INSTALL_DATA) $(PKG_BUILD_DIR)/MANIFEST $(1)/usr/share/quickstart/MANIFEST",
+            backend_makefile.read_text(),
+        )
 
         self.assertIn(
             "/etc/quickstart/device-classifications.json",
