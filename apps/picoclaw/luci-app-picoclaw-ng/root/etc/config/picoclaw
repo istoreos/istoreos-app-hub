@@ -1,0 +1,6 @@
+config picoclaw 'main'
+	option mode 'gateway'
+	option launcher_port '18800'
+	option launcher_public '1'
+	option asset ''
+	option debug_log '0'

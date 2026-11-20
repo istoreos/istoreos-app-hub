@@ -53,6 +53,7 @@ Auto-generated from `apps/*/app-meta-*/Makefile` via `make apps-catalog`.
 | owntone | Owntone音乐平台 | multimedia net | /cgi-bin/luci/admin/services/owntone | https://owntone.github.io/owntone-server/ | Owntone是一个支持iTunes, AirPlay, Chromecast等的音乐串流平台。 |
 | penpot | Penpot设计平台 | net tool | /cgi-bin/luci/admin/services/penpot | https://penpot.app/ | Penpot是第一个开源的便于团队协作的在线设计平台。 |
 | photoprism | PhotoPrism相册管理 | multimedia net | /cgi-bin/luci/admin/services/photoprism | https://photoprism.app/ | PhotoPrism是一个AI驱动的相册管理应用。 |
+| picoclaw | PicoClaw 网关 | networking service | /cgi-bin/luci/admin/services/picoclaw | https://github.com/Gt841/luci-app-picoclaw-ng | PicoClaw 的图形管理面板，默认 Gateway 模式，需要时临时打开 Launcher 面板改配置。 |
 | plex | Plex影院 | multimedia net | /cgi-bin/luci/admin/services/plex | https://www.plex.tv/ | Plex是一个多媒体串流平台，可以让您方便地管理和串流您的媒体。 |
 | pve | Proxmox虚拟机(PVE) | system tool | /cgi-bin/luci/admin/services/pve | https://pve.proxmox.com/ | 运行在 iStoreOS 上面的 Proxmox(PVE) 虚拟机平台。 |
 | rtbwmon | 实时流量 | monitor net | /cgi-bin/luci/admin/status/rtbwmon | https://github.com/linkease/openwrt-app-actions/tree/main/applications/luci-app-rtbwmon | 实时查看客户端网速，无后台服务 |

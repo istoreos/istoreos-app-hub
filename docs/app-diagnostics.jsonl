@@ -47,6 +47,7 @@
 {"id":"owntone","type":"docker","depends":["docker-deps","luci-app-owntone","luci-i18n-owntone-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"penpot","type":"docker","depends":["docker-deps","luci-app-penpot","luci-i18n-penpot-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"photoprism","type":"docker","depends":["docker-deps","luci-app-photoprism","luci-i18n-photoprism-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
+{"id":"picoclaw","type":"native","depends":["luci-app-picoclaw-ng"],"autoconf":false,"istorec":false,"init":true,"config":true,"luci":true}
 {"id":"plex","type":"docker","depends":["docker-deps","luci-app-plex","luci-i18n-plex-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"pve","type":"docker","depends":["docker-deps","luci-app-pve","luci-i18n-pve-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"rtbwmon","type":"native","depends":["luci-app-rtbwmon","luci-i18n-rtbwmon-zh-cn"],"autoconf":false,"istorec":false,"init":true,"config":false,"luci":true}

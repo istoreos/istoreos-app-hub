@@ -1,0 +1,125 @@
+#!/bin/sh /etc/rc.common
+### BEGIN INIT INFO
+# Provides:          picoclaw
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     99
+# Default-Stop:      10
+# Short-Description: PicoClaw Launcher / Gateway
+# Description:       Run PicoClaw Gateway by default, or Launcher as a temporary web panel
+### END INIT INFO
+
+START=99
+STOP=10
+USE_PROCD=1
+
+. /lib/functions.sh
+
+PC_LOG_FILE="/etc/picoclaw-luci.log"
+PC_RUNTIME_LOG="/var/log/picoclaw.log"
+PC_LOG_ENABLED=0
+
+pc_log() {
+    [ "$PC_LOG_ENABLED" = "1" ] || return 0
+    [ -f "$PC_LOG_FILE" ] || (umask 077; : > "$PC_LOG_FILE" 2>/dev/null)
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [init] $*" >> "$PC_LOG_FILE" 2>/dev/null
+}
+
+prepare_runtime_log() {
+    mkdir -p /var/log 2>/dev/null
+    if [ -f "$PC_RUNTIME_LOG" ]; then
+        SIZE=$(wc -c < "$PC_RUNTIME_LOG" 2>/dev/null | tr -d ' ')
+        [ -n "$SIZE" ] || SIZE=0
+        if [ "$SIZE" -gt 2097152 ] 2>/dev/null; then
+            mv -f "$PC_RUNTIME_LOG" "$PC_RUNTIME_LOG.1" 2>/dev/null
+        fi
+    fi
+    : > "$PC_RUNTIME_LOG" 2>/dev/null
+    chmod 600 "$PC_RUNTIME_LOG" 2>/dev/null
+}
+
+start_service() {
+    local mode launcher_port launcher_public panel_port
+    config_load picoclaw
+    config_get mode main mode "gateway"
+    config_get launcher_port main launcher_port "18800"
+    config_get launcher_public main launcher_public "1"
+    config_get PC_LOG_ENABLED main debug_log "0"
+    [ "$PC_LOG_ENABLED" = "1" ] || PC_LOG_ENABLED=0
+
+    panel_port=""
+    # 临时网页面板：/tmp/picoclaw-panel 第一行 public，第二行可选临时端口（备用面板）。
+    # 该文件在重启后自动消失，因此开机仍按 UCI 的默认模式（默认 gateway）。
+    if [ -f /tmp/picoclaw-panel ]; then
+        mode=launcher
+        launcher_public=$(head -n 1 /tmp/picoclaw-panel 2>/dev/null)
+        [ "$launcher_public" = "0" ] || launcher_public=1
+        panel_port=$(sed -n '2p' /tmp/picoclaw-panel 2>/dev/null)
+        case "$panel_port" in ''|*[!0-9]*) panel_port="" ;; esac
+        if [ -n "$panel_port" ] && { [ "$panel_port" -lt 1 ] || [ "$panel_port" -gt 65535 ]; }; then
+            panel_port=""
+        fi
+        pc_log "panel flag detected public=$launcher_public port=${panel_port:-default}"
+    fi
+
+    prepare_runtime_log
+
+    if [ "$mode" = "gateway" ] && [ ! -f /root/.picoclaw/config.json ]; then
+        pc_log "config missing, running onboard"
+        HOME=/root /usr/bin/picoclaw onboard >> "$PC_RUNTIME_LOG" 2>&1
+    fi
+
+    pc_log "start_service mode=$mode port=$launcher_port public=$launcher_public"
+
+    procd_open_instance picoclaw
+    if [ "$mode" = "gateway" ]; then
+        # 没有默认模型时 --allow-empty 让网关以受限模式保持运行，
+        # 用户可以先通过临时面板配置模型，而不是陷入启动即退出的循环。
+        procd_set_param command /bin/sh -c "exec /usr/bin/picoclaw gateway --allow-empty >> '$PC_RUNTIME_LOG' 2>&1"
+        procd_set_param env HOME=/root SSL_CERT_DIR=/etc/ssl/certs
+        pc_log "exec: /usr/bin/picoclaw gateway --allow-empty"
+    else
+        if [ "$launcher_public" = "1" ]; then
+            procd_set_param command /bin/sh -c "exec /usr/bin/picoclaw-launcher -no-browser -public -port $launcher_port >> '$PC_RUNTIME_LOG' 2>&1"
+        else
+            procd_set_param command /bin/sh -c "exec /usr/bin/picoclaw-launcher -no-browser -port $launcher_port >> '$PC_RUNTIME_LOG' 2>&1"
+        fi
+        procd_set_param env HOME=/root SSL_CERT_DIR=/etc/ssl/certs
+        pc_log "exec: /usr/bin/picoclaw-launcher public=$launcher_public port=$launcher_port"
+    fi
+    procd_set_param respawn 3600 5 5
+    procd_set_param user root
+    procd_close_instance
+    pc_log "instance submitted to procd"
+}
+
+# BusyBox pidof/killall 无法匹配超过 15 字符的名字（picoclaw-launcher 为 17），
+# 因此直接扫描 /proc/<pid>/cmdline。
+stop_service() {
+    local sig d pid cmd
+    config_load picoclaw
+    config_get PC_LOG_ENABLED main debug_log "0"
+    [ "$PC_LOG_ENABLED" = "1" ] || PC_LOG_ENABLED=0
+    pc_log "stop_service requested"
+    for sig in TERM KILL; do
+        for d in /proc/[0-9]*; do
+            [ -r "$d/cmdline" ] || continue
+            cmd=$(tr '\000' ' ' < "$d/cmdline" 2>/dev/null)
+            case "$cmd" in
+                *"/picoclaw-launcher"*|*"/picoclaw gateway"*|*"picoclaw gateway"*)
+                    pid=${d#/proc/}
+                    if [ "$pid" != "$$" ]; then
+                        pc_log "sending SIG$sig to pid $pid"
+                        kill -$sig "$pid" 2>/dev/null
+                    fi
+                    ;;
+            esac
+        done
+        sleep 1
+    done
+    pc_log "stop_service done"
+}
+
+service_triggers() {
+    procd_add_reload_trigger "picoclaw"
+}
