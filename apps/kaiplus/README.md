@@ -80,15 +80,15 @@ success. Installation and updating share the same task ID to prevent overlap.
 
 ## Package versions and checks
 
-The pending package set uses `kaiplus 1.0.25-r2`,
-`luci-app-kaiplus 1.0.11-r5`, and `app-meta-kaiplus 1.0.25-r12`. The runtime
+The pending package set uses `kaiplus 1.0.25-r4`,
+`luci-app-kaiplus 1.0.11-r5`, and `app-meta-kaiplus 1.0.25-r14`. The runtime
 recipe consumes `kaiplus-binary-1.0.25.tar.gz` from the
 `kaiplus-runtime-v1.0.25` GitHub release, built from Reasonix commit
 `f6913b1fb322b8b6f8e3d9795580510cb703e30d`. Its SHA-256 is
 `13d31810ca6dd861515a683a1c7710868cba2895c515295eb064753eada1c628`.
 If the candidate is rebuilt, refresh `KAIPLUS_HASH` from the new tarball.
 OpenWrt IPK/APK compilation and feed publication remain separate steps. Device
-protection uses `changeguard 0.3.5-r2` and `linkspace 0.3.3-r2` from their
+protection uses `changeguard 0.3.5-r4` and `linkspace 0.3.3-r3` from their
 matching runtime releases.
 Existing `syncapps.yaml` mappings cover all changed packages.
 
@@ -111,8 +111,8 @@ HTML stays uncompressed for runtime base-path injection and SPA routing.
 Publish the tarball, `kaiplus-web.zip`, and `release.json` together from the
 same Reasonix release build. Standalone binaries continue to embed the ZIP.
 
-The KaiPlus runtime requires ChangeGuard >= 0.3.5-r2, and ChangeGuard requires
-Linkspace >= 0.3.3-r2 (OPKG uses the equivalent `-2` suffix). These minimum
+The KaiPlus runtime requires ChangeGuard >= 0.3.5-r4, and ChangeGuard requires
+Linkspace >= 0.3.3-r3 (OPKG uses the equivalent release suffixes). These minimum
 versions belong to runtime package dependencies so an installation cannot
 silently reuse incompatible protection components.
 The market `config.sh` saves the KaiPlus data and backup directories and starts
