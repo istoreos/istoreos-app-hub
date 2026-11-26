@@ -39,8 +39,11 @@ msgstr "运行版本"
 msgid "Standard — DSH Web workbench"
 msgstr "标准版 — DSH Web 工作台"
 
-msgid "Standard is the supported profile. Chromium/noVNC will be added as a separate advanced profile later."
-msgstr "当前支持标准版；Chromium/noVNC 将在后续作为独立的高级运行环境提供。"
+msgid "Browser enhanced — Chromium & Browser Use (Experimental)"
+msgstr "浏览器增强版 — Chromium 与 Browser Use（实验性）"
+
+msgid "Standard is smaller and remains recommended. Browser enhanced adds visible Chromium, protected noVNC and Playwright Browser Use; its image requires several gigabytes of Docker storage and more memory. Profiles keep separate DSH settings and sessions, while sharing the selected workspace."
+msgstr "标准版体积更小并继续作为推荐选择。浏览器增强版增加可视化 Chromium、受保护的 noVNC 与 Playwright Browser Use；其镜像需要数 GB Docker 存储和更多内存。两个版本分别保存 DSH 设置与会话，但共享所选工作区。"
 
 msgid "Web port"
 msgstr "Web 端口"
@@ -51,14 +54,23 @@ msgstr "DSH 在所有接口上监听此端口，访问范围仍由用户的防�
 msgid "Administrator key"
 msgstr "管理员密钥"
 
-msgid "Leave blank to keep the current key. A new key takes effect after Install/Upgrade or Restart and will not be displayed again."
-msgstr "留空将保留当前密钥。新密钥会在安装/升级或重启后生效，并且不会再次显示。"
+msgid "Administrator username"
+msgstr "管理员用户名"
+
+msgid "Fixed sign-in username for the browser-enhanced gateway."
+msgstr "浏览器增强版网关使用的固定登录用户名。"
+
+msgid "Leave blank to keep the current key. Sign in as dsh with this key. A new key takes effect after Install/Upgrade or Restart and will not be displayed again."
+msgstr "留空将保留当前密钥。请使用用户名 dsh 和此密钥登录。新密钥会在安装/升级或重启后生效，并且不会再次显示。"
 
 msgid "Use 12 to 256 characters without spaces or control characters."
 msgstr "请输入 12 至 256 个不含空格或控制字符的字符。"
 
 msgid "DSH data directory"
 msgstr "DSH 数据目录"
+
+msgid "Standard stores its credentials, settings and sessions here. Browser enhanced uses an isolated sibling directory ending in -advanced. Uninstalling the application deletes neither directory."
+msgstr "标准版在此保存凭据、设置和会话；浏览器增强版使用以 -advanced 结尾的隔离同级目录。卸载应用不会删除这两个目录。"
 
 msgid "Workspace directory"
 msgstr "工作区目录"
@@ -75,8 +87,8 @@ msgstr "自动 — 设备地址与路由器主机名"
 msgid "Enter custom hosts"
 msgstr "输入自定义主机"
 
-msgid "Recommended: keep * to trust the device's current IP addresses and router hostname. For a custom DNS name, replace * with exact comma-separated hostnames or IP addresses. This setting does not disable the administrator key."
-msgstr "建议保留 *，自动信任设备当前 IP 地址和路由器主机名。使用自定义 DNS 名称时，请将 * 替换为逗号分隔的精确主机名或 IP 地址。此设置不会关闭管理员密钥认证。"
+msgid "Recommended: keep * to trust the device's current IP addresses and router hostname. For a custom DNS name, replace * with exact comma-separated hostnames or IP addresses. Authentication remains enabled in both runtime profiles."
+msgstr "建议保留 *，自动信任设备当前 IP 地址和路由器主机名。使用自定义 DNS 名称时，请将 * 替换为逗号分隔的精确主机名或 IP 地址。两个运行版本都会保持身份认证。"
 
 msgid "Container image"
 msgstr "容器镜像"
@@ -117,8 +129,14 @@ msgstr "DSH 已停止"
 msgid "Healthy"
 msgstr "运行正常"
 
+msgid "Experimental"
+msgstr "实验性"
+
 msgid "Open the workbench in a new window. DSH uses its own administrator-key login and keeps models, sessions and tools inside the workbench."
 msgstr "在新窗口中打开工作台。DSH 使用自己的管理员密钥登录，模型、会话和工具均在工作台内管理。"
+
+msgid "Open the browser-enhanced workbench in a new window. Its Chromium desktop and Browser Use tools share the same protected DSH session."
+msgstr "在新窗口中打开浏览器增强工作台。Chromium 桌面与 Browser Use 工具共享同一受保护的 DSH 会话。"
 
 msgid "Web access"
 msgstr "Web 访问"
@@ -140,6 +158,15 @@ msgstr "网络范围"
 
 msgid "All interfaces · controlled by firewall"
 msgstr "所有接口 · 由防火墙控制"
+
+msgid "Capabilities"
+msgstr "功能"
+
+msgid "Chromium desktop · Browser Use"
+msgstr "Chromium 桌面 · Browser Use"
+
+msgid "DSH Web workbench"
+msgstr "DSH Web 工作台"
 
 msgid "Runtime details"
 msgstr "运行详情"

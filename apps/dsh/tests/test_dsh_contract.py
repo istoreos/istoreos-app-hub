@@ -11,7 +11,7 @@ class DshContract(unittest.TestCase):
     def read(self, relative):
         return (ROOT / relative).read_text(encoding="utf-8")
 
-    def test_runtime_profile_is_pinned_and_extensible(self):
+    def test_runtime_profiles_are_pinned_and_explicit(self):
         script = self.read("dsh/files/dsh.sh")
         config = self.read("dsh/files/dsh.config")
         cbi = self.read("luci-app-dsh/luasrc/model/cbi/dsh.lua")
@@ -20,10 +20,35 @@ class DshContract(unittest.TestCase):
         self.assertIn("option extra_trusted_hosts '*'", config)
         self.assertIn("case \"${1:-standard}\"", script)
         self.assertIn("ghcr.io/omdsh-dev/dsh-container:0.2.1-rc.2@sha256:", script)
+        self.assertIn("ghcr.io/runzhliu/deepseek-harness:0.2.3-alpha.2-r1@sha256:", script)
         self.assertNotIn(":latest", script)
-        self.assertNotIn("runzhliu/deepseek-harness", script)
         self.assertIn('profile:value("standard"', cbi)
-        self.assertNotIn('profile:value("advanced"', cbi)
+        self.assertIn('profile:value("advanced"', cbi)
+
+    def test_advanced_profile_protects_the_browser_desktop(self):
+        script = self.read("dsh/files/dsh.sh")
+        caddy = self.read("dsh/files/advanced.Caddyfile")
+
+        self.assertIn('GATEWAY_NAME="dsh-gateway"', script)
+        self.assertIn('ADVANCED_NETWORK="dsh-internal"', script)
+        self.assertIn('--shm-size 1g', script)
+        self.assertIn('--publish "$port:13080"', script)
+        self.assertIn('--cap-add NET_BIND_SERVICE', script)
+        self.assertEqual(script.count('--cap-add NET_BIND_SERVICE'), 1)
+        self.assertNotIn('--publish "$port:6080"', script)
+        self.assertNotIn('--publish "$port:9222"', script)
+        self.assertIn('advanced_data_path="${data_path}-advanced"', script)
+        self.assertIn("forward_auth dsh:3080", caddy)
+        self.assertIn("header_up -Upgrade", caddy)
+        self.assertIn("header_up -Origin", caddy)
+        self.assertIn('basic_auth bcrypt "DSH administrator"', caddy)
+        self.assertIn("dsh {$DSH_PASSWORD_HASH}", caddy)
+        self.assertIn("/?token={$DSH_LAUNCH_TOKEN}", caddy)
+        self.assertGreaterEqual(caddy.count("header_up Host {http.request.hostport}"), 5)
+        self.assertNotIn("/cgi-bin/luci/admin/services/dsh/open", caddy)
+        self.assertIn("reverse_proxy dsh:6080", caddy)
+        self.assertIn("reverse_proxy dsh:3080", caddy)
+        self.assertIn("@desktop path /novnc-*", caddy)
 
     def test_container_uses_a_dedicated_authenticated_port(self):
         script = self.read("dsh/files/dsh.sh")
@@ -42,16 +67,26 @@ class DshContract(unittest.TestCase):
         self.assertNotIn("--privileged", script)
         self.assertNotIn("/var/run/docker.sock", script)
         self.assertNotIn("eval ", script)
-        self.assertNotIn("docker logs", script)
+        self.assertIn("do_launch_token", script)
+        self.assertIn('docker logs --tail 300 "$CONTAINER_NAME"', script)
         self.assertIn("*[!A-Za-z0-9.,:_%_-]*", script)
         self.assertIn('KEY_FILE="$KEY_DIRECTORY/admin.key"', script)
         self.assertIn("ensure_admin_key", script)
         self.assertIn("hexdump -n 32", script)
         self.assertNotIn("od -An", script)
         self.assertIn('chmod 0600 "$KEY_FILE"', script)
+        self.assertIn('--env "DSH_PASSWORD_HASH=$password_hash"', script)
+        self.assertIn('--env "DSH_LAUNCH_TOKEN=$launch_token"', script)
+        self.assertIn("hash-password --algorithm bcrypt", script)
+        self.assertIn("do_refresh_gateway", script)
+        self.assertIn("do_boot", script)
         self.assertIn('case "$address" in 0.0.0.0|::)', script)
         self.assertIn('[ "$value" = "*" ] && return 0', script)
         self.assertIn("''|'*')", script)
+        self.assertLess(
+            script.index('trusted_hosts_value="$(trusted_hosts "$extra_hosts")"'),
+            script.index("IFS=,"),
+        )
 
     def test_replacement_has_health_gate_and_rollback(self):
         script = self.read("dsh/files/dsh.sh")
@@ -90,6 +125,9 @@ class DshContract(unittest.TestCase):
         self.assertIn('section:tab("runtime"', cbi)
         self.assertIn('trusted_hosts.default = "*"', cbi)
         self.assertIn('value ~= "*"', cbi)
+        self.assertIn('translate("Administrator username")', cbi)
+        self.assertIn('return "dsh"', cbi)
+        self.assertIn('administrator_username:depends("image_profile", "advanced")', cbi)
         self.assertIn("dsh-facts", status)
         self.assertIn("Runtime details", status)
         self.assertNotIn("dsh-status-row", status)
@@ -100,13 +138,20 @@ class DshContract(unittest.TestCase):
         meta = self.read("app-meta-dsh/Makefile")
 
         self.assertIn("+docker +dockerd +ca-bundle +linkease-app-entry", runtime)
+        self.assertIn("./files/advanced.Caddyfile", runtime)
+        self.assertIn("./files/dsh.init", runtime)
         self.assertIn("/usr/share/linkease/apps.d/39-dsh.json", runtime)
         self.assertIn("+luci-lib-linkeaseauth +linkease-app-entry", luci)
         self.assertIn("META_DEPENDS:=+dsh +luci-app-dsh", meta)
         self.assertNotIn("linkease/apps.d", meta)
 
     def test_shell_is_syntactically_valid(self):
-        for relative in ("dsh/files/dsh.sh", "tests/device_acceptance.sh"):
+        for relative in (
+            "dsh/files/dsh.sh",
+            "dsh/files/dsh.init",
+            "tests/device_acceptance.sh",
+            "tests/device_acceptance_advanced.sh",
+        ):
             result = subprocess.run(
                 ["sh", "-n", str(ROOT / relative)],
                 text=True,
@@ -122,6 +167,18 @@ class DshContract(unittest.TestCase):
         self.assertNotIn("docker logs", script)
         self.assertNotIn('cat "$KEY_FILE"', script)
         self.assertIn("FINAL_DSH_DEVICE_ACCEPTANCE=PASS", script)
+
+        advanced = self.read("tests/device_acceptance_advanced.sh")
+        self.assertIn("FINAL_DSH_ADVANCED_ACCEPTANCE=PASS", advanced)
+        self.assertIn("novnc_unauth", advanced)
+        self.assertIn("authenticated asset returned", advanced)
+        self.assertIn("DSH administrator key", advanced)
+        self.assertNotIn("docker logs", advanced)
+
+        browser = self.read("tests/browser_acceptance_advanced.mjs")
+        self.assertIn("FINAL_DSH_ADVANCED_BROWSER", browser)
+        self.assertIn("Network.setExtraHTTPHeaders", browser)
+        self.assertNotIn("launch-token", browser)
 
     def test_kaiplus_provider_fixture_contains_no_credential(self):
         overlay = self.read("tests/fixtures/kaiplus-provider.patch.yml")

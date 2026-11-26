@@ -24,8 +24,9 @@ section:tab("runtime", translate("Runtime"))
 local profile = section:taboption("runtime", ListValue, "image_profile", translate("Runtime profile"))
 profile.rmempty = false
 profile:value("standard", translate("Standard — DSH Web workbench"))
+profile:value("advanced", translate("Browser enhanced — Chromium & Browser Use (Experimental)"))
 profile.default = "standard"
-profile.description = translate("Standard is the supported profile. Chromium/noVNC will be added as a separate advanced profile later.")
+profile.description = translate("Standard is smaller and remains recommended. Browser enhanced adds visible Chromium, protected noVNC and Playwright Browser Use; its image requires several gigabytes of Docker storage and more memory. Profiles keep separate DSH settings and sessions, while sharing the selected workspace.")
 
 local port = section:taboption("access", Value, "port", translate("Web port"))
 port.rmempty = false
@@ -39,10 +40,17 @@ function port.validate(self, value)
 	return tostring(number)
 end
 
+local administrator_username = section:taboption("access", DummyValue, "_administrator_username", translate("Administrator username"))
+administrator_username:depends("image_profile", "advanced")
+administrator_username.description = translate("Fixed sign-in username for the browser-enhanced gateway.")
+function administrator_username.cfgvalue()
+	return "dsh"
+end
+
 local administrator_key = section:taboption("access", Value, "_administrator_key", translate("Administrator key"))
 administrator_key.password = true
 administrator_key.rmempty = true
-administrator_key.description = translate("Leave blank to keep the current key. A new key takes effect after Install/Upgrade or Restart and will not be displayed again.")
+administrator_key.description = translate("Leave blank to keep the current key. Sign in as dsh with this key. A new key takes effect after Install/Upgrade or Restart and will not be displayed again.")
 function administrator_key.cfgvalue()
 	return ""
 end
@@ -86,7 +94,7 @@ end
 local data_path = section:taboption("storage", Value, "data_path", translate("DSH data directory") .. "<b>*</b>")
 data_path.rmempty = false
 data_path.validate = validate_storage_path
-data_path.description = translate("Stores credentials, settings, sessions and installed DSH plugins. Uninstalling the application does not delete this directory.")
+data_path.description = translate("Standard stores its credentials, settings and sessions here. Browser enhanced uses an isolated sibling directory ending in -advanced. Uninstalling the application deletes neither directory.")
 for _, path in ipairs(data_paths) do data_path:value(path, path) end
 data_path.default = data_default
 
@@ -102,7 +110,7 @@ trusted_hosts.rmempty = true
 trusted_hosts.default = "*"
 trusted_hosts:value("*", translate("Automatic — device addresses and router hostname"))
 trusted_hosts.combobox_manual = translate("Enter custom hosts")
-trusted_hosts.description = translate("Recommended: keep * to trust the device's current IP addresses and router hostname. For a custom DNS name, replace * with exact comma-separated hostnames or IP addresses. This setting does not disable the administrator key.")
+trusted_hosts.description = translate("Recommended: keep * to trust the device's current IP addresses and router hostname. For a custom DNS name, replace * with exact comma-separated hostnames or IP addresses. Authentication remains enabled in both runtime profiles.")
 function trusted_hosts.validate(self, value)
 	value = (value or ""):match("^%s*(.-)%s*$")
 	if value ~= "" and value ~= "*" and not value:match("^[%w%.,:_%%%-]+$") then

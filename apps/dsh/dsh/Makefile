@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dsh
 PKG_VERSION:=0.2.1
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 PKGARCH:=all
 
 include $(INCLUDE_DIR)/package.mk
@@ -64,9 +64,11 @@ define Build/Compile
 endef
 
 define Package/dsh/install
-	$(INSTALL_DIR) $(1)/etc/config $(1)/usr/libexec/istorec $(1)/usr/share/dsh/www $(1)/usr/share/linkease/apps.d
+	$(INSTALL_DIR) $(1)/etc/config $(1)/etc/init.d $(1)/usr/libexec/istorec $(1)/usr/share/dsh/www $(1)/usr/share/linkease/apps.d
 	$(INSTALL_CONF) ./files/dsh.config $(1)/etc/config/dsh
+	$(INSTALL_BIN) ./files/dsh.init $(1)/etc/init.d/dsh
 	$(INSTALL_BIN) ./files/dsh.sh $(1)/usr/libexec/istorec/dsh.sh
+	$(INSTALL_DATA) ./files/advanced.Caddyfile $(1)/usr/share/dsh/advanced.Caddyfile
 	$(INSTALL_DATA) ./files/dsh-plugin.json $(1)/usr/share/dsh/dsh-plugin.json
 	$(INSTALL_DATA) ./files/logo.svg $(1)/usr/share/dsh/www/logo.svg
 	ln -sf /usr/share/dsh/dsh-plugin.json $(1)/usr/share/linkease/apps.d/39-dsh.json

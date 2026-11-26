@@ -8,7 +8,7 @@ include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=LuCI support for DSH
 LUCI_PKGARCH:=all
-PKG_VERSION:=1.0.0-r1
+PKG_VERSION:=1.0.0-r2
 PKG_RELEASE:=
 LUCI_DEPENDS:=+dsh +luci-compat +luci-lib-taskd +luci-lib-linkeaseauth +linkease-app-entry +lsblk +zoneinfo-asia
 LUCI_MINIFY_CSS:=0
