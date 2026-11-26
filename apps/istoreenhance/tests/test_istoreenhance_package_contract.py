@@ -17,7 +17,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("istoreenhance/Makefile")
 
         self.assertIn("PKG_SOURCE_DATE:=0.9.1", makefile)
-        self.assertIn("PKG_RELEASE:=1", makefile)
+        self.assertIn("PKG_RELEASE:=2", makefile)
         self.assertIn("PKG_SOURCE:=iStoreEnhance-binary-$(PKG_SOURCE_DATE).tar.gz", makefile)
         self.assertIn(
             "PKG_SOURCE_URL:=https://github.com/kspeeder/docker_kspeeder/releases/download/v$(PKG_SOURCE_DATE)/",
@@ -209,7 +209,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_VERSION:=0.9.1-r1", makefile)
+        self.assertIn("PKG_VERSION:=0.9.1-r2", makefile)
         self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
