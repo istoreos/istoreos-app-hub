@@ -23,7 +23,7 @@ class MiseLuciGuidanceTest(unittest.TestCase):
         luci_recipe = (ROOT / "luci-app-mise/Makefile").read_text()
         meta_recipe = (ROOT / "app-meta-mise/Makefile").read_text()
         self.assertIn("PKG_RELEASE:=2", luci_recipe)
-        self.assertIn("PKG_RELEASE:=5", meta_recipe)
+        self.assertIn("PKG_RELEASE:=7", meta_recipe)
 
 
 if __name__ == "__main__":

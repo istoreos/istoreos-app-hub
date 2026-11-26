@@ -17,7 +17,7 @@ class LinkEaseFullEmbedPackageContractTest(unittest.TestCase):
         embed = self.read("luci-app-linkeasefull-embed/Makefile")
 
         self.assertIn("PKG_VERSION:=3.0.32", meta)
-        self.assertIn("PKG_RELEASE:=7", meta)
+        self.assertIn("PKG_RELEASE:=8", meta)
         self.assertIn("PKG_SOURCE_DATE:=3.0.32", runtime)
         self.assertIn(
             "4f917e4e1348ee7a3251830dfb23fbe4a193487ccad5bc71d08479676841f57a",

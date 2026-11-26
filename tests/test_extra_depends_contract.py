@@ -61,9 +61,9 @@ EXPECTED = {
         "luci-lib-linkeaseauth (>=1.2.1-r4)",
     ),
     "apps/fastnet/luci-app-fastnet/Makefile": (
-        "fastnet (>=0.8.10-$(if $(CONFIG_USE_APK),r)1)",
-        "fastnet (>=0.8.10-1)",
-        "fastnet (>=0.8.10-r1)",
+        "fastnet (>=0.8.10-$(if $(CONFIG_USE_APK),r)4)",
+        "fastnet (>=0.8.10-4)",
+        "fastnet (>=0.8.10-r4)",
     ),
     "apps/istorerouter/luci-app-istorerouter/Makefile": (
         "luci-lib-taskd (>=1.0.15)",
