@@ -1,0 +1,436 @@
+<%+header%>
+<style>
+.pcwrap{max-width:1180px;margin:0 auto;color:#263238;font-size:13px}
+.pcwrap *{box-sizing:border-box}
+.pc-hero{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:20px 24px;border-radius:14px;color:#fff;
+  background:linear-gradient(135deg,#16202e 0%,#243447 55%,#2f4a63 100%);
+  box-shadow:0 10px 28px rgba(16,32,48,.18);margin-bottom:14px}
+.pc-hero-left{display:flex;align-items:center;gap:14px;min-width:0}
+.pc-logo{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  font-size:26px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.pc-title{font-size:20px;font-weight:700;letter-spacing:.4px;line-height:1.25}
+.pc-sub{font-size:12px;color:#a9bacb;margin-top:4px}
+.pc-hero-right{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.08);padding:8px 14px;border-radius:999px}
+.pc-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.pc-dot.on{background:#49d17d;box-shadow:0 0 0 4px rgba(73,209,125,.18);animation:pcPulse 2s ease-in-out infinite}
+.pc-dot.off{background:#ff6b6b;box-shadow:0 0 0 4px rgba(255,107,107,.16)}
+@keyframes pcPulse{0%,100%{box-shadow:0 0 0 4px rgba(73,209,125,.18)}50%{box-shadow:0 0 0 8px rgba(73,209,125,.05)}}
+#pc-status-text{font-size:13px;font-weight:600;letter-spacing:.3px}
+
+.pc-card{background:#fff;border:1px solid #e4e9ef;border-radius:12px;box-shadow:0 2px 8px rgba(30,50,70,.05);
+  margin-bottom:14px;overflow:hidden}
+.pc-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 18px;border-bottom:1px solid #eef2f6;background:#fbfcfe}
+.pc-card-title{font-size:14px;font-weight:700;color:#1f2d3d;display:flex;align-items:center;gap:8px}
+.pc-card-body{padding:14px 18px}
+
+.pc-toolbar{display:flex;gap:8px;flex-wrap:wrap;padding:14px 18px}
+.pc-btn{appearance:none;border:1px solid #cfd8e3;background:#fff;color:#2c3e50;border-radius:8px;
+  padding:7px 14px;font-size:12.5px;font-weight:600;cursor:pointer;line-height:1.4;
+  transition:background .15s,border-color .15s,transform .05s;display:inline-flex;align-items:center;gap:6px}
+.pc-btn:hover:not(:disabled){background:#f2f6fb;border-color:#aebfd2}
+.pc-btn:active:not(:disabled){transform:translateY(1px)}
+.pc-btn:disabled{opacity:.45;cursor:not-allowed}
+.pc-btn.primary{background:#1f6feb;border-color:#1f6feb;color:#fff}
+.pc-btn.primary:hover:not(:disabled){background:#1a5fd0;border-color:#1a5fd0}
+.pc-btn.green{background:#1f9d55;border-color:#1f9d55;color:#fff}
+.pc-btn.green:hover:not(:disabled){background:#198a4a}
+.pc-btn.orange{background:#e8710a;border-color:#e8710a;color:#fff}
+.pc-btn.orange:hover:not(:disabled){background:#cf6508}
+.pc-btn.danger{background:#fff;border-color:#ef9a9a;color:#c62828}
+.pc-btn.danger:hover:not(:disabled){background:#fff5f5}
+.pc-btn.slim{padding:5px 10px;font-size:12px}
+
+.pc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0 26px;padding:6px 18px 10px}
+.pc-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;
+  border-bottom:1px dashed #edf1f5;font-size:12.5px}
+.pc-row .k{color:#7b8a99;flex-shrink:0}
+.pc-row .v{color:#22313f;font-weight:600;text-align:right;word-break:break-all}
+.pc-row .v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:500}
+.pc-pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;font-weight:700;line-height:1.7}
+.pc-pill.ok{background:#e6f7ee;color:#1a7f47}
+.pc-pill.warn{background:#fff4e5;color:#b26a00}
+.pc-pill.bad{background:#fdecea;color:#c62828}
+.pc-pill.muted{background:#eef1f4;color:#66788a}
+
+.pc-panel-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 18px 16px;
+  font-size:12px;color:#7b8a99}
+.pc-panel-row a{color:#1f6feb;font-weight:600;word-break:break-all}
+
+.pc-progress{position:relative;height:8px;background:#e8eef6;border-radius:4px;overflow:hidden;margin:10px 0 8px}
+.pc-progress-bar{position:absolute;left:0;top:0;height:100%;width:0;border-radius:4px;
+  background:linear-gradient(90deg,#1f6feb,#63a4ff);transition:width .35s ease}
+.pc-install-msg{font-size:12.5px;color:#4a5a6a}
+.pc-install-meta{font-size:11.5px;color:#8a99a8;margin-top:4px}
+
+.pc-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 20px;padding:4px 18px 16px}
+.pc-field{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:#5b6b7b}
+.pc-field label{font-weight:600;color:#37474f}
+.pc-input,.pc-select{border:1px solid #cfd8e3;border-radius:8px;padding:7px 10px;font-size:13px;background:#fff;color:#263238;max-width:100%}
+.pc-input:focus,.pc-select:focus{outline:none;border-color:#1f6feb;box-shadow:0 0 0 3px rgba(31,111,235,.12)}
+.pc-inline{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#4a5a6a;padding-top:6px}
+.pc-hint{font-size:11.5px;color:#8a99a8;line-height:1.6}
+.pc-form-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
+
+.pc-log{background:#111a23;color:#cfd8e3;border-radius:0;padding:12px 14px;margin:0;
+  height:360px;overflow:auto;white-space:pre-wrap;word-break:break-all;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.5}
+.pc-log-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc-check{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#5b6b7b}
+
+#pc-toast{position:fixed;right:22px;bottom:22px;z-index:99999;display:flex;flex-direction:column;gap:8px;max-width:min(420px,90vw)}
+.pc-toast{background:#1f2d3d;color:#fff;border-radius:9px;padding:10px 14px;font-size:12.5px;line-height:1.5;
+  box-shadow:0 8px 24px rgba(15,30,45,.25);animation:pcToast .18s ease-out}
+.pc-toast.ok{background:#1f7a4d}
+.pc-toast.err{background:#b3261e}
+@keyframes pcToast{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.pc-hidden{display:none!important}
+#pc-backup-box{margin:0 18px 14px;padding:12px 14px;border:1px dashed #90caf9;background:#f3f8ff;border-radius:10px;font-size:12.5px;color:#29465b}
+</style>
+
+<div class="pcwrap">
+  <div class="pc-hero">
+    <div class="pc-hero-left">
+      <div class="pc-logo">&#129438;</div>
+      <div>
+        <div class="pc-title">PicoClaw · 皮皮虾，我们走！</div>
+        <div class="pc-sub">OpenWrt 生命周期管理 · 核心版本 v<%=pc_version%> · 配置目录 <%=config_dir%></div>
+      </div>
+    </div>
+    <div class="pc-hero-right">
+      <span id="pc-status-dot" class="pc-dot <% if st.running then %>on<% else %>off<% end %>"></span>
+      <span id="pc-status-text"><% if st.running then %>运行中<% elseif st.installed then %>已停止<% else %>未安装<% end %></span>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-toolbar">
+      <button type="button" class="pc-btn primary" id="pc-install" data-do="install" <% if inst.state == "running" then %>disabled<% end %>><% if st.installed then %>重新安装核心<% else %>安装核心<% end %></button>
+      <button type="button" class="pc-btn <% if st.running then %>orange<% else %>green<% end %>" id="pc-toggle" data-do="<% if st.running then %>stop<% else %>start<% end %>" <% if not st.installed then %>disabled<% end %>><% if st.running then %>停止<% else %>启动<% end %></button>
+      <button type="button" class="pc-btn" id="pc-restart" data-do="restart" <% if not st.installed then %>disabled<% end %>>重启</button>
+      <button type="button" class="pc-btn" id="pc-open-panel" data-do="open_panel" <% if not st.installed then %>disabled<% end %>>打开网页面板</button>
+      <button type="button" class="pc-btn" id="pc-open-backup" data-do="open_panel_backup" <% if not st.installed then %>disabled<% end %>>备用端口面板</button>
+      <button type="button" class="pc-btn" id="pc-check-update" data-do="check_update">检查上游版本</button>
+      <button type="button" class="pc-btn" id="pc-skills" data-do="install_skills" <% if not st.installed then %>disabled<% end %>>安装 OpenWrt 技能包</button>
+      <button type="button" class="pc-btn" id="pc-autostart" data-do="<% if st.autostart then %>autostart_off<% else %>autostart_on<% end %>"><% if st.autostart then %>取消开机自启<% else %>设置开机自启<% end %></button>
+      <button type="button" class="pc-btn danger" id="pc-uninstall" data-do="uninstall" <% if not st.installed then %>disabled<% end %>>卸载核心</button>
+    </div>
+    <div class="pc-panel-row">
+      <span>数据导出：</span>
+      <select class="pc-select" id="pc-export-kind" style="padding:4px 8px;font-size:12px">
+        <option value="all">整个环境（含配置/技能/记忆）</option>
+        <option value="config">配置文件 config.json</option>
+        <option value="skills">技能目录</option>
+        <option value="memory">记忆目录</option>
+      </select>
+      <button type="button" class="pc-btn slim" id="pc-export" <% if not st.installed then %>disabled<% end %>>导出并下载</button>
+      <span class="pc-hint">导出包在 /tmp 下生成后立即发送，不会长期保留。</span>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-card-head">
+      <div class="pc-card-title">&#128200; 运行状态</div>
+      <div class="pc-hint">状态每 3 秒自动刷新</div>
+    </div>
+    <div class="pc-grid">
+      <div class="pc-row"><span class="k">运行模式</span><span class="v" id="pc-mode"><% if st.mode == "launcher" then %>Launcher<% if st.panel_active then %>（临时）<% end %><% else %>Gateway<% end %></span></div>
+      <div class="pc-row"><span class="k">进程 PID</span><span class="v mono" id="pc-pid"><% if st.pid ~= "" then %><%=esc(st.pid)%><% else %>-<% end %></span></div>
+      <div class="pc-row"><span class="k">监听端口</span><span class="v mono" id="pc-port"><% if st.listen_port then %><%=st.listen_port%><% else %>-<% end %></span></div>
+      <div class="pc-row"><span class="k">内存占用</span><span class="v" id="pc-mem"><% if st.memory_kb and st.memory_kb > 0 then %><%=string.format("%.1f MB", st.memory_kb / 1024)%><% else %>-<% end %></span></div>
+      <div class="pc-row"><span class="k">开机自启</span><span class="v" id="pc-autostart-state"><% if st.autostart then %><span class="pc-pill ok">已开启</span><% else %><span class="pc-pill muted">未开启</span><% end %></span></div>
+      <div class="pc-row"><span class="k">当前版本</span><span class="v" id="pc-version"><% if st.version ~= "" then %>v<%=esc(st.version)%><% else %>-<% end %></span></div>
+      <div class="pc-row"><span class="k">上游最新版本</span><span class="v" id="pc-latest"><% if st.latest ~= "" then %>v<%=esc(st.latest)%><% else %>-<% end %></span></div>
+      <div class="pc-row"><span class="k">核心路径</span><span class="v mono">/usr/bin/picoclaw</span></div>
+      <div class="pc-row"><span class="k">面板程序</span><span class="v mono">/usr/bin/picoclaw-launcher</span></div>
+      <div class="pc-row"><span class="k">运行日志</span><span class="v mono"><%=runtime_log%></span></div>
+      <div class="pc-row"><span class="k">系统架构</span><span class="v mono" id="pc-arch"><%=esc(arch.raw)%> / <%=esc(arch.distrib)%><% if arch.cpu ~= "-" then %> / CPU v<%=esc(arch.cpu)%><% end %></span></div>
+      <div class="pc-row"><span class="k">下载资产</span><span class="v mono" id="pc-asset"><% if st.asset ~= "" then %><%=esc(st.asset)%><% else %><span class="pc-pill bad">无法自动识别</span><% end %></span></div>
+    </div>
+    <div class="pc-panel-row" id="pc-panel-row">
+      <% if st.panel_active then %>
+        <span>面板已切换为 Launcher：</span>
+        <a id="pc-panel-url" href="<%=esc(st.url)%>" target="_blank"><%=esc(st.url)%></a>
+        <span class="pc-hint">登录使用 Launcher 面板密码；首次进入请立即设置强密码，未设置前 public 面板允许同网段完成首次设置</span>
+        <button type="button" class="pc-btn slim orange" data-do="close_panel">返回 Gateway 模式</button>
+      <% else %>
+        <span class="pc-hint">默认以 Gateway 后台运行；需要网页配置时临时打开 Launcher，重启路由器后自动回到 Gateway。</span>
+      <% end %>
+    </div>
+    <div class="pc-panel-row" id="pc-panel-config">
+      <span>面板端口</span>
+      <input class="pc-input" style="width:96px" type="number" id="pc-port-input" min="1" max="65535" value="<%=settings.launcher_port%>">
+      <label class="pc-check"><input type="checkbox" id="pc-public-input" value="1" <% if settings.launcher_public then %>checked<% end %>> 局域网访问（public）</label>
+      <button type="button" class="pc-btn slim" data-do="save_panel">应用</button>
+      <span class="pc-hint">默认模式仍为 Gateway；保存会重启服务并关闭临时面板。首次 public 访问请立即设置面板密码。</span>
+    </div>
+  </div>
+
+  <div id="pc-backup-box" class="pc-hidden">
+    <div>备用面板已启动，访问 <a id="pc-backup-url" href="#" target="_blank"></a></div>
+    <div style="margin-top:6px" class="pc-hint">使用与主面板相同的 Launcher 面板密码登录；此入口仅在本次临时面板期间有效，重启后自动回到 Gateway。</div>
+  </div>
+
+  <div class="pc-card" id="pc-install-card">
+    <div class="pc-card-head">
+      <div class="pc-card-title">&#128230; 安装进度</div>
+      <div class="pc-hint" id="pc-install-step"><%=esc(inst.step or "")%></div>
+    </div>
+    <div class="pc-card-body">
+      <div class="pc-progress"><div class="pc-progress-bar" id="pc-progress-bar" style="width:<%=tonumber(inst.progress) or 0%>%"></div></div>
+      <div class="pc-install-msg" id="pc-install-msg"><% if inst.state == "running" then %><%=esc(inst.message or "正在安装...")%><% elseif inst.state == "failed" then %><span class="pc-pill bad">失败</span> <%=esc(inst.message or "")%><% elseif inst.state == "success" then %><span class="pc-pill ok">完成</span> <%=esc(inst.message or "")%><% else %>尚未执行安装。选择正确的 CPU 架构后点击「安装核心」。<% end %></div>
+      <div class="pc-install-meta">下载地址由插件内置的固定版本与 SHA256 决定；校验失败会自动回滚。</div>
+      <div class="pc-field" style="margin-top:12px">
+        <label>上游二进制资产（仅影响本次安装/更新）</label>
+        <select class="pc-select" id="pc-asset-select">
+          <option value="" <% if settings.asset == "" then %>selected<% end %>>自动检测<% if arch.asset ~= "" then %>（当前识别：<%=esc(arch.asset)%>）<% else %>（识别失败，请手动选择）<% end %></option>
+          <% for _, a in ipairs(assets) do %>
+          <option value="<%=a.id%>" <% if settings.asset == a.id then %>selected<% end %>><%=a.id%> — <%=esc(a.label)%></option>
+          <% end %>
+        </select>
+        <span class="pc-hint">自动检测失败或结果不对时手动选择；选错会在安装后版本自检阶段回滚。</span>
+      </div>
+      <% if install_log ~= "" then %>
+      <details style="margin-top:10px">
+        <summary style="cursor:pointer;font-size:12px;color:#1f6feb;font-weight:600">查看安装日志</summary>
+        <pre class="pc-log" style="height:240px;margin-top:8px"><%=install_log%></pre>
+      </details>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="pc-card">
+    <div class="pc-card-head">
+      <div class="pc-card-title">&#128220; 运行日志</div>
+      <div class="pc-log-tools">
+        <label class="pc-check"><input type="checkbox" id="pc-debug-input" <% if settings.debug_log then %>checked<% end %>> 诊断日志</label>
+        <label class="pc-check"><input type="checkbox" id="pc-log-auto" checked> 自动刷新</label>
+        <button type="button" class="pc-btn slim" id="pc-log-refresh">刷新</button>
+        <button type="button" class="pc-btn slim" data-do="clear_log">清空</button>
+      </div>
+    </div>
+    <pre class="pc-log" id="pc-log"><%=logs%></pre>
+  </div>
+</div>
+
+<div id="pc-toast"></div>
+
+<script>
+(function () {
+  var PC_TOKEN = '<%=csrf_token%>';
+  var PC_ACTION = '<%=action_url%>';
+  var LAST = null;
+  var BUSY = false;
+  var logPaused = false;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function toast(msg, type) {
+    if (!msg) return;
+    var box = $('pc-toast');
+    var el = document.createElement('div');
+    el.className = 'pc-toast' + (type === 'ok' ? ' ok' : (type === 'err' ? ' err' : ''));
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(function () { el.remove(); }, 4200);
+  }
+  function formBody(obj) {
+    var b = new URLSearchParams();
+    b.set('token', PC_TOKEN);
+    b.set('action', 'api_action');
+    for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) b.set(k, obj[k]);
+    return b.toString();
+  }
+  function api(doName, extra, opts) {
+    if (BUSY) return Promise.resolve(null);
+    BUSY = true;
+    var data = {do: doName};
+    if (extra) for (var k in extra) data[k] = extra[k];
+    return fetch(PC_ACTION, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: formBody(data)
+    }).then(function (r) {
+      return r.text().then(function (t) {
+        var j = null;
+        try { j = JSON.parse(t); } catch (e) {}
+        if (!r.ok) throw new Error('HTTP ' + r.status + (t ? ': ' + t.slice(0, 160) : ''));
+        if (!j) throw new Error('响应格式异常：' + t.slice(0, 160));
+        return j;
+      });
+    }).then(function (j) {
+      toast(j.message, j.ok ? 'ok' : 'err');
+      if (j && j.url) {
+        var a = $('pc-backup-url');
+        a.href = j.url; a.textContent = j.url;
+        $('pc-backup-box').classList.remove('pc-hidden');
+      }
+      if (opts && opts.newTab && j && j.url) window.open(j.url, '_blank');
+      return j;
+    }).catch(function (e) {
+      toast('操作失败：' + e.message, 'err');
+      return null;
+    }).then(function (j) {
+      BUSY = false;
+      refreshStatus();
+      return j;
+    });
+  }
+
+  function setText(id, v) {
+    var el = $(id);
+    if (el) el.textContent = (v == null || v === '') ? '-' : v;
+  }
+  function setDisabled(id, v) {
+    var el = $(id);
+    if (el) el.disabled = !!v;
+  }
+
+  function applyStatus(s) {
+    LAST = s;
+    var dot = $('pc-status-dot');
+    if (dot) dot.className = 'pc-dot ' + (s.running ? 'on' : 'off');
+    setText('pc-status-text', s.running ? '运行中' : (s.installed ? '已停止' : '未安装'));
+    setText('pc-mode', s.mode === 'launcher' ? ('Launcher' + (s.panel_active ? '（临时）' : '')) : 'Gateway');
+    setText('pc-pid', s.pid || '-');
+    setText('pc-port', s.listen_port ? s.listen_port : '-');
+    setText('pc-mem', s.memory_kb > 0 ? (s.memory_kb / 1024).toFixed(1) + ' MB' : '-');
+    setText('pc-version', s.version ? 'v' + s.version : '-');
+    setText('pc-latest', s.latest ? 'v' + s.latest : '-');
+    setText('pc-arch', s.arch_raw + ' / ' + s.arch_distrib + (s.arch_cpu && s.arch_cpu !== '-' ? ' / CPU v' + s.arch_cpu : ''));
+    var assetEl = $('pc-asset');
+    if (assetEl) assetEl.innerHTML = s.asset ? esc(s.asset) : '<span class="pc-pill bad">无法自动识别</span>';
+    var boot = $('pc-autostart-state');
+    if (boot) boot.innerHTML = s.autostart ? '<span class="pc-pill ok">已开启</span>' : '<span class="pc-pill muted">未开启</span>';
+    var auto = $('pc-autostart');
+    if (auto) {
+      auto.textContent = s.autostart ? '取消开机自启' : '设置开机自启';
+      auto.setAttribute('data-do', s.autostart ? 'autostart_off' : 'autostart_on');
+    }
+    var toggle = $('pc-toggle');
+    if (toggle) {
+      toggle.textContent = s.running ? '停止' : '启动';
+      toggle.setAttribute('data-do', s.running ? 'stop' : 'start');
+      toggle.className = 'pc-btn ' + (s.running ? 'orange' : 'green');
+    }
+    setDisabled('pc-install', s.install_state === 'running');
+    setDisabled('pc-toggle', !s.installed);
+    setDisabled('pc-restart', !s.installed);
+    setDisabled('pc-open-panel', !s.installed);
+    setDisabled('pc-open-backup', !s.installed);
+    setDisabled('pc-skills', !s.installed);
+    setDisabled('pc-uninstall', !s.installed);
+    setDisabled('pc-export', !s.installed);
+
+    var row = $('pc-panel-row');
+    if (row) {
+      if (s.panel_active) {
+        row.innerHTML = '<span>面板已切换为 Launcher：</span><a href="' + esc(s.url) + '" target="_blank">' + esc(s.url) + '</a>' +
+          '<span class="pc-hint">登录使用 Launcher 面板密码；首次进入请立即设置强密码</span>' +
+          '<button type="button" class="pc-btn slim orange" data-do="close_panel">返回 Gateway 模式</button>';
+      } else {
+        row.innerHTML = '<span class="pc-hint">默认以 Gateway 后台运行；需要网页配置时临时打开 Launcher，重启路由器后自动回到 Gateway。</span>';
+      }
+    }
+
+    var bar = $('pc-progress-bar');
+    if (bar) bar.style.width = Math.max(0, Math.min(100, Number(s.install_progress) || 0)) + '%';
+    setText('pc-install-step', s.install_step || '');
+    var msg = $('pc-install-msg');
+    if (msg) {
+      if (s.install_state === 'running') msg.innerHTML = esc(s.install_message || '正在安装...');
+      else if (s.install_state === 'failed') msg.innerHTML = '<span class="pc-pill bad">失败</span> ' + esc(s.install_message || '');
+      else if (s.install_state === 'success') msg.innerHTML = '<span class="pc-pill ok">完成</span> ' + esc(s.install_message || '');
+      else msg.textContent = '尚未执行安装。选择正确的 CPU 架构后点击「安装核心」。';
+    }
+  }
+
+  function refreshStatus() {
+    return fetch(PC_ACTION + '?action=api_status', {credentials: 'same-origin'})
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(applyStatus)
+      .catch(function (e) {
+        setText('pc-status-text', '状态读取失败');
+        toast('状态读取失败：' + e.message, 'err');
+      });
+  }
+
+  function refreshLog(force) {
+    if (logPaused && !force) return;
+    fetch(PC_ACTION + '?action=api_log&lines=80', {credentials: 'same-origin'})
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var el = $('pc-log');
+        if (!el || !j || !j.ok) return;
+        var text = j.log || '暂无日志';
+        if (el.textContent !== text) {
+          el.textContent = text;
+          el.scrollTop = el.scrollHeight;
+        }
+      }).catch(function () {});
+  }
+
+  document.addEventListener('click', function (ev) {
+    var btn = ev.target.closest('button[data-do]');
+    if (!btn || btn.disabled) return;
+    var doName = btn.getAttribute('data-do');
+    if (doName === 'install') {
+      var sel = $('pc-asset-select');
+      var asset = sel ? sel.value : '';
+      if (!window.confirm(LAST && LAST.installed ? '重新安装会覆盖当前核心，是否继续？' : '开始安装 PicoClaw？')) return;
+      api('install', {asset: asset});
+    } else if (doName === 'uninstall') {
+      if (!window.confirm('卸载核心程序（保留 /root/.picoclaw 配置数据）？')) return;
+      api('uninstall');
+    } else if (doName === 'save_panel') {
+      api('save_panel', {
+        launcher_port: $('pc-port-input').value,
+        launcher_public: $('pc-public-input').checked ? '1' : '0'
+      });
+    } else if (doName === 'open_panel' || doName === 'open_panel_backup') {
+      api(doName, null, {newTab: true});
+    } else if (doName === 'clear_log') {
+      api('clear_log').then(function () { refreshLog(true); });
+    } else {
+      api(doName);
+    }
+  });
+
+  $('pc-debug-input').addEventListener('change', function () {
+    api('debug_log', {value: this.checked ? '1' : '0'});
+  });
+
+  $('pc-export').addEventListener('click', function () {
+    var kind = $('pc-export-kind').value;
+    var f = document.createElement('form');
+    f.method = 'post';
+    f.action = PC_ACTION;
+    f.style.display = 'none';
+    f.innerHTML = '<input type="hidden" name="token" value="' + esc(PC_TOKEN) + '">' +
+                  '<input type="hidden" name="action" value="export">' +
+                  '<input type="hidden" name="kind" value="' + esc(kind) + '">';
+    document.body.appendChild(f);
+    f.submit();
+    setTimeout(function () { f.remove(); }, 1500);
+  });
+
+  $('pc-log-refresh').addEventListener('click', function () { refreshLog(true); });
+  $('pc-log-auto').addEventListener('change', function () { if (this.checked) refreshLog(true); });
+  refreshStatus();
+  refreshLog(true);
+  setInterval(function () {
+    if (document.hidden) return;
+    refreshStatus();
+    if ($('pc-log-auto').checked) refreshLog(false);
+  }, 3000);
+})();
+</script>
+<%+footer%>

@@ -524,6 +524,14 @@ apps:
         meta:
             - local: apps/photoprism/app-meta-photoprism
               remote: openwrt-app-meta/applications/app-meta-photoprism
+    picoclaw:
+        services: []
+        luci:
+            - local: apps/picoclaw/luci-app-picoclaw-ng
+              remote: openwrt-app-actions/applications/luci-app-picoclaw-ng
+        meta:
+            - local: apps/picoclaw/app-meta-picoclaw
+              remote: openwrt-app-meta/applications/app-meta-picoclaw
     plex:
         services: []
         luci:
