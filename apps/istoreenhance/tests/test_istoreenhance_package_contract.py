@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 import re
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -156,10 +157,13 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertIn("option gateway_mode '0'", config)
         self.assertIn("config_get_bool gateway_mode $1 gateway_mode 0", init)
         self.assertIn('GATEWAY_DOMAINS_FILE="/usr/share/kspeeder/gateway-domains.conf"', init)
-        self.assertIn('GATEWAY_DNSMASQ_CONFIG="/tmp/dnsmasq.d/kspeeder-gateway.conf"', init)
+        self.assertIn('GATEWAY_DNSMASQ_HOSTS="/tmp/kspeeder-gateway.hosts"', init)
         self.assertIn("render_gateway_dns_config", init)
         self.assertIn("apply_gateway_dns", init)
         self.assertIn("remove_gateway_dns", init)
+        self.assertIn("register_gateway_hosts", init)
+        self.assertIn("unregister_gateway_hosts", init)
+        self.assertIn("addnhosts", init)
         self.assertIn("/etc/init.d/dnsmasq reload", init)
         self.assertIn('$1 == "gateway"', init)
         self.assertNotIn('address=/.linkease.net/', init)
@@ -185,9 +189,21 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(
                 output.read_text(encoding="utf-8"),
-                "address=/registry.linkease.net/192.168.9.1\n"
-                "address=/dl-npm.linkease.net/192.168.9.1\n",
+                "192.168.9.1 registry.linkease.net\n"
+                "192.168.9.1 dl-npm.linkease.net\n",
             )
+
+    def test_chinese_catalog_is_valid_gettext(self):
+        msgfmt = shutil.which("msgfmt")
+        if not msgfmt:
+            self.skipTest("msgfmt is unavailable")
+        catalog = ROOT / "luci-app-istoreenhance/po/zh-cn/istoreenhance.po"
+        result = subprocess.run(
+            [msgfmt, "--check", "-o", "/dev/null", str(catalog)],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_luci_exposes_gateway_mode_and_both_domain_groups(self):
         cbi = self.read("luci-app-istoreenhance/luasrc/model/cbi/istoreenhance.lua")
