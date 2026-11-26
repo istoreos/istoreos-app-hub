@@ -76,6 +76,24 @@ class DualBackendContract(unittest.TestCase):
         self.assertIn("status-docker", view)
         self.assertIn("Active backend", view)
 
+    def test_luci_status_and_runtime_details_are_translatable(self):
+        cbi = self.read("luci-app-hermes/luasrc/model/cbi/hermes.lua")
+        view = self.read("luci-app-hermes/luasrc/view/hermes/status.htm")
+        po = self.read("luci-app-hermes/po/zh-cn/hermes.po")
+        self.assertIn('translate("Python 3.14.9 (mise-runtime, SHA-verified)")', cbi)
+        for message in (
+            "Running",
+            "Stopped",
+            "Degraded",
+            "Not installed",
+            "Healthy",
+            "Unhealthy",
+        ):
+            self.assertIn(f'translate("{message}")', view)
+            self.assertIn(f'msgid "{message}"', po)
+        self.assertIn("<%:Native%>", view)
+        self.assertIn("<%:Docker%>", view)
+
     def test_fresh_install_defaults_to_native_without_docker_dependency(self):
         config = self.read("luci-app-hermes/root/etc/config/hermes")
         defaults = self.read("luci-app-hermes/root/etc/uci-defaults/99-hermes")
