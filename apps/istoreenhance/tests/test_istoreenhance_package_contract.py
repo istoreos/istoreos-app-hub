@@ -33,7 +33,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.9.1", makefile)
-        self.assertIn("PKG_RELEASE:=11", makefile)
+        self.assertIn("PKG_RELEASE:=12", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
             "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
@@ -91,6 +91,89 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
     def test_runtime_package_does_not_ship_obsolete_desktop_module(self):
         self.assertFalse((ROOT / "istoreenhance/files/www/desktop-entry.js").exists())
+
+    def test_gateway_domains_are_one_typed_authoritative_list(self):
+        lines = [
+            line.split()
+            for line in self.read("istoreenhance/files/gateway-domains.conf").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        ]
+        self.assertTrue(all(len(line) == 2 for line in lines))
+        gateway = sorted(domain for kind, domain in lines if kind == "gateway")
+        loopback = sorted(domain for kind, domain in lines if kind == "loopback")
+        self.assertEqual(len(lines), len(gateway) + len(loopback))
+        self.assertEqual(len({domain for _, domain in lines}), len(lines))
+        self.assertEqual(
+            gateway,
+            sorted(
+                """
+                dl-codeload-github.linkease.net
+                dl-conda-community.linkease.net
+                dl-conda.linkease.net
+                dl-crates-index.linkease.net
+                dl-crates-static.linkease.net
+                dl-crates.linkease.net
+                dl-github-api.linkease.net
+                dl-github.linkease.net
+                dl-go-sdk.linkease.net
+                dl-golang.linkease.net
+                dl-gradle-distributions.linkease.net
+                dl-gradle-plugins.linkease.net
+                dl-homebrew-api.linkease.net
+                dl-homebrew-bottles.linkease.net
+                dl-maven.linkease.net
+                dl-mise-versions.linkease.net
+                dl-node-unofficial.linkease.net
+                dl-nodejs-org.linkease.net
+                dl-npm.linkease.net
+                dl-nuget-files.linkease.net
+                dl-nuget.linkease.net
+                dl-packagist-huawei.linkease.net
+                dl-packagist.linkease.net
+                dl-playwright.linkease.net
+                dl-pypi-files.linkease.net
+                dl-pypi.linkease.net
+                dl-rubygems.linkease.net
+                dl-rustup.linkease.net
+                dl-sigstore-tuf.linkease.net
+                gh.linkease.net
+                ghcr.linkease.net
+                registry.linkease.net
+                """.split()
+            ),
+        )
+        self.assertEqual(loopback, ["ghcr-relay.linkease.net", "registry-relay.linkease.net"])
+
+    def test_runtime_package_installs_gateway_domain_manifest(self):
+        makefile = self.read("istoreenhance/Makefile")
+        self.assertIn("./files/gateway-domains.conf", makefile)
+        self.assertIn("$(1)/usr/share/kspeeder/gateway-domains.conf", makefile)
+
+    def test_gateway_mode_uses_manifest_and_manages_dnsmasq(self):
+        config = self.read("istoreenhance/files/istoreenhance.config")
+        init = self.read("istoreenhance/files/istoreenhance.init")
+
+        self.assertIn("option gateway_mode '0'", config)
+        self.assertIn("config_get_bool gateway_mode $1 gateway_mode 0", init)
+        self.assertIn('GATEWAY_DOMAINS_FILE="/usr/share/kspeeder/gateway-domains.conf"', init)
+        self.assertIn('GATEWAY_DNSMASQ_CONFIG="/tmp/dnsmasq.d/kspeeder-gateway.conf"', init)
+        self.assertIn("render_gateway_dns_config", init)
+        self.assertIn("apply_gateway_dns", init)
+        self.assertIn("remove_gateway_dns", init)
+        self.assertIn("/etc/init.d/dnsmasq reload", init)
+        self.assertIn('$1 == "gateway"', init)
+        self.assertNotIn('address=/.linkease.net/', init)
+
+    def test_luci_exposes_gateway_mode_and_both_domain_groups(self):
+        cbi = self.read("luci-app-istoreenhance/luasrc/model/cbi/istoreenhance.lua")
+        model = self.read("luci-app-istoreenhance/luasrc/model/istoreenhance.lua")
+
+        self.assertIn('s:option(Flag, "gateway_mode"', cbi)
+        self.assertIn("gateway_domains", cbi)
+        self.assertIn("loopback_domains", cbi)
+        self.assertIn("/usr/share/kspeeder/gateway-domains.conf", model)
+        self.assertIn('kind == "gateway"', model)
+        self.assertIn('kind == "loopback"', model)
 
     def test_default_entry_stays_on_luci_while_open_uses_shared_route(self):
         makefile = self.read("luci-app-istoreenhance/Makefile")
