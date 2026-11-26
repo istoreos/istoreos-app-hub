@@ -16,7 +16,7 @@ class ClaudeCodeContractTest(unittest.TestCase):
         runtime = self.read("claude-code/files/claude-runtime.lua")
         package = self.read("claude-code/files/claude-package.lua")
         self.assertIn("PKG_VERSION:=2.1.326", recipe)
-        self.assertIn("PKG_RELEASE:=3", recipe)
+        self.assertIn("PKG_RELEASE:=4", recipe)
         self.assertIn("@anthropic-ai/claude-code-linux-x64-musl", runtime)
         self.assertIn("@anthropic-ai/claude-code-linux-arm64-musl", runtime)
         self.assertIn("candidate.version=='24.22.1'", runtime)

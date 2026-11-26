@@ -69,7 +69,7 @@ class OpenCodeContractTest(unittest.TestCase):
         self.assertIn("前往运行时环境", status)
         self.assertIn("!storageReady", status)
         self.assertIn("PKG_VERSION:=0.1.0-r3", luci_recipe)
-        self.assertIn("PKG_RELEASE:=5", meta_recipe)
+        self.assertIn("PKG_RELEASE:=6", meta_recipe)
 
     def test_registration_and_sync_are_owned_by_plugin(self):
         recipe = self.read("opencode/Makefile")

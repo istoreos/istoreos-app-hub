@@ -16,7 +16,7 @@ class KimiCodeContractTest(unittest.TestCase):
         runtime = self.read("kimi/files/kimi-runtime.lua")
         package = self.read("kimi/files/kimi-package.lua")
         self.assertIn("PKG_VERSION:=2.7.3", recipe)
-        self.assertIn("PKG_RELEASE:=3", recipe)
+        self.assertIn("PKG_RELEASE:=4", recipe)
         self.assertIn("@moonshot-ai/kimi-code", runtime)
         self.assertIn("candidate.version=='24.22.1'", runtime)
         self.assertIn("'--ignore-scripts'", package)

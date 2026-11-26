@@ -17,7 +17,7 @@ class CodexContractTest(unittest.TestCase):
         runtime = self.read("codex/files/codex-runtime.lua")
         package = self.read("codex/files/codex-package.lua")
         self.assertIn("PKG_VERSION:=0.172.0", recipe)
-        self.assertIn("PKG_RELEASE:=3", recipe)
+        self.assertIn("PKG_RELEASE:=4", recipe)
         self.assertIn("+mise-runtime", recipe)
         self.assertIn("group_add_next codex", recipe)
         self.assertIn("version='0.172.0'", runtime)
