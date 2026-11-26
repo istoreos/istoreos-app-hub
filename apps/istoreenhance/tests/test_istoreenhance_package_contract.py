@@ -164,6 +164,31 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         self.assertIn('$1 == "gateway"', init)
         self.assertNotIn('address=/.linkease.net/', init)
 
+    def test_dnsmasq_renderer_maps_gateway_domains_but_not_loopback_domains(self):
+        init = ROOT / "istoreenhance/files/istoreenhance.init"
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            manifest = directory / "domains.conf"
+            output = directory / "dnsmasq.conf"
+            manifest.write_text(
+                "gateway registry.linkease.net\n"
+                "gateway dl-npm.linkease.net\n"
+                "loopback registry-relay.linkease.net\n",
+                encoding="utf-8",
+            )
+            script = f"""
+                . {init}
+                GATEWAY_DOMAINS_FILE={manifest}
+                render_gateway_dns_config 192.168.9.1 {output}
+            """
+            result = subprocess.run(["sh", "-c", script], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(
+                output.read_text(encoding="utf-8"),
+                "address=/registry.linkease.net/192.168.9.1\n"
+                "address=/dl-npm.linkease.net/192.168.9.1\n",
+            )
+
     def test_luci_exposes_gateway_mode_and_both_domain_groups(self):
         cbi = self.read("luci-app-istoreenhance/luasrc/model/cbi/istoreenhance.lua")
         model = self.read("luci-app-istoreenhance/luasrc/model/istoreenhance.lua")
