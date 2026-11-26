@@ -1,0 +1,19 @@
+# Test-device profile overlay for reusing the OpenAI-compatible provider
+# configured by KAI Plus. Credentials are deliberately not stored here.
+- id: llm-pi-ai
+  config:
+    providers:
+      kaiplus:
+        displayName: KAI Plus
+        apiKeyEnv: KOOLCENTER_API_KEY
+        api: openai-completions
+        baseURL: https://token.koolcenter.com/v1
+        models:
+          - id: qwen3.8-flash
+            name: Qwen 3.8 Flash
+            contextWindow: 262144
+            maxTokens: 32768
+- id: agent-default-model
+  config:
+    provider: kaiplus
+    model: qwen3.8-flash

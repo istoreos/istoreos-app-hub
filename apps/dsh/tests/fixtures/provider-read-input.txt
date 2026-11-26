@@ -1,0 +1,2 @@
+DSH_PROVIDER_VALIDATION_MARKER=KAIPLUS_READ_20261126
+The validation target is an isolated DSH workspace on the test device.

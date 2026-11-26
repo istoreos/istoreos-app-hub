@@ -13,6 +13,7 @@
 {"id":"dockermanager","type":"native","depends":["dockermanager","luci-app-dockermanager"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"dpanel","type":"docker","depends":["docker-deps","luci-app-dpanel","luci-i18n-dpanel-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"drawio","type":"docker","depends":["docker-deps","luci-app-drawio","luci-i18n-drawio-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
+{"id":"dsh","type":"docker","depends":["docker-deps","dsh","luci-app-dsh","luci-i18n-dsh-zh-cn"],"autoconf":false,"istorec":false,"init":false,"config":false,"luci":true}
 {"id":"emby","type":"docker","depends":["docker-deps","luci-app-emby","luci-i18n-emby-zh-cn"],"autoconf":true,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"excalidraw","type":"docker","depends":["docker-deps","luci-app-excalidraw","luci-i18n-excalidraw-zh-cn"],"autoconf":false,"istorec":true,"init":false,"config":true,"luci":true}
 {"id":"fastnet","type":"native","depends":["fastnet","luci-app-fastnet","luci-i18n-fastnet-zh-cn"],"autoconf":true,"istorec":false,"init":false,"config":false,"luci":true}

@@ -19,6 +19,7 @@ Format: `id — title — description`
 - dockermanager — Docker管理 — 更简单专业的 Docker 管理器，加速更快更方便.
 - dpanel — DPanel 可视化面板 — 轻量化 docker 可视化管理面板。
 - drawio — DrawIO绘图 — DrawIO是运行在浏览器中的在线绘图工具。
+- dsh — DSH — DeepSeek Harness Web 工作台，提供模型、会话、工具、审批和插件能力，并在受控 Docker 容器中运行。
 - emby — Emby影院 — Emby是一个多媒体串流平台，可以让您方便地管理和串流您的媒体。
 - excalidraw — Excalidraw画板 — Excalidraw是支持多人协同的私有化在线画板工具。
 - fastnet — FastNet 网络测速 — FastNet 提供网络测速与网络诊断 Web UI，默认端口 3200。

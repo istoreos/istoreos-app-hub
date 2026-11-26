@@ -174,6 +174,16 @@ apps:
         meta:
             - local: apps/drawio/app-meta-drawio
               remote: openwrt-app-meta/applications/app-meta-drawio
+    dsh:
+        services:
+            - local: apps/dsh/dsh
+              remote: openwrt-app-actions/applications/dsh
+        luci:
+            - local: apps/dsh/luci-app-dsh
+              remote: openwrt-app-actions/applications/luci-app-dsh
+        meta:
+            - local: apps/dsh/app-meta-dsh
+              remote: openwrt-app-meta/applications/app-meta-dsh
     emby:
         services: []
         luci:

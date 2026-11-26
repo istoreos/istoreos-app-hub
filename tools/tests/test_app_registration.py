@@ -25,6 +25,7 @@ CASES = [
     ('claude-code/claude-code', 'claude-code', '36-claude-code.json'),
     ('opencode/opencode', 'opencode', '37-opencode.json'),
     ('kimi/kimi', 'kimi', '38-kimi.json'),
+    ('dsh/dsh', 'dsh', '39-dsh.json'),
     ('istoreenhance/istoreenhance', 'kspeeder', '20-kspeeder.json'),
     ('fastnet/fastnet', 'fastnet', '17-fastnet.json'),
     ('ddnsto/luci-app-ddnsto', 'ddnsto', '16-ddnsto.json'),

@@ -1,0 +1,2 @@
+DSH_PROVIDER_WRITE=PASS
+PROVIDER=kaiplus/qwen3.8-flash

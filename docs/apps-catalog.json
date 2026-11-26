@@ -181,8 +181,8 @@
     ],
     "website": "https://www.ddnsto.com/",
     "author": "xiaobao",
-    "version": "4.2.8",
-    "release": "3",
+    "version": "4.2.9",
+    "release": "1",
     "depends": "+ddnsto +luci-app-ddnsto +luci-i18n-ddnsto-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/ddnsto",
     "meta_dir": "apps/ddnsto/app-meta-ddnsto"
@@ -253,6 +253,25 @@
     "meta_dir": "apps/drawio/app-meta-drawio"
   },
   {
+    "id": "dsh",
+    "title": "DSH",
+    "description": "DeepSeek Harness Web 工作台，提供模型、会话、工具、审批和插件能力，并在受控 Docker 容器中运行。",
+    "description_en": "DeepSeek Harness Web workbench for models, sessions, tools, approvals and plugins, running in a controlled Docker container.",
+    "tags": [
+      "ai",
+      "development",
+      "docker",
+      "service"
+    ],
+    "website": "https://github.com/deepseek-ai/deepseek-harness",
+    "author": "DeepSeek AI / LinkEase",
+    "version": "1.0.0",
+    "release": "2",
+    "depends": "+dsh +luci-app-dsh +luci-i18n-dsh-zh-cn +docker-deps",
+    "luci_entry": "/cgi-bin/luci/admin/services/dsh",
+    "meta_dir": "apps/dsh/app-meta-dsh"
+  },
+  {
     "id": "emby",
     "title": "Emby影院",
     "description": "Emby是一个多媒体串流平台，可以让您方便地管理和串流您的媒体。",
@@ -298,7 +317,7 @@
     "website": "https://www.koolcenter.com/t/topic/9148",
     "author": "xiaobao",
     "version": "0.8.10",
-    "release": "24",
+    "release": "22",
     "depends": "+fastnet +luci-app-fastnet +luci-i18n-fastnet-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/fastnet",
     "meta_dir": "apps/fastnet/app-meta-fastnet"
@@ -650,8 +669,8 @@
     ],
     "website": "https://www.linkease.com/",
     "author": "xiaobao",
-    "version": "3.0.23",
-    "release": "6",
+    "version": "3.0.32",
+    "release": "7",
     "depends": "+linkease-runtime-transition +linkease +linkeasefull +luci-app-linkeasefull +luci-app-linkeasefull-embed +luci-lib-linkeasefile +luci-i18n-linkeasefull-zh-cn",
     "luci_entry": "/cgi-bin/luci/admin/services/linkeasefull",
     "meta_dir": "apps/linkeasefull/app-meta-linkeasefull"

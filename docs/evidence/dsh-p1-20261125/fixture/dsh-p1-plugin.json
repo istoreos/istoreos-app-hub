@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "dsh",
+  "name": "DSH P1 Spike",
+  "desktop": {
+    "mode": "iframe",
+    "target": {
+      "scheme": "http",
+      "hostMode": "request-host",
+      "port": {
+        "default": 13080
+      },
+      "path": "/apps/dsh/"
+    },
+    "access": {
+      "scope": "lan"
+    }
+  },
+  "standalone": {
+    "basePath": "/apps/dsh/",
+    "externalOpen": {
+      "enabled": true,
+      "label": "打开 DSH P1"
+    }
+  },
+  "auth": {
+    "mode": "default"
+  },
+  "backend": {
+    "type": "http",
+    "scheme": "http",
+    "host": "127.0.0.1",
+    "defaultPort": 13080,
+    "upstreamBasePath": "/",
+    "pathMode": "strip-public-base",
+    "proxyMode": "app-base",
+    "transport": "tcp"
+  },
+  "window": {
+    "width": 1280,
+    "height": 820,
+    "singleton": true
+  },
+  "capabilities": [
+    "ai-workbench",
+    "development"
+  ],
+  "categories": [
+    "development",
+    "ai"
+  ]
+}
