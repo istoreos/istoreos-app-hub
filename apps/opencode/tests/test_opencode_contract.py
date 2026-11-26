@@ -16,7 +16,7 @@ class OpenCodeContractTest(unittest.TestCase):
         runtime = self.read("opencode/files/opencode-runtime.lua")
         package = self.read("opencode/files/opencode-package.lua")
         self.assertIn("PKG_VERSION:=2.4.1", recipe)
-        self.assertIn("PKG_RELEASE:=3", recipe)
+        self.assertIn("PKG_RELEASE:=4", recipe)
         self.assertIn("@opencode/cli-linux-x64-baseline-musl", runtime)
         self.assertIn("@opencode/cli-linux-arm64-musl", runtime)
         self.assertIn("candidate.version=='24.22.1'", runtime)
@@ -52,6 +52,24 @@ class OpenCodeContractTest(unittest.TestCase):
         self.assertIn("?id=opencode", status)
         self.assertIn("安装 AgentFlow 后使用", status)
         self.assertNotIn("auth.json", controller)
+
+    def test_missing_runtime_storage_has_an_actionable_luci_path(self):
+        runtime = self.read("opencode/files/opencode-runtime.lua")
+        package = self.read("opencode/files/opencode-package.lua")
+        controller = self.read("luci-app-opencode/luasrc/controller/opencode.lua")
+        status = self.read("luci-app-opencode/luasrc/view/opencode/status.htm")
+        luci_recipe = self.read("luci-app-opencode/Makefile")
+        meta_recipe = self.read("app-meta-opencode/Makefile")
+
+        self.assertIn("storage_configured", package)
+        self.assertIn("Configure persistent storage in Runtime Environments", runtime)
+        self.assertIn('next = "runtime-storage"', controller)
+        self.assertIn("opencode-storage-guide", status)
+        self.assertIn("先配置运行时存储", status)
+        self.assertIn("前往运行时环境", status)
+        self.assertIn("!storageReady", status)
+        self.assertIn("PKG_VERSION:=0.1.0-r3", luci_recipe)
+        self.assertIn("PKG_RELEASE:=5", meta_recipe)
 
     def test_registration_and_sync_are_owned_by_plugin(self):
         recipe = self.read("opencode/Makefile")
