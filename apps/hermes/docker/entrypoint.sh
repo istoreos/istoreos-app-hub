@@ -30,12 +30,12 @@ if [[ ! -d "${HERMES_WEBUI_AGENT_DIR}" ]]; then
 fi
 
 (
-  exec hermes gateway run
+  exec hermes gateway run --external-supervisor --force
 ) &
 gateway_pid=$!
 
 (
-  cd "${HERMES_WEBUI_AGENT_DIR:-/hermes}" 2>/dev/null || cd /hermes
+  cd "${HERMES_WEBUI_DEFAULT_WORKSPACE:-/workspace}"
   exec python3 "${HERMES_WEBUI_DIR}/server.py"
 ) &
 webui_pid=$!

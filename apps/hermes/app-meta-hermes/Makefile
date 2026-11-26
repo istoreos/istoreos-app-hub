@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=1.0.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 META_TITLE:=Hermes
 META_TITLE.en:=Hermes
 META_DEPENDS:=+luci-app-hermes +luci-i18n-hermes-zh-cn

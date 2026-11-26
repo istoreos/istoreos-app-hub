@@ -82,20 +82,30 @@ def main():
                         add('node', version, arch, abi, 'upstream1-npm' + option['version'], source,
                             [artifact(f'{base}/v{version}/{filename}', hashes[filename], 'tar.xz', 1), copy.deepcopy(option['artifact'])], npm=option['version'])
 
-    python_url = 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest'
-    python = json.loads(read('python-latest', python_url))
-    assets = {a['name']: a for a in python['assets']}
-    python_source = 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/tags/' + python['tag_name']
-    for minor in ['3.12', '3.13']:
-        versions = {m.group(1) for name in assets if (m := re.match(r'^cpython-(' + re.escape(minor) + r'\.\d+)\+', name))}
-        version = max(versions, key=lambda v: tuple(map(int, v.split('.'))))
-        for arch in ['x86_64', 'aarch64']:
-            for abi, upstream in [('glibc', 'gnu'), ('musl', 'musl')]:
-                name = f'cpython-{version}+{python["tag_name"]}-{arch}-unknown-linux-{upstream}-install_only_stripped.tar.gz'
-                a = assets[name]
-                assert a['digest'].startswith('sha256:')
-                add('python', version, arch, abi, python['tag_name'], python_source,
-                    [artifact(a['browser_download_url'], a['digest'][7:], 'tar.gz', 1, a['size'])], 'python')
+    python_sources = [
+        ('python-latest', 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/latest',
+         ['3.12', '3.13'], 'install_only_stripped'),
+        # Hermes v0.23.4 pins this exact first-party Python build. Keep it in
+        # the public catalog so applications can bind the same interpreter
+        # without letting Hermes PM download a second private Python.
+        ('python-hermes-20261021',
+         'https://api.github.com/repos/astral-sh/python-build-standalone/releases/tags/20261021',
+         ['3.14'], 'install_only'),
+    ]
+    for metadata_name, python_url, minors, variant in python_sources:
+        python = json.loads(read(metadata_name, python_url))
+        assets = {a['name']: a for a in python['assets']}
+        python_source = 'https://api.github.com/repos/astral-sh/python-build-standalone/releases/tags/' + python['tag_name']
+        for minor in minors:
+            versions = {m.group(1) for name in assets if (m := re.match(r'^cpython-(' + re.escape(minor) + r'\.\d+)\+', name))}
+            version = max(versions, key=lambda v: tuple(map(int, v.split('.'))))
+            for arch in ['x86_64', 'aarch64']:
+                for abi, upstream in [('glibc', 'gnu'), ('musl', 'musl')]:
+                    name = f'cpython-{version}+{python["tag_name"]}-{arch}-unknown-linux-{upstream}-{variant}.tar.gz'
+                    a = assets[name]
+                    assert a['digest'].startswith('sha256:')
+                    add('python', version, arch, abi, python['tag_name'], python_source,
+                        [artifact(a['browser_download_url'], a['digest'][7:], 'tar.gz', 1, a['size'])], 'python')
 
     go_source = 'https://go.dev/dl/?mode=json&include=all'
     go = {x['version']: x for x in json.loads(read('go', go_source))}

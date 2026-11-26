@@ -248,6 +248,14 @@ apps:
         meta:
             - local: apps/heimdall/app-meta-heimdall
               remote: openwrt-app-meta/applications/app-meta-heimdall
+    hermes:
+        services: []
+        luci:
+            - local: apps/hermes/luci-app-hermes
+              remote: openwrt-app-actions/applications/luci-app-hermes
+        meta:
+            - local: apps/hermes/app-meta-hermes
+              remote: openwrt-app-meta/applications/app-meta-hermes
     homeassistant:
         services: []
         luci:
