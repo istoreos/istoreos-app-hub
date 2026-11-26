@@ -76,9 +76,9 @@ EXPECTED = {
         "luci-lib-taskd (>=1.0.15)",
     ),
     "apps/kaiplus/kaiplus/Makefile": (
-        "changeguard (>=0.3.5-$(if $(CONFIG_USE_APK),r)2), luci-lib-linkeaseauth (>=1.2.1-r5)",
-        "changeguard (>=0.3.5-2), luci-lib-linkeaseauth (>=1.2.1-r5)",
-        "changeguard (>=0.3.5-r2), luci-lib-linkeaseauth (>=1.2.1-r5)",
+        "changeguard (>=0.3.5-$(if $(CONFIG_USE_APK),r)3), luci-lib-linkeaseauth (>=1.2.1-r5)",
+        "changeguard (>=0.3.5-3), luci-lib-linkeaseauth (>=1.2.1-r5)",
+        "changeguard (>=0.3.5-r3), luci-lib-linkeaseauth (>=1.2.1-r5)",
     ),
     "apps/kaiplus/luci-app-kaiplus/Makefile": (
         "luci-lib-linkeaseauth (>=1.2.1-r5)",
