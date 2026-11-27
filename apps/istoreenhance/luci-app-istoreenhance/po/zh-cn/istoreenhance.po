@@ -1,4 +1,15 @@
-msgid "KSpeeder
+msgid ""
+msgstr ""
+"Project-Id-Version: luci-app-istoreenhance\n"
+"PO-Revision-Date: 2026-11-27 00:00+0000\n"
+"Last-Translator: iStoreOS Team\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "KSpeeder"
 msgstr "KSpeeder"
 
 msgid "Running state"
@@ -24,4 +35,22 @@ msgstr "服务状态"
 
 msgid "Collecting data..."
 msgstr "收集数据..."
+
+msgid "Gateway mode"
+msgstr "网关模式"
+
+msgid "Resolve KSpeeder gateway domains to this router's LAN IP through dnsmasq. Enable this only when KSpeeder runs on the router."
+msgstr "通过 dnsmasq 将 KSpeeder 网关域名解析到本路由器的 LAN IP。仅当 KSpeeder 运行在本路由器上时启用。"
+
+msgid "Gateway DNS domains"
+msgstr "网关 DNS 域名"
+
+msgid "Gateway mode maps these domains to this router. If KSpeeder runs on another machine, configure the gateway DNS to map these domains to that machine instead."
+msgstr "网关模式会把这些域名指向本路由器。如果 KSpeeder 运行在其他机器上，请在网关 DNS 中把这些域名改为指向那台机器。"
+
+msgid "Client loopback domains"
+msgstr "客户端回环域名"
+
+msgid "These Docker relay domains must keep resolving to 127.0.0.1 on every client. Do not map them to the router or a remote KSpeeder node."
+msgstr "这些 Docker relay 域名在每台客户端上都必须继续解析到 127.0.0.1，不要把它们指向路由器或远程 KSpeeder 节点。"
 

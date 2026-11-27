@@ -3,6 +3,9 @@
 START=99
 USE_PROCD=1
 
+GATEWAY_DOMAINS_FILE="/usr/share/kspeeder/gateway-domains.conf"
+GATEWAY_DNSMASQ_HOSTS="/tmp/kspeeder-gateway.hosts"
+
 write_mirrors_config() {
     local filename="$1"
     cat > "$filename" << 'EOF'
@@ -22,9 +25,108 @@ EOF
 
 get_config() {
 	config_get_bool enabled $1 enabled 0
+	config_get_bool gateway_mode $1 gateway_mode 0
 	config_get port $1 port 5443
 	config_get adminport $1 adminport 5003
   config_get cache $1 cache
+}
+
+gateway_lan_ip() {
+	local address
+	if command -v ubus >/dev/null 2>&1 && command -v jsonfilter >/dev/null 2>&1; then
+		address="$(ubus call network.interface.lan status 2>/dev/null | jsonfilter -e '@["ipv4-address"][0].address' 2>/dev/null)"
+	fi
+	[ -n "$address" ] || address="$(uci -q get network.lan.ipaddr 2>/dev/null)"
+	case "$address" in
+		''|*[!0-9.]*) return 1 ;;
+	esac
+	printf '%s\n' "$address"
+}
+
+render_gateway_dns_config() {
+	local address="$1"
+	local output="$2"
+	awk -v address="$address" '
+		$1 == "gateway" && $2 ~ /^[A-Za-z0-9.-]+$/ {
+			printf "%s %s\n", address, $2
+		}
+	' "$GATEWAY_DOMAINS_FILE" > "$output"
+}
+
+reload_dnsmasq() {
+	[ -x /etc/init.d/dnsmasq ] && /etc/init.d/dnsmasq reload >/dev/null 2>&1
+}
+
+gateway_hosts_registered() {
+	uci -q get dhcp.@dnsmasq[0].addnhosts 2>/dev/null \
+		| tr ' ' '\n' \
+		| grep -Fqx "$GATEWAY_DNSMASQ_HOSTS"
+}
+
+register_gateway_hosts() {
+	gateway_hosts_registered && return 0
+	uci add_list "dhcp.@dnsmasq[0].addnhosts=$GATEWAY_DNSMASQ_HOSTS" || return 1
+	uci commit dhcp
+}
+
+unregister_gateway_hosts() {
+	gateway_hosts_registered || return 0
+	uci -q del_list "dhcp.@dnsmasq[0].addnhosts=$GATEWAY_DNSMASQ_HOSTS" || return 1
+	uci commit dhcp
+}
+
+remove_gateway_dns() {
+	local changed=0
+	if [ -e "$GATEWAY_DNSMASQ_HOSTS" ]; then
+		rm -f "$GATEWAY_DNSMASQ_HOSTS"
+		changed=1
+	fi
+	if gateway_hosts_registered; then
+		unregister_gateway_hosts
+		changed=1
+	fi
+	[ "$changed" = 0 ] || reload_dnsmasq
+}
+
+apply_gateway_dns() {
+	local address temporary
+	[ "$gateway_mode" = 1 ] || {
+		remove_gateway_dns
+		return 0
+	}
+	[ -r "$GATEWAY_DOMAINS_FILE" ] || {
+		logger -t istoreenhance "gateway mode: missing domain manifest $GATEWAY_DOMAINS_FILE"
+		remove_gateway_dns
+		return 1
+	}
+	address="$(gateway_lan_ip)" || {
+		logger -t istoreenhance "gateway mode: cannot determine LAN IPv4 address"
+		remove_gateway_dns
+		return 1
+	}
+	temporary="${GATEWAY_DNSMASQ_HOSTS}.tmp.$$"
+	if ! render_gateway_dns_config "$address" "$temporary" || [ ! -s "$temporary" ]; then
+		rm -f "$temporary"
+		logger -t istoreenhance "gateway mode: cannot render dnsmasq configuration"
+		remove_gateway_dns
+		return 1
+	fi
+	local changed=0
+	if [ -f "$GATEWAY_DNSMASQ_HOSTS" ] && cmp -s "$temporary" "$GATEWAY_DNSMASQ_HOSTS"; then
+		rm -f "$temporary"
+	else
+		mv "$temporary" "$GATEWAY_DNSMASQ_HOSTS"
+		changed=1
+	fi
+	if ! gateway_hosts_registered; then
+		if ! register_gateway_hosts; then
+			logger -t istoreenhance "gateway mode: cannot register dnsmasq hosts file"
+			return 1
+		fi
+		changed=1
+	fi
+	[ "$changed" = 0 ] || reload_dnsmasq
+	logger -t istoreenhance "gateway mode: mapped KSpeeder domains to $address"
 }
 
 start_service() {
@@ -32,12 +134,16 @@ start_service() {
 	config_foreach get_config istoreenhance
 	if [ $enabled != 1 ]; then
 		disabled_mirrors
+		remove_gateway_dns
 		return 1
 	fi
 
   if [ -z $cache ]; then
+		remove_gateway_dns
     return 2
   fi
+
+	apply_gateway_dns || true
 	
 	if [ ! -f $cache/kspeeder.yml ]; then
 		parent_dir=$(dirname "$cache")
@@ -57,6 +163,7 @@ start_service() {
 
 service_triggers() {
 	procd_add_reload_trigger "istoreenhance"
+	procd_add_reload_trigger "network"
 }
 
 disabled_mirrors() {
@@ -69,4 +176,5 @@ disabled_mirrors() {
 
 service_stopped() {
 	disabled_mirrors
+	remove_gateway_dns
 }

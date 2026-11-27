@@ -12,7 +12,7 @@ PKG_ARCH_ISTOREENHANCE:=$(ARCH)
 PKG_NAME:=istoreenhance
 # use PKG_SOURCE_DATE instead of PKG_VERSION for compitable
 PKG_SOURCE_DATE:=0.9.1
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 ARCH_HEXCODE:=
 ifeq ($(ARCH),x86_64)
 ARCH_HEXCODE=8664
@@ -95,6 +95,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/istoreenhance.init $(1)/etc/init.d/istoreenhance
 	$(INSTALL_BIN) ./files/istoreenhance.uci-default $(1)/etc/uci-defaults/istoreenhance
 	$(INSTALL_DATA) ./files/kspeeder-plugin.json $(1)/usr/share/kspeeder/kspeeder-plugin.json
+	$(INSTALL_DATA) ./files/gateway-domains.conf $(1)/usr/share/kspeeder/gateway-domains.conf
 	if [ -d "$(KSPEEDER_WEB_ROOT)" ] && [ -f "$(KSPEEDER_WEB_ROOT)/index.html" ]; then \
 		$(CP) $(KSPEEDER_WEB_ROOT)/* $(1)/usr/share/kspeeder/www/; \
 	fi
