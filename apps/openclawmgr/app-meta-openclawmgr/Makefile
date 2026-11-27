@@ -3,7 +3,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_VERSION:=0.1.13
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 
 META_TITLE:=OpenClaw Launcher
 META_TITLE.en:=OpenClaw Launcher

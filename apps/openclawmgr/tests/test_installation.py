@@ -26,6 +26,9 @@ REAL_NODE = Path(os.environ.get('OPENCLAWMGR_TEST_NODE', shutil.which('node'))).
 REAL_NPM = REAL_NODE.parent / 'npm'
 SEMVER = REAL_NODE.parent.parent / 'lib/node_modules/npm/node_modules/semver'
 TEST_SHELL = shlex.split(os.environ.get('OPENCLAWMGR_TEST_SHELL','sh'))
+STABLE_VERSION = '2026.10.34'
+COMPAT_VERSION = '2026.3.28'
+LATEST_VERSION = '2026.11.10'
 
 MOCK = r'''#!/usr/bin/python3
 import os, sys, json, shutil, hashlib, base64, tarfile, time, subprocess
@@ -84,7 +87,9 @@ elif name == 'lua':
   event('runtime-client',args[1:])
   if action in ('preflight','inspect','check'): finish()
   if action=='port-check':
-   if flag('PORT_BUSY'):
+   owned_busy = flag('OWNED_PORT_BUSY') and (root/'running').exists()
+   running_pid = args[4] if len(args) > 4 else ''
+   if flag('PORT_BUSY') or (owned_busy and not running_pid):
     print('PORT_IN_USE: Gateway port is already used outside this application instance',file=sys.stderr);finish(1)
    finish()
   if action=='cancel':
@@ -126,7 +131,9 @@ elif name == 'openclawmgr':
  event('service',args)
  if args[0]=='stop': (root/'running').unlink(missing_ok=True)
  elif args[0] in ('start','restart'):
-  if flag('START_FAIL'): finish(17)
+  target_pkg=base/'current/global/lib/node_modules/openclaw/package.json'
+  target_version=json.loads(target_pkg.read_text()).get('version') if target_pkg.exists() else ''
+  if flag('START_FAIL') or (flag('ROLLBACK_TARGET_FAIL') and target_version=='2026.1.1'): finish(17)
   (root/'running').write_text('running')
 elif name in ('node','node.real'):
  ref=Path(sys.argv[0]).resolve().parents[2]/'runtime.json'
@@ -151,7 +158,9 @@ elif name == 'npm':
  event('npm',args)
  event('npm-libc',os.environ.get('npm_config_libc'))
  if args==['--version']: print('11.12.1'); finish()
- version='2026.3.28'
+ requested=args[1] if args and args[0] in ('view','pack') else ''
+ version={'openclaw@2026.10.34':'2026.10.34','openclaw@2026.3.28':'2026.3.28',
+          'openclaw@latest':'2026.11.10','openclaw@2026.11.10':'2026.11.10'}.get(requested,'2026.10.34')
  tarball=root/('openclaw-'+version+'.tgz')
  integrity='sha512-'+base64.b64encode(hashlib.sha512(tarball.read_bytes()).digest()).decode()
  if args[0]=='view':
@@ -203,7 +212,8 @@ else: raise Exception(name)
 '''
 
 CLI = '''import fs from 'node:fs';
-if (process.argv.includes('--version')) console.log(process.env.MOCK_CLI_WRONG === '1' ? 'wrong-version' : '2026.3.28');
+const packageVersion=JSON.parse(fs.readFileSync(new URL('./package.json',import.meta.url),'utf8')).version;
+if (process.argv.includes('--version')) console.log(process.env.MOCK_CLI_WRONG === '1' ? 'wrong-version' : packageVersion);
 else if (process.argv.includes('health')) {
  if (process.argv.includes('--no-color')) { console.error('unknown option --no-color'); process.exit(1); }
  if (process.env.MOCK_HEALTH_DELAY_MS) await new Promise(resolve => setTimeout(resolve,Number(process.env.MOCK_HEALTH_DELAY_MS)));
@@ -259,11 +269,12 @@ class Device:
         digest = hashlib.sha256((self.root/'node.tar.xz').read_bytes()).hexdigest()
         pins = self.share/'node-pins.sh'
         pins.write_text(re.sub(r'(?<=OC_NODE_SHA256=)[0-9a-f]{64}',digest,pins.read_text()))
-        pkg = self.root/'package'
-        pkg.mkdir()
-        (pkg/'package.json').write_text(json.dumps({'name':'openclaw','version':'2026.3.28','dependencies':{}}))
-        (pkg/'openclaw.mjs').write_text(CLI)
-        with tarfile.open(self.root/'openclaw-2026.3.28.tgz','w:gz') as tar: tar.add(pkg,arcname='package')
+        for version in (STABLE_VERSION,COMPAT_VERSION,LATEST_VERSION):
+            pkg = self.root/('package-'+version)
+            pkg.mkdir()
+            (pkg/'package.json').write_text(json.dumps({'name':'openclaw','version':version,'dependencies':{}}))
+            (pkg/'openclaw.mjs').write_text(CLI)
+            with tarfile.open(self.root/('openclaw-'+version+'.tgz'),'w:gz') as tar: tar.add(pkg,arcname='package')
         self.entry = self.root/'openclawmgr.sh'
         self.entry.write_text((ROOT/'usr/libexec/istorec/openclawmgr.sh').read_text())
         for file in [self.entry, self.share/'install-runtime.sh', self.share/'openclawmgr-cli.sh', self.share/'cli-bin/npm', self.share/'npm-env.sh']:
@@ -315,7 +326,7 @@ class InstallationTests(unittest.TestCase):
         self.assertTrue((d.base/'node/bin/node').is_file())
         self.assertEqual((d.base/'global').readlink(),Path('current/global'))
         receipt=json.loads((d.base/'current/receipt.json').read_text())
-        self.assertEqual(receipt['version'],'2026.3.28')
+        self.assertEqual(receipt['version'],STABLE_VERSION)
         self.assertEqual(receipt['source'],'origin')
         self.assertEqual(len(receipt['nodeExecutableSha256']),64)
         self.assertFalse((d.root/'lock').exists())
@@ -374,7 +385,25 @@ class InstallationTests(unittest.TestCase):
         views=[v for k,v in d.events() if k=='npm' and v[0]=='view']
         packs=[v for k,v in d.events() if k=='npm' and v[0]=='pack']
         self.assertEqual(views,[['view','openclaw@latest','--json']])
-        self.assertEqual(packs[0][1],'openclaw@2026.3.28')
+        self.assertEqual(packs[0][1],'openclaw@'+LATEST_VERSION)
+
+    def test_stable_and_compat_channels_pin_exact_reviewed_versions(self):
+        stable=Device();self.addCleanup(stable.close);self.ok(stable.run())
+        stable_receipt=json.loads((stable.base/'current/receipt.json').read_text())
+        self.assertEqual((stable_receipt['channel'],stable_receipt['version']),('stable',STABLE_VERSION))
+        self.assertIn(['view','openclaw@'+STABLE_VERSION,'--json'],[v for k,v in stable.events() if k=='npm'])
+
+        compat=Device();self.addCleanup(compat.close);compat.env['INSTALL_CHANNEL']='compat';self.ok(compat.run())
+        compat_receipt=json.loads((compat.base/'current/receipt.json').read_text())
+        self.assertEqual((compat_receipt['channel'],compat_receipt['version']),('compat',COMPAT_VERSION))
+        self.assertIn(['view','openclaw@'+COMPAT_VERSION,'--json'],[v for k,v in compat.events() if k=='npm'])
+
+    def test_unknown_install_channel_is_rejected_before_network(self):
+        d=self.device;d.env['INSTALL_CHANNEL']='arbitrary-version'
+        result=d.run()
+        self.assertNotEqual(result.returncode,0)
+        self.assertIn('Invalid install channel',result.stdout+result.stderr)
+        self.assertFalse(any(k in ('npm','curl','ks-cli','runtime-plan') for k,v in d.events()))
 
     def test_download_failure_retains_exit_status(self):
         d=self.device; r=d.run(DOWNLOAD_FAIL=1)
@@ -450,6 +479,14 @@ class InstallationTests(unittest.TestCase):
         self.assertIn('PORT_IN_USE',result.stdout+result.stderr)
         self.assertFalse(any(k in ('curl','ks-cli','npm','runtime-plan','service') for k,v in d.events()))
 
+    def test_running_legacy_gateway_is_owned_during_upgrade(self):
+        d=self.device;d.legacy(running=True);result=d.run('upgrade',OWNED_PORT_BUSY=1)
+        self.ok(result)
+        output=result.stdout+result.stderr
+        self.assertNotIn('get_running_pid: not found',output)
+        self.assertNotIn('PORT_IN_USE',output)
+        self.assertEqual([v for k,v in d.events() if k=='service'],[['stop'],['start']])
+
     def test_openwrt_df_without_inode_option_uses_stat(self):
         self.ok(self.device.run(NO_DF_INODES=1))
 
@@ -475,6 +512,19 @@ class InstallationTests(unittest.TestCase):
         self.assertTrue((d.root/'running').exists())
         self.assertFalse(any(k=='service' for k,v in d.events()))
 
+    def test_failed_operations_publish_recovery_outcome_for_ui(self):
+        d=self.device;d.legacy(running=True)
+        self.assertEqual(d.run('upgrade',NPM_FAIL=1).returncode,23)
+        result=d.run('last_operation');self.ok(result)
+        status=json.loads(result.stdout)
+        self.assertEqual((status['operation'],status['exit_code'],status['outcome']),('upgrade',23,'preserved'))
+
+        fresh=Device();self.addCleanup(fresh.close)
+        self.assertEqual(fresh.run('install',NPM_FAIL=1).returncode,23)
+        result=fresh.run('last_operation');self.ok(result)
+        status=json.loads(result.stdout)
+        self.assertEqual((status['operation'],status['exit_code'],status['outcome']),('install',23,'failed'))
+
     def test_engine_failure_preserves_old_runtime(self):
         d=self.device; d.legacy(); self.assertNotEqual(d.run('upgrade',BAD_ENGINES=1).returncode,0)
         self.assertFalse((d.base/'current').exists())
@@ -484,7 +534,7 @@ class InstallationTests(unittest.TestCase):
         self.assertFalse(any(k=='service' for k,v in d.events()))
 
     def test_missing_required_native_module_prevents_activation(self):
-        d=self.device; d.legacy(); self.assertNotEqual(d.run('upgrade',NATIVE_FAIL=1).returncode,0)
+        d=self.device; d.env['INSTALL_CHANNEL']='compat'; d.legacy(); self.assertNotEqual(d.run('upgrade',NATIVE_FAIL=1).returncode,0)
         self.assertFalse(any(k=='service' for k,v in d.events()))
 
     def test_successful_legacy_upgrade_keeps_previous_and_data_backup(self):
@@ -493,6 +543,83 @@ class InstallationTests(unittest.TestCase):
         self.assertEqual((d.base/'data/.openclaw/sentinel').read_text(),'old')
         self.assertTrue(list((d.base/'backups').glob('*/data.tar')))
         self.assertTrue((d.root/'running').exists())
+
+    def test_manual_rollback_restores_previous_release_and_pre_upgrade_data_offline(self):
+        d=self.device;d.legacy(running=True);self.ok(d.run('upgrade'))
+        upgraded=(d.base/'current').readlink()
+        previous=(d.base/'previous').readlink()
+        rollback_info=d.run('rollback_previous_version')
+        self.ok(rollback_info)
+        self.assertEqual(rollback_info.stdout.strip(),'2026.1.1')
+        (d.base/'data/.openclaw/sentinel').write_text('changed-after-upgrade')
+        network_before=len([1 for k,v in d.events() if k in ('npm','curl','ks-cli','runtime-plan')])
+
+        result=d.run('rollback_previous',NPM_FAIL=1,DOWNLOAD_FAIL=1)
+
+        self.ok(result)
+        self.assertEqual((d.base/'current').readlink(),previous)
+        self.assertEqual((d.base/'previous').readlink(),upgraded)
+        self.assertEqual(json.loads((d.base/'current/global/lib/node_modules/openclaw/package.json').read_text())['version'],'2026.1.1')
+        self.assertEqual((d.base/'data/.openclaw/sentinel').read_text(),'old')
+        self.assertTrue((d.root/'running').exists())
+        self.assertEqual(len([1 for k,v in d.events() if k in ('npm','curl','ks-cli','runtime-plan')]),network_before)
+        self.assertTrue(list((d.base/'backups').glob('rollback-*/forward-data.tar')))
+        operation=d.run('last_operation');self.ok(operation)
+        self.assertEqual(json.loads(operation.stdout)['outcome'],'rolled-back')
+
+    def test_manual_rollback_failure_restores_newer_release_data_and_service(self):
+        d=self.device;d.legacy(running=True);self.ok(d.run('upgrade'))
+        source=(d.base/'current').readlink();target=(d.base/'previous').readlink()
+        (d.base/'data/.openclaw/sentinel').write_text('newer-data')
+
+        result=d.run('rollback_previous',ROLLBACK_TARGET_FAIL=1)
+
+        self.assertNotEqual(result.returncode,0)
+        self.assertEqual((d.base/'current').readlink(),source)
+        self.assertEqual((d.base/'previous').readlink(),target)
+        self.assertEqual((d.base/'data/.openclaw/sentinel').read_text(),'newer-data')
+        self.assertTrue((d.root/'running').exists())
+        self.assertFalse(list(d.base.glob('.rollback.*')))
+        self.assertTrue(list((d.base/'backups').glob('rollback-*/failed-target-data/.openclaw/sentinel')))
+
+    def test_manual_rollback_rejects_invalid_snapshot_before_stopping_service(self):
+        d=self.device;d.legacy(running=True);self.ok(d.run('upgrade'))
+        source=(d.base/'current').readlink();target=(d.base/'previous').readlink()
+        source_id=source.name
+        (d.base/'backups'/source_id/'data.tar').write_bytes(b'not-a-tar')
+        service_count=len([1 for k,v in d.events() if k=='service'])
+
+        result=d.run('rollback_previous')
+
+        self.assertNotEqual(result.returncode,0)
+        self.assertEqual((d.base/'current').readlink(),source)
+        self.assertEqual((d.base/'previous').readlink(),target)
+        self.assertTrue((d.root/'running').exists())
+        self.assertEqual(len([1 for k,v in d.events() if k=='service']),service_count)
+
+    def test_interrupted_manual_rollback_can_restore_newer_release_and_data(self):
+        d=self.device;d.legacy(running=True);self.ok(d.run('upgrade'))
+        source=(d.base/'current').readlink();target=(d.base/'previous').readlink()
+        (d.base/'data/.openclaw/sentinel').write_text('newer-data')
+        backup=d.base/'backups/rollback-interrupted';backup.mkdir()
+        with tarfile.open(backup/'forward-data.tar','w') as archive:
+            archive.add(d.base/'data',arcname='.')
+        (d.base/'data/.openclaw/sentinel').write_text('older-data')
+        (d.base/'current').unlink();(d.base/'current').symlink_to(target)
+        (d.base/'previous').unlink();(d.base/'previous').symlink_to(source)
+        txn=d.base/'.rollback.interrupted';txn.mkdir()
+        for name,value in {'source':str(source),'target':str(target),'backup':str(backup),
+                           'was-running':'1','phase':'checking'}.items():
+            (txn/name).write_text(value+'\n')
+
+        result=d.run('recover_rollback')
+
+        self.ok(result)
+        self.assertEqual((d.base/'current').readlink(),source)
+        self.assertEqual((d.base/'previous').readlink(),target)
+        self.assertEqual((d.base/'data/.openclaw/sentinel').read_text(),'newer-data')
+        self.assertTrue((d.root/'running').exists())
+        self.assertFalse(txn.exists())
 
     def test_health_failure_restores_legacy_runtime_and_snapshot(self):
         d=self.device; d.legacy(running=True); r=d.run('upgrade',HEALTH_FAIL=1,MIGRATE=1)
@@ -605,6 +732,19 @@ class InstallationTests(unittest.TestCase):
         self.assertTrue((d.base/'data').exists())
         self.assertTrue((d.root/'SharedRuntime/environments/fixture-sdk').is_dir())
 
+    def test_removal_refuses_pending_rollback_before_stopping_or_deleting(self):
+        d=self.device; self.ok(d.run())
+        journal=d.base/'.rollback.pending';journal.mkdir()
+        service_count=len([1 for k,v in d.events() if k=='service'])
+
+        for action in ('uninstall','uninstall_openclaw','purge'):
+            result=d.run(action)
+            self.assertNotEqual(result.returncode,0,action)
+            self.assertTrue((d.base/'current/receipt.json').is_file(),action)
+            self.assertTrue(journal.is_dir(),action)
+
+        self.assertEqual(len([1 for k,v in d.events() if k=='service']),service_count)
+
     def test_cancellation_joins_npm_children_and_preserves_old_runtime(self):
         d=self.device; d.legacy(running=True)
         proc=subprocess.Popen([*TEST_SHELL,str(d.entry),'upgrade'],env={**d.env,'MOCK_BLOCK_INSTALL':'1'},stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
@@ -689,13 +829,23 @@ class RuntimeChecks(unittest.TestCase):
         metadata=root/'metadata.json'; metadata.write_text(json.dumps({'version':'2026.3.28'}))
         native=root/'native.json'; native.write_text('{}')
         output=release/'receipt.json'
-        command=[str(REAL_NODE),str(SHARE/'runtime-check.cjs'),'receipt',str(metadata),'11.19.1','stable','origin','mise-runtime:fixed-sdk','',str(output),str(native)]
+        command=[str(REAL_NODE),str(SHARE/'runtime-check.cjs'),'receipt',str(metadata),'11.19.1','compat','origin','mise-runtime:fixed-sdk','',str(output),str(native)]
         r=subprocess.run(command,env=env,capture_output=True,text=True);self.assertEqual(r.returncode,0,r.stderr)
         receipt=json.loads(output.read_text());self.assertEqual(receipt['runtime']['kind'],'mise-runtime')
         self.assertEqual(receipt['runtime']['instance'],'fixed-sdk');self.assertEqual(output.stat().st_mode&0o777,0o644)
         ref=json.loads((release/'runtime.json').read_text());ref['instance']='other-sdk';(release/'runtime.json').write_text(json.dumps(ref))
         output.unlink();r=subprocess.run(command,env=env,capture_output=True,text=True)
         self.assertNotEqual(r.returncode,0);self.assertFalse(output.exists())
+
+    def test_receipt_rejects_fixed_channel_version_mismatch(self):
+        root,release,env=self.shared_fixture()
+        metadata=root/'metadata.json';metadata.write_text(json.dumps({'version':COMPAT_VERSION}))
+        native=root/'native.json';native.write_text('{}')
+        output=release/'receipt.json'
+        result=subprocess.run([str(REAL_NODE),str(SHARE/'runtime-check.cjs'),'receipt',str(metadata),'11.19.1',
+            'stable','origin','mise-runtime:fixed-sdk','',str(output),str(native)],env=env,capture_output=True,text=True)
+        self.assertNotEqual(result.returncode,0)
+        self.assertFalse(output.exists())
 
     def sqlite_vec_fixture(self, version):
         temporary=tempfile.TemporaryDirectory(prefix='openclawmgr-native-')
@@ -739,7 +889,7 @@ class RuntimeChecks(unittest.TestCase):
         (module/'index.js').write_text("throw new Error('fixture missing pty native module');")
         return global_dir,metadata
 
-    def test_verified_stable_records_pty_fallback_capability(self):
+    def test_verified_compat_records_pty_fallback_capability(self):
         global_dir,metadata=self.pty_fixture('2026.3.28')
         result=self.check('native',global_dir,metadata)
         self.assertEqual(result.returncode,0,result.stderr)
@@ -793,6 +943,17 @@ class RuntimeChecks(unittest.TestCase):
         self.assertNotIn('+openclawmgr-glibc',recipe)
         self.assertTrue(os.access(SHARE/'cli-bin/npm',os.X_OK))
         self.assertTrue(os.access(SHARE/'npm-git.sh',os.X_OK))
+
+    def test_version_management_ui_and_controller_contract(self):
+        ui=(APP/'luci-app-openclawmgr/htdocs/luci-static/resources/openclawmgr/app.js').read_text()
+        controller=(APP/'luci-app-openclawmgr/luasrc/controller/openclawmgr.lua').read_text()
+        for text in ['openclaw@2026.10.34（推荐稳定版）','openclaw@2026.3.28（兼容回退版）',
+                     'openclaw@latest（尝鲜版）','data-op="rollback_previous"','data-retry-compat',
+                     '当前版本产生的数据会单独归档，但不会自动合并到旧版本']:
+            self.assertIn(text,ui)
+        for text in ['rollback_available = rollback_ver ~= ""','rollback_version = rollback_ver',
+                     'rollback_previous = true','install_channel ~= "compat"']:
+            self.assertIn(text,controller)
 
 
 if __name__=='__main__': unittest.main(verbosity=2)

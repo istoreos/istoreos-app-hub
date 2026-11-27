@@ -48,7 +48,8 @@
    安装器通过公共 `mise-runtime request ensure` 安装、校验或复用确切实例；SDK 和库只保存在公共存储。
    每个应用 release 的 `runtime.json` 固定存储根、实例、库和清单摘要，Node 目录仅提供小型入口脚本。
    不跟随全局默认，不复制共享 SDK，不原地升级其 npm；engines 不满足时保留原应用并报错。
-3. stable 仍是 `openclaw@2026.3.28`；latest 只解析一次。校验目标 engines，
+3. stable 固定为官方 extended-stable `openclaw@2026.10.34`，兼容回退版固定为既有产品兼容基线
+   `openclaw@2026.3.28`；latest 只解析一次。三个通道最终都按精确版本安装。校验目标 engines，
    按精确版本 `npm pack`，再独立核对包名、版本及 SHA512，随后安装本地 tarball。
    依赖包仍由 npm 使用其完整性元数据验证；不声称仅锁定顶层版本就锁定了整个依赖树。
 4. 候选在 `${base_dir}/.install.*/candidate` 安装，使用独立 HOME 做 CLI smoke。
@@ -86,6 +87,24 @@ OpenClawMgr/
 原生模块能力及安装时间；`runtime.kind=mise-runtime` 记录确切实例、存储根、实际 glibc 版本和库清单 SHA256。Node 摘要来自实际执行的共享二进制；原始归档校验由公共管理器维护。
 历史 releases 和成功备份不自动删除，需运维确认后清理；卸载运行时保留 data 和备份。
 “清理（含数据）”会删除这些内容。
+
+### 版本通道与手动回退
+
+- `stable`：推荐稳定版 `2026.10.34`。
+- `compat`：兼容回退版 `2026.3.28`，仅用于故障恢复，可能缺少较新的安全更新。
+- `latest`：官方 latest，解析一次后固定精确版本完成本次事务。
+
+成功升级后，页面仅在 `previous` release 和与当前 release 对应的升级前 `data.tar`
+同时有效时显示“回退到上一可用版本”。回退不联网：先停服务并归档当前数据，再同时恢复
+previous 程序和升级前数据，最后执行 Gateway 健康检查。目标启动失败会恢复回退前程序、
+数据和服务；异常中断使用：
+
+```sh
+/usr/libexec/istorec/openclawmgr.sh recover_rollback
+```
+
+当前版本产生的数据保存在 `backups/rollback-*/forward-data.tar`，不会自动合并进旧版本。
+跨版本回退必须使用该事务入口，不能手工只切换 `previous`。
 
 ## 固定公共运行时与 glibc 启动链路
 
