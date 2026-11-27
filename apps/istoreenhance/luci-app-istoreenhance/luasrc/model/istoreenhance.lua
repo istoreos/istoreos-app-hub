@@ -3,29 +3,6 @@ local jsonc = require "luci.jsonc"
 
 local istoreenhance = {}
 
-local gateway_domains_file = "/usr/share/kspeeder/gateway-domains.conf"
-
-istoreenhance.gateway_domains = function()
-  local gateway = {}
-  local loopback = {}
-  local file = io.open(gateway_domains_file, "r")
-  if not file then
-    return gateway, loopback
-  end
-  for line in file:lines() do
-    local kind, domain = line:match("^%s*(%S+)%s+([%w.-]+)%s*$")
-    if kind == "gateway" then
-      gateway[#gateway + 1] = domain
-    elseif kind == "loopback" then
-      loopback[#loopback + 1] = domain
-    end
-  end
-  file:close()
-  table.sort(gateway)
-  table.sort(loopback)
-  return gateway, loopback
-end
-
 istoreenhance.blocks = function()
   local f = io.popen("lsblk -s -f -b -o NAME,FSSIZE,MOUNTPOINT --json", "r")
   local vals = {}

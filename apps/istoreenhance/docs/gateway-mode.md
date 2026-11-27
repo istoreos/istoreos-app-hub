@@ -19,8 +19,10 @@ both the generated file and its UCI registration.
 
 ## KSpeeder runs on another LAN node
 
-Keep Gateway mode disabled. The LuCI page lists every `gateway` domain that
-the gateway DNS administrator must resolve to the KSpeeder node's LAN IP.
+Keep Gateway mode disabled. The KSpeeder management page lists every `gateway`
+domain that the gateway DNS administrator must resolve to the KSpeeder node's
+LAN IP. Use the LuCI link to open `/#/gateway-dns` on the KSpeeder management
+port, or run `ks-cli gateway domains --admin-url http://<node-ip>:5003`.
 
 The manifest also lists two `loopback` domains:
 

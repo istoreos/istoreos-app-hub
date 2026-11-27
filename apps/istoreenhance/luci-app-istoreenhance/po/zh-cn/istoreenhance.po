@@ -45,12 +45,12 @@ msgstr "通过 dnsmasq 将 KSpeeder 网关域名解析到本路由器的 LAN IP�
 msgid "Gateway DNS domains"
 msgstr "网关 DNS 域名"
 
-msgid "Gateway mode maps these domains to this router. If KSpeeder runs on another machine, configure the gateway DNS to map these domains to that machine instead."
-msgstr "网关模式会把这些域名指向本路由器。如果 KSpeeder 运行在其他机器上，请在网关 DNS 中把这些域名改为指向那台机器。"
+msgid "The complete gateway and client loopback domain catalog is shown in the KSpeeder management page."
+msgstr "完整的网关域名和客户端回环域名目录将在 KSpeeder 管理页面中展示。"
 
-msgid "Client loopback domains"
-msgstr "客户端回环域名"
+msgid "View domains in KSpeeder"
+msgstr "在 KSpeeder 中查看域名"
 
-msgid "These Docker relay domains must keep resolving to 127.0.0.1 on every client. Do not map them to the router or a remote KSpeeder node."
-msgstr "这些 Docker relay 域名在每台客户端上都必须继续解析到 127.0.0.1，不要把它们指向路由器或远程 KSpeeder 节点。"
+msgid "For a remote KSpeeder, open http://KSpeeder node IP:5003/#/gateway-dns on that node."
+msgstr "如果 KSpeeder 运行在其他机器上，请打开 http://KSpeeder节点IP:5003/#/gateway-dns。"
 

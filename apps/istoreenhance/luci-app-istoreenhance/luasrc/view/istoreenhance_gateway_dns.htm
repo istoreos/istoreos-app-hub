@@ -1,0 +1,36 @@
+<%
+local adminport = tonumber(self.adminport) or 5003
+if adminport < 1 or adminport > 65535 then
+  adminport = 5003
+end
+%>
+<div class="cbi-value">
+  <label class="cbi-value-title"><%:Gateway DNS domains%></label>
+  <div class="cbi-value-field">
+    <div style="max-width: 52rem; padding: 0.9rem 1rem; border: 1px solid #dfe5ec; border-radius: 6px; background: #f8fafc;">
+      <p style="margin: 0 0 0.75rem; color: #64748b; line-height: 1.6;">
+        <%:The complete gateway and client loopback domain catalog is shown in the KSpeeder management page.%>
+      </p>
+      <a
+        id="istoreenhance-gateway-dns-link"
+        class="cbi-button cbi-button-action important"
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+      ><%:View domains in KSpeeder%></a>
+      <p style="margin: 0.75rem 0 0; color: #94a3b8; font-size: 0.85em; line-height: 1.6;">
+        <%:For a remote KSpeeder, open http://KSpeeder node IP:5003/#/gateway-dns on that node.%>
+      </p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+(function () {
+  var host = window.location.hostname || "127.0.0.1";
+  if (host.indexOf(":") !== -1 && host.charAt(0) !== "[") {
+    host = "[" + host + "]";
+  }
+  document.getElementById("istoreenhance-gateway-dns-link").href =
+    "http://" + host + ":<%=adminport%>/#/gateway-dns";
+})();
+</script>
