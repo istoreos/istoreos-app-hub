@@ -34,7 +34,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         makefile = self.read("app-meta-istoreenhance/Makefile")
 
         self.assertIn("PKG_VERSION:=0.9.1", makefile)
-        self.assertIn("PKG_RELEASE:=12", makefile)
+        self.assertIn("PKG_RELEASE:=13", makefile)
         self.assertIn("META_ARCH:=x86_64 aarch64 arm", makefile)
         self.assertIn(
             "META_DESCRIPTION:=KSpeeder 为 Docker 镜像、软件包/文件下载和 GitHub/GitLab 公开仓库克隆提供网络加速。",
@@ -241,16 +241,20 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(reloads.read_text(encoding="utf-8"), "reload\nreload\n")
 
-    def test_luci_exposes_gateway_mode_and_both_domain_groups(self):
+    def test_luci_exposes_gateway_mode_and_links_to_kspeeder_domain_catalog(self):
         cbi = self.read("luci-app-istoreenhance/luasrc/model/cbi/istoreenhance.lua")
         model = self.read("luci-app-istoreenhance/luasrc/model/istoreenhance.lua")
+        link = self.read("luci-app-istoreenhance/luasrc/view/istoreenhance_gateway_dns.htm")
 
         self.assertIn('s:option(Flag, "gateway_mode"', cbi)
-        self.assertIn("gateway_domains", cbi)
-        self.assertIn("loopback_domains", cbi)
-        self.assertIn("/usr/share/kspeeder/gateway-domains.conf", model)
-        self.assertIn('kind == "gateway"', model)
-        self.assertIn('kind == "loopback"', model)
+        self.assertIn('template = "istoreenhance_gateway_dns"', cbi)
+        self.assertNotIn("TextValue", cbi)
+        self.assertNotIn("gateway_domains", cbi)
+        self.assertNotIn("gateway_domains", model)
+        self.assertIn("/#/gateway-dns", link)
+        self.assertIn("window.location.hostname", link)
+        self.assertIn("self.adminport", link)
+        self.assertIn("KSpeeder node IP", link)
 
     def test_default_entry_stays_on_luci_while_open_uses_shared_route(self):
         makefile = self.read("luci-app-istoreenhance/Makefile")
@@ -261,7 +265,7 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
 
         self.assertIn("+luci-lib-linkeaseauth", makefile)
         self.assertIn("+linkease-app-entry", makefile)
-        self.assertIn("PKG_VERSION:=0.9.1-r2", makefile)
+        self.assertIn("PKG_VERSION:=0.9.1-r3", makefile)
         self.assertRegex(makefile, r"(?m)^PKG_RELEASE:=$")
         self.assertIn('http = require "luci.http"', controller)
         self.assertIn('resolver = require("luci.model.linkease.apps_openwrt").new()', controller)
