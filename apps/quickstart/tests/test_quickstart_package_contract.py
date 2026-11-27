@@ -1,6 +1,8 @@
 import re
 import unittest
 import json
+import subprocess
+import tempfile
 from pathlib import Path
 
 from verify_quickstart_runtime import EXPECTED_GO_MODULE, GO_SECURITY_FLOORS
@@ -17,6 +19,44 @@ def make_value(path: Path, key: str) -> str:
 
 
 class QuickstartPackageContractTest(unittest.TestCase):
+    def test_procd_uses_separate_http_and_internal_unix_sockets(self) -> None:
+        init = APP_ROOT / "quickstart/files/quickstart.init"
+        result = subprocess.run(
+            ["sh", "-c", '''
+                procd_open_instance() { :; }
+                procd_close_instance() { :; }
+                procd_set_param() {
+                    [ "$1" != command ] || printf '%s\\n' "$@"
+                }
+                . "$1"
+                start_service
+            ''', "sh", str(init)],
+            check=True, capture_output=True, text=True,
+        )
+        self.assertEqual(result.stdout.splitlines(), [
+            "command", "/usr/sbin/quickstart", "serve",
+            "--http-unix", "/var/run/quickstart/http.sock",
+            "--unix", "/var/run/quickstart/local.sock",
+        ])
+        controller = (APP_ROOT / "luci-app-quickstart/luasrc/controller/istore_backend.lua").read_text()
+        self.assertIn('local ISTOREOS_SOCKET = "/var/run/quickstart/http.sock"', controller)
+
+    def test_upgrade_restarts_backend_before_startdhns(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log = root / "calls"
+            for name in ("quickstart", "startdhns"):
+                service = root / name
+                service.write_text(f'#!/bin/sh\nprintf "%s %s\\n" "{name}" "$1" >> "{log}"\n')
+                service.chmod(0o700)
+            script = (APP_ROOT / "quickstart/files/quickstart.uci-default").read_text()
+            script = script.replace("/etc/init.d/", f"{root}/")
+            subprocess.run(["sh", "-c", "PKG_UPGRADE=1\n" + script], check=True)
+            self.assertEqual(log.read_text().splitlines(), [
+                "quickstart enable", "quickstart restart",
+                "startdhns enable", "startdhns boot",
+            ])
+
     def test_backend_luci_and_asset_versions_match(self) -> None:
         backend_makefile = APP_ROOT / "quickstart" / "Makefile"
         netpolicy_makefile = APP_ROOT / "quickstart-netpolicy" / "Makefile"

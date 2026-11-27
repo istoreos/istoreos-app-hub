@@ -10,6 +10,12 @@ local http = {
 local fs = { readfile = function() return "" end, unlink = function() end }
 local nixio = { bit = { rshift = function(value, bits) return math.floor(value / 2^bits) end } }
 local util = { shellquote = function(value) return "'" .. value:gsub("'", "'\\''") .. "'" end }
+util.contains = function(values, value)
+    for _, item in ipairs(values) do
+        if item == value then return true end
+    end
+    return false
+end
 package.preload["luci.http"] = function() return http end
 package.preload["luci.util"] = function() return util end
 package.preload["luci.ltn12"] = function() return {} end
