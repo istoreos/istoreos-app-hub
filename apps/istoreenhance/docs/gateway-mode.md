@@ -24,6 +24,11 @@ domain that the gateway DNS administrator must resolve to the KSpeeder node's
 LAN IP. Use the LuCI link to open `/#/gateway-dns` on the KSpeeder management
 port, or run `ks-cli gateway domains --admin-url http://<node-ip>:5003`.
 
+The management page also generates ready-to-copy hosts and dnsmasq/OpenWrt
+configuration. On a router it pre-fills the IPv4 address detected from
+`br-lan`; for a remote KSpeeder node, replace it with that node's LAN IPv4 and
+the generated content updates immediately.
+
 The manifest also lists two `loopback` domains:
 
 - `registry-relay.linkease.net`
