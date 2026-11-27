@@ -1,8 +1,8 @@
 # KSpeeder gateway DNS mode
 
 The iStoreEnhance package ships one typed domain manifest at
-`/usr/share/kspeeder/gateway-domains.conf`. Both the init script and LuCI page
-consume this file.
+`/usr/share/kspeeder/gateway-domains.conf`. KSpeeder generates it from the
+same catalog used by the admin API, and the init script consumes it.
 
 ## KSpeeder runs on the gateway
 
