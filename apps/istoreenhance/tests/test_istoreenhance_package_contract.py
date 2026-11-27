@@ -205,6 +205,42 @@ class IStoreEnhancePackageContractTest(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    def test_gateway_dns_lifecycle_registers_reloads_and_cleans_up(self):
+        init = ROOT / "istoreenhance/files/istoreenhance.init"
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            manifest = directory / "domains.conf"
+            hosts = directory / "gateway.hosts"
+            registered = directory / "registered"
+            reloads = directory / "reloads"
+            manifest.write_text(
+                "gateway registry.linkease.net\n"
+                "loopback registry-relay.linkease.net\n",
+                encoding="utf-8",
+            )
+            script = f"""
+                . {init}
+                GATEWAY_DOMAINS_FILE={manifest}
+                GATEWAY_DNSMASQ_HOSTS={hosts}
+                gateway_lan_ip() {{ printf '%s\\n' 192.168.9.1; }}
+                gateway_hosts_registered() {{ test -e {registered}; }}
+                register_gateway_hosts() {{ : > {registered}; }}
+                unregister_gateway_hosts() {{ rm -f {registered}; }}
+                reload_dnsmasq() {{ printf '%s\\n' reload >> {reloads}; }}
+                logger() {{ :; }}
+                gateway_mode=1
+                apply_gateway_dns
+                test -s {hosts}
+                test -e {registered}
+                gateway_mode=0
+                apply_gateway_dns
+                test ! -e {hosts}
+                test ! -e {registered}
+            """
+            result = subprocess.run(["sh", "-c", script], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(reloads.read_text(encoding="utf-8"), "reload\nreload\n")
+
     def test_luci_exposes_gateway_mode_and_both_domain_groups(self):
         cbi = self.read("luci-app-istoreenhance/luasrc/model/cbi/istoreenhance.lua")
         model = self.read("luci-app-istoreenhance/luasrc/model/istoreenhance.lua")
