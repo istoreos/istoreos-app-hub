@@ -12,6 +12,7 @@ APPS = {
         "controller": "codex.lua",
         "view": "codex/status.htm",
         "prefix": "codex",
+        "data_dir": "Codex",
     },
     "claude-code": {
         "service": "claude",
@@ -19,6 +20,7 @@ APPS = {
         "controller": "claude.lua",
         "view": "claude/status.htm",
         "prefix": "claude",
+        "data_dir": "ClaudeCode",
     },
     "kimi": {
         "service": "kimi",
@@ -26,6 +28,7 @@ APPS = {
         "controller": "kimi.lua",
         "view": "kimi/status.htm",
         "prefix": "kimi",
+        "data_dir": "KimiCode",
     },
     "opencode": {
         "service": "opencode",
@@ -33,6 +36,7 @@ APPS = {
         "controller": "opencode.lua",
         "view": "opencode/status.htm",
         "prefix": "opencode",
+        "data_dir": "OpenCode",
     },
 }
 
@@ -52,6 +56,20 @@ class CodingAgentRuntimeGuidanceTest(unittest.TestCase):
                 self.assertIn(f'/etc/init.d/{values["service"]} stop || true', config)
                 self.assertIn('exit 0', config)
                 self.assertLess(config.index(guard), config.index(prepare))
+
+    def test_default_data_directories_are_normalized_and_match_luci(self):
+        for app, values in APPS.items():
+            with self.subTest(app=app):
+                config = self.read(f"apps/{app}/app-meta-{app}/config.sh")
+                model = self.read(
+                    f'apps/{app}/luci-app-{app}/luasrc/model/{values["prefix"]}.lua'
+                )
+                directory = values["data_dir"]
+                self.assertRegex(directory, r"^[A-Za-z0-9_.-]+$")
+                self.assertIn(
+                    f'data_dir="$ISTORE_CONF_DIR/{directory}"', config
+                )
+                self.assertIn(f'"/Configs/{directory}"', model)
 
     def test_every_management_page_guides_runtime_storage_setup(self):
         for app, values in APPS.items():

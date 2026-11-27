@@ -136,6 +136,7 @@ class DshContract(unittest.TestCase):
         runtime = self.read("dsh/Makefile")
         luci = self.read("luci-app-dsh/Makefile")
         meta = self.read("app-meta-dsh/Makefile")
+        autoconf_path = ROOT / "app-meta-dsh/config.sh"
 
         self.assertIn("+docker +dockerd +ca-bundle +linkease-app-entry", runtime)
         self.assertIn("./files/advanced.Caddyfile", runtime)
@@ -143,12 +144,20 @@ class DshContract(unittest.TestCase):
         self.assertIn("/usr/share/linkease/apps.d/39-dsh.json", runtime)
         self.assertIn("+luci-lib-linkeaseauth +linkease-app-entry", luci)
         self.assertIn("META_DEPENDS:=+dsh +luci-app-dsh", meta)
+        self.assertIn("META_AUTOCONF:=path enable", meta)
+        self.assertTrue(autoconf_path.is_file())
+        autoconf = autoconf_path.read_text(encoding="utf-8")
+        self.assertTrue(autoconf.startswith("#!/bin/sh\n"))
+        self.assertIn('data_path="$ISTORE_CONF_DIR/DSH"', autoconf)
+        self.assertIn('workspace_path="$ISTORE_PUBLIC_DIR/DSH"', autoconf)
+        self.assertIn("/usr/libexec/istorec/dsh.sh", autoconf)
         self.assertNotIn("linkease/apps.d", meta)
 
     def test_shell_is_syntactically_valid(self):
         for relative in (
             "dsh/files/dsh.sh",
             "dsh/files/dsh.init",
+            "app-meta-dsh/config.sh",
             "tests/device_acceptance.sh",
             "tests/device_acceptance_advanced.sh",
         ):
